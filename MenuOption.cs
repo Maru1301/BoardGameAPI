@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Menu_Practice
+{
+    internal class MenuOption
+    {
+        private readonly string _optionName;
+
+        private readonly MenuList? _prevMenuList;
+
+        private readonly MenuList? _nextMenuList;
+
+        public string OptionName { get => _optionName; }
+
+        public MenuList? PrevMenuList { get => _prevMenuList; }
+
+        public MenuList? NextMenuList { get => _nextMenuList; }
+
+        public MenuOption(string optionName, MenuList? prevMenuList = null, MenuList? nextMenuList = null)
+        {
+            this._optionName = optionName;
+            this._prevMenuList = prevMenuList;
+            this._nextMenuList = nextMenuList;
+        }
+    }
+}
