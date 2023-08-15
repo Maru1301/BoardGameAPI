@@ -15,7 +15,28 @@ namespace Menu_Practice
         {
             _menuLists = new();
             _currentList = new MenuList();
-            _menuLists.
+        }
+
+        public void Push(MenuList menuList)
+        {
+            _menuLists.Add(menuList);
+        }
+
+        public void Initialize() 
+        {
+            if( _menuLists.Count != 0 ) 
+            { 
+                _currentList = _menuLists.First();
+            }
+            else
+            {
+                throw new Exception("There is nothing in the Menu now!");
+            }
+        }
+
+        public void Show()
+        {
+            _currentList.Show();
         }
     }
 }
