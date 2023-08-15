@@ -13,13 +13,13 @@ namespace Menu_Practice
 
         private readonly MenuList? _prevMenuList;
 
-        private readonly MenuList? _nextMenuList;
+        private MenuList? _nextMenuList;
 
         public string OptionName { get => _optionName; }
 
         public MenuList? PrevMenuList { get => _prevMenuList; }
 
-        public MenuList? NextMenuList { get => _nextMenuList; }
+        public MenuList? NextMenuList { get => _nextMenuList; set => _nextMenuList = value; }
 
         public MenuOption(string optionName, MenuList? prevMenuList = null, MenuList? nextMenuList = null)
         {
