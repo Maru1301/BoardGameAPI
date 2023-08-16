@@ -11,6 +11,8 @@ namespace Menu_Practice
         private readonly List<MenuOption> _options;
         private MenuList? _prevList;
 
+        public List<MenuOption> Options { get => _options; }
+
         public MenuList()
         {
             this._options = new();
