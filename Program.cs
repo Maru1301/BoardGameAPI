@@ -10,7 +10,9 @@
 
             Menu menu = menuBuilder.BuildMenu();
 
-            menu.Show();
+            MenuManipulator manipulator = new(menu);
+
+            manipulator.ActivateMenu();
         }
     }
 }
