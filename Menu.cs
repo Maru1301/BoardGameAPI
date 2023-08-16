@@ -34,9 +34,9 @@ namespace Menu_Practice
             }
         }
 
-        public void Show()
+        public MenuList GetCurrentList()
         {
-            _currentList.Show();
+            return _currentList;
         }
     }
 }
