@@ -32,6 +32,7 @@ namespace Menu_Practice
             MenuOption menuOption3 = new("Deceiver");
             menuList2.Push(menuOption3);
             menuList2.AddParent(menuList);
+            menuOption.NextMenuList = menuList2;
 
             _menu.Push(menuList2);
         }
