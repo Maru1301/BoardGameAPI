@@ -21,5 +21,18 @@ namespace Menu_Practice
         {
             _menuLists.Add(menuList);
         }
+
+        public MenuList GetRootMenuList()
+        {
+            foreach(MenuList menuList in _menuLists)
+            {
+                if (menuList.IsRootList)
+                {
+                    return menuList;
+                }
+            }
+
+            return new();
+        }
     }
 }
