@@ -9,14 +9,19 @@ namespace Menu_Practice
     internal class MenuList
     {
         private readonly List<MenuOption> _options;
-        private MenuList? _prevList;
+        private readonly bool _isRootList;
+        private MenuList _prevList;
 
         public List<MenuOption> Options { get => _options; }
 
-        public MenuList()
+        public MenuList PrevList { get => _prevList; }
+
+        public bool IsRootList { get => _isRootList; }
+
+        public MenuList(bool isRootList = false)
         {
             this._options = new();
-            _prevList = null;
+            _isRootList = isRootList;
         }
 
         public void Push(MenuOption option)
@@ -27,14 +32,6 @@ namespace Menu_Practice
         public void AddParent(MenuList parentList)
         {
             _prevList = parentList;
-        }
-
-        public void Show()
-        {
-            foreach (MenuOption option in _options)
-            {
-                Console.WriteLine(option.OptionName);
-            }
         }
     }
 }
