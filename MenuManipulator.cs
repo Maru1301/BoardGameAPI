@@ -9,11 +9,13 @@ namespace Menu_Practice
     internal class MenuManipulator
     {
         private Menu _menu;
+        private MenuList _currentList;
         private int _chooser;
 
         public MenuManipulator(Menu menu)
         {
             this._menu = menu;
+            _currentList = this._menu.MenuLists.First();
             _chooser = 0;
         }
 
@@ -38,6 +40,7 @@ namespace Menu_Practice
             {
                 if(key == ConsoleKey.Enter)
                 {
+                    ChangeList();
                     changed = true;
                 }
                 else if(key == ConsoleKey.UpArrow)
@@ -50,7 +53,7 @@ namespace Menu_Practice
                 }
                 else if(key == ConsoleKey.DownArrow)
                 {
-                    if(_chooser < _menu.GetCurrentList().Options.Count-1)
+                    if(_chooser < _currentList.Options.Count-1)
                     {
                         _chooser++;
                         changed = true;
@@ -61,11 +64,33 @@ namespace Menu_Practice
             return changed;
         }
 
+        private void ChangeList()
+        {
+            MenuOption CurrentOption = GetCurrentOption();
+            if (_currentList.IsRootList)
+            {
+                if(CurrentOption.OptionName == "Exit")
+                {
+                    Environment.Exit(0);
+                }
+            }
+            
+            if (CurrentOption.OptionName == "Back")
+            {
+                _currentList = _currentList.PrevList;
+            }
+        }
+
+        private MenuOption GetCurrentOption()
+        {
+            return _currentList.Options[_chooser];
+        }
+
         private void Show()
         {
             Console.Clear();
 
-            var list = _menu.GetCurrentList();
+            var list = _currentList;
             for(int i = 0; i < list.Options.Count; i++)
             {
                 if(_chooser == i)
