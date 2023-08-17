@@ -15,7 +15,7 @@ namespace Menu_Practice
         public MenuManipulator(Menu menu)
         {
             this._menu = menu;
-            _currentList = this._menu.MenuLists.First();
+            _currentList = this._menu.GetRootMenuList();
             _chooser = 0;
         }
 
@@ -41,6 +41,7 @@ namespace Menu_Practice
                 if(key == ConsoleKey.Enter)
                 {
                     ChangeList();
+                    _chooser = 0;
                     changed = true;
                 }
                 else if(key == ConsoleKey.UpArrow)
@@ -78,6 +79,10 @@ namespace Menu_Practice
             if (CurrentOption.OptionName == "Back")
             {
                 _currentList = _currentList.PrevList;
+            }
+            else
+            {
+                _currentList = CurrentOption.NextMenuList;
             }
         }
 
