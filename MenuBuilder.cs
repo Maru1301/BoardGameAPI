@@ -9,44 +9,48 @@ namespace Menu_Practice
     internal class MenuBuilder
     {
         private readonly Menu _menu;
-        public MenuBuilder() 
+        public MenuBuilder()
         {
             _menu = new Menu();
         }
 
         public void ConstructMenu()
         {
-            MenuList menuList = new();
+            bool IsRootList = true;
+            MenuList menuList = new(IsRootList);
             MenuOption menuOption = new("Start");
             menuList.Push(menuOption);
-
-            MenuOption menuOption2 = new("Exit");
-            menuList.Push(menuOption2);
+            BuildRootMenuList(ref menuList);
 
             _menu.Push(menuList);
 
             MenuList menuList2 = new();
             MenuOption menuOption1 = new("Lord");
             menuList2.Push(menuOption1);
-
             MenuOption menuOption3 = new("Deceiver");
             menuList2.Push(menuOption3);
             menuList2.AddParent(menuList);
+            BuildMenuList(ref menuList2);
+
             menuOption.NextMenuList = menuList2;
 
             _menu.Push(menuList2);
         }
 
+        private static void BuildRootMenuList(ref MenuList list)
+        {
+            MenuOption ExitOption = new("Exit");
+            list.Push(ExitOption);
+        }
+
+        private static void BuildMenuList(ref MenuList list)
+        {
+            MenuOption BackOption = new("Back");
+            list.Push(BackOption);
+        }
+
         public Menu BuildMenu()
         {
-            try
-            {
-                _menu.Initialize();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
             return _menu;
         }
     }
