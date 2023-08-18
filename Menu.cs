@@ -19,6 +19,13 @@ namespace Menu_Practice
 
         public void Push(MenuList menuList)
         {
+            if (menuList.IsRootList)
+            {
+                if(_menuLists.Where(list => list.IsRootList == true).Any())
+                {
+                    throw new Exception("Root List has existed");
+                }
+            }
             _menuLists.Add(menuList);
         }
 
