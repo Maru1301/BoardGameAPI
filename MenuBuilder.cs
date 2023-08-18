@@ -20,21 +20,34 @@ namespace Menu_Practice
             {
                 bool IsRootList = true;
                 MenuList menuList = new(IsRootList);
-                MenuOption menuOption = new("Start");
-                menuList.Push(menuOption);
-                BuildRootMenuList(ref menuList);
+                MenuOption menuOptionStart = new("Start");
+                menuList.Push(menuOptionStart);
+                BuildMenuList(ref menuList);
 
                 _menu.Push(menuList);
 
                 MenuList menuList2 = new();
+
                 MenuOption menuOption1 = new("Lord");
                 menuList2.Push(menuOption1);
+                Character Lord = new();
+                MenuList characterInfoMenu = new CharacterInfoMenu(Lord);
+                BuildMenuList(ref characterInfoMenu);
+                menuOption1.NextMenuList = characterInfoMenu;
+                characterInfoMenu.AddParent(menuList2);
+
                 MenuOption menuOption3 = new("Deceiver");
                 menuList2.Push(menuOption3);
+                Character Deceiver = new();
+                MenuList characterInfoMenu2 = new CharacterInfoMenu(Deceiver);
+                BuildMenuList(ref characterInfoMenu2);
+                menuOption3.NextMenuList = characterInfoMenu2;
+                characterInfoMenu2.AddParent(menuList2);
+
                 menuList2.AddParent(menuList);
                 BuildMenuList(ref menuList2);
 
-                menuOption.NextMenuList = menuList2;
+                menuOptionStart.NextMenuList = menuList2;
 
                 _menu.Push(menuList2);
             }
@@ -45,16 +58,24 @@ namespace Menu_Practice
             }
         }
 
-        private static void BuildRootMenuList(ref MenuList list)
-        {
-            MenuOption ExitOption = new("Exit");
-            list.Push(ExitOption);
-        }
-
         private static void BuildMenuList(ref MenuList list)
         {
-            MenuOption BackOption = new("Back");
-            list.Push(BackOption);
+            if (list.IsRootList)
+            {
+                MenuOption ExitOption = new("Exit");
+                list.Push(ExitOption);
+            }
+            else 
+            {
+                if (list.GetType() == new CharacterInfoMenu(new Character()).GetType())
+                {
+                    MenuOption GoOption = new("Go");
+                    list.Push(GoOption);
+                }
+
+                MenuOption BackOption = new("Back");
+                list.Push(BackOption);
+            }
         }
 
         public Menu BuildMenu()
