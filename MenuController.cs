@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Menu_Practice
 {
-    internal class MenuManipulator
+    internal class MenuController
     {
         private Menu _menu;
         private MenuList _currentList;
         private int _chooser;
 
-        public MenuManipulator(Menu menu)
+        public MenuController(Menu menu)
         {
             this._menu = menu;
             _currentList = this._menu.GetRootMenuList();
@@ -94,6 +94,11 @@ namespace Menu_Practice
         private void Show()
         {
             Console.Clear();
+
+            if(_currentList.GetType() == typeof(CharacterInfoMenu))
+            {
+                _currentList.
+            }
 
             var list = _currentList;
             for(int i = 0; i < list.Options.Count; i++)
