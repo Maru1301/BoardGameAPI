@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Menu_Practice.Characters;
 
 namespace Menu_Practice
 {
     internal class MenuBuilder
     {
         private readonly Menu _menu;
+        private readonly CharacterList _characterList;
         public MenuBuilder()
         {
             _menu = new Menu();
+            _characterList = new CharacterList();
         }
 
         public void ConstructMenu()
@@ -26,30 +29,28 @@ namespace Menu_Practice
 
                 _menu.Push(menuList);
 
-                MenuList menuList2 = new();
+                MenuList characterMenuList = new();
 
-                MenuOption menuOption1 = new("Lord");
-                menuList2.Push(menuOption1);
-                Character Lord = new();
-                MenuList characterInfoMenu = new CharacterInfoMenu(Lord);
-                BuildMenuList(ref characterInfoMenu);
-                menuOption1.NextMenuList = characterInfoMenu;
-                characterInfoMenu.AddParent(menuList2);
+                MenuOption currentMenuOption;
+                Character currentCharacter;
+                MenuList currentCharacterInfoMenu;
+                foreach ((string name, Character character) in _characterList.Characters)
+                {
+                    currentMenuOption = new(name);
+                    characterMenuList.Push(currentMenuOption);
+                    currentCharacter = character;
+                    currentCharacterInfoMenu = new CharacterInfoMenu(character);
+                    BuildMenuList(ref currentCharacterInfoMenu);
+                    currentMenuOption.NextMenuList = currentCharacterInfoMenu;
+                    currentCharacterInfoMenu.AddParent(characterMenuList);
+                }
 
-                MenuOption menuOption3 = new("Deceiver");
-                menuList2.Push(menuOption3);
-                Character Deceiver = new();
-                MenuList characterInfoMenu2 = new CharacterInfoMenu(Deceiver);
-                BuildMenuList(ref characterInfoMenu2);
-                menuOption3.NextMenuList = characterInfoMenu2;
-                characterInfoMenu2.AddParent(menuList2);
+                characterMenuList.AddParent(menuList);
+                BuildMenuList(ref characterMenuList);
 
-                menuList2.AddParent(menuList);
-                BuildMenuList(ref menuList2);
+                menuOptionStart.NextMenuList = characterMenuList;
 
-                menuOptionStart.NextMenuList = menuList2;
-
-                _menu.Push(menuList2);
+                _menu.Push(characterMenuList);
             }
             catch(Exception ex) 
             {
