@@ -16,32 +16,32 @@ namespace Menu_Practice.Characters.Builders
 
         public void BuildName()
         {
-            _character.SetName("士兵");
+            _character.Name = "士兵";
         }
 
         public void BuildRule()
         {
-            _character.SetRule("人海戰術");
+            _character.Rule = "人海戰術";
         }
 
         public void BuildCards()
         {
             int[] cards = { 2, 5, 2 };
-            _character.SetCards(cards);
+            _character.Cards = cards;
         }
         public void BuildDisqualificationCondition()
         {
-            _character.SetDisqualificationCondition("盾牌數 - 匕首數 < 2");
+            _character.DisqualificationCondition = "盾牌數 - 匕首數 < 2";
         }
 
         public void BuildEvolutionCondition()
         {
-            _character.SetEvolutionCondition("盾牌數 > 5");
+            _character.EvolutionCondition = "盾牌數 > 5";
         }
 
         public void BuildAdditionalPointCondition()
         {
-            _character.SetAdditionalPointCondition("盾牌數 - 匕首數 - 2");
+            _character.AdditionalPointCondition = "盾牌數 - 匕首數 - 2";
         }
 
         public Character GetCharacter()

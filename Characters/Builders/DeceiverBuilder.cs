@@ -16,32 +16,32 @@ namespace Menu_Practice.Characters.Builders
 
         public void BuildName()
         {
-            _character.SetName("詐欺師*");
+            _character.Name = "詐欺師*";
         }
 
         public void BuildRule()
         {
-            _character.SetRule("誘敵戰術");
+            _character.Rule = "誘敵戰術";
         }
 
         public void BuildCards()
         {
             int[] cards = { 4, 1, 4 };
-            _character.SetCards(cards);
+            _character.Cards = cards;
         }
         public void BuildDisqualificationCondition()
         {
-            _character.SetDisqualificationCondition("匕首數 - 盾牌數 < 2");
+            _character.DisqualificationCondition = "匕首數 - 盾牌數 < 2";
         }
 
         public void BuildEvolutionCondition()
         {
-            _character.SetEvolutionCondition("盾牌數 = 0");
+            _character.EvolutionCondition = "盾牌數 = 0";
         }
 
         public void BuildAdditionalPointCondition()
         {
-            _character.SetAdditionalPointCondition("匕首數 - 2");
+            _character.AdditionalPointCondition = "匕首數 - 2";
         }
 
         public Character GetCharacter()

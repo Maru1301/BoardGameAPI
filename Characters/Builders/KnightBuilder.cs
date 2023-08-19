@@ -16,32 +16,32 @@ namespace Menu_Practice.Characters.Builders
 
         public void BuildName()
         {
-            _character.SetName("騎士");
+            _character.Name = "騎士";
         }
 
         public void BuildRule()
         {
-            _character.SetRule("騎士精神");
+            _character.Rule = "騎士精神";
         }
 
         public void BuildCards()
         {
             int[] cards = { 3, 5, 1 };
-            _character.SetCards(cards);
+            _character.Cards = cards;
         }
         public void BuildDisqualificationCondition()
         {
-            _character.SetDisqualificationCondition("皇冠數 - 匕首數 < 1");
+            _character.DisqualificationCondition = "皇冠數 - 匕首數 < 1";
         }
 
         public void BuildEvolutionCondition()
         {
-            _character.SetEvolutionCondition("匕首數  = 0");
+            _character.EvolutionCondition = "匕首數  = 0";
         }
 
         public void BuildAdditionalPointCondition()
         {
-            _character.SetAdditionalPointCondition("皇冠數");
+            _character.AdditionalPointCondition = "皇冠數";
         }
 
         public Character GetCharacter()
