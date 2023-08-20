@@ -70,7 +70,7 @@ namespace Menu_Practice
             {
                 if (list.GetType() == new CharacterInfoMenu(new Character()).GetType())
                 {
-                    MenuOption GoOption = new("Go");
+                    MenuOption GoOption = new("Select");
                     list.Push(GoOption);
                 }
 
