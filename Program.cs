@@ -16,7 +16,7 @@ namespace Menu_Practice
 
             Menu menu = menuBuilder.BuildMenu();
 
-            MenuManipulator manipulator = new(menu);
+            MenuController manipulator = new(menu);
 
             manipulator.ActivateMenu();
         }
