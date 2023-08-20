@@ -36,30 +36,41 @@ namespace Menu_Practice
         {
             bool changed = false;
             ConsoleKey key = Console.ReadKey().Key;
-            if(key != ConsoleKey.Escape)
+            try
             {
-                if(key == ConsoleKey.Enter)
+                if (key != ConsoleKey.Escape)
                 {
-                    ChangeList();
-                    _chooser = 0;
-                    changed = true;
-                }
-                else if(key == ConsoleKey.UpArrow)
-                {
-                    if(_chooser > 0)
+                    if (key == ConsoleKey.Enter)
                     {
-                        _chooser--;
+                        ChangeList();
+                        _chooser = 0;
                         changed = true;
                     }
-                }
-                else if(key == ConsoleKey.DownArrow)
-                {
-                    if(_chooser < _currentList.Options.Count-1)
+                    else if (key == ConsoleKey.UpArrow)
                     {
-                        _chooser++;
-                        changed = true;
+                        if (_chooser > 0)
+                        {
+                            _chooser--;
+                            changed = true;
+                        }
+                    }
+                    else if (key == ConsoleKey.DownArrow)
+                    {
+                        if (_chooser < _currentList.Options.Count - 1)
+                        {
+                            _chooser++;
+                            changed = true;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine("Press any key to go on...");
+                Console.ReadKey();
+                Console.Clear();
+                changed = true;
             }
 
             return changed;
@@ -82,6 +93,8 @@ namespace Menu_Practice
             }
             else
             {
+                if (CurrentOption.NextMenuList == null) throw new Exception("Next Menu does not exist!");
+                    
                 _currentList = CurrentOption.NextMenuList;
             }
         }
@@ -95,9 +108,9 @@ namespace Menu_Practice
         {
             Console.Clear();
 
-            if(_currentList.GetType() == typeof(CharacterInfoMenu))
+            if (_currentList.GetType() == typeof(CharacterInfoMenu))
             {
-                _currentList.
+                _currentList.ShowInfo();
             }
 
             var list = _currentList;
