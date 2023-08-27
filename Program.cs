@@ -1,11 +1,15 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using Menu_Practice.Characters;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Menu_Practice
 {
-    internal class Program
+    internal partial class Program
     {
+
+        private Status _status;
         static void Main(string[] args)
         {
+
             Console.CursorVisible = false;
 
             Loading.Show();
@@ -14,11 +18,17 @@ namespace Menu_Practice
 
             menuBuilder.ConstructMenu();
 
-            Menu menu = menuBuilder.BuildMenu();
+            var rootMenuList = menuBuilder.GetRootMenuList();
 
-            MenuController manipulator = new(menu);
+            MenuController controller = new(rootMenuList);
 
-            manipulator.ActivateMenu();
+            controller.ActivateMenu();
+
+            (Character character, Character opponent) = controller.GetChosenCharacterAndChosenOpponent();
+
+            Game game = new(character, opponent);
+
+            game.Start();
         }
     }
 }

@@ -1,28 +1,32 @@
-﻿using System;
+﻿using Menu_Practice.Characters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Menu_Practice.Program;
 
 namespace Menu_Practice
 {
     internal class MenuController
     {
-        private Menu _menu;
-        private MenuList _currentList;
+        private readonly Stack<MenuList> _menuStack = new();
         private int _chooser;
+        private Character _chosenCharacter;
+        private Character _chosenOpponent;
+        private bool _gameStart;
 
-        public MenuController(Menu menu)
+        public MenuController(MenuList rootMenuList)
         {
-            this._menu = menu;
-            _currentList = this._menu.GetRootMenuList();
+            _menuStack.Push(rootMenuList);
             _chooser = 0;
+            _gameStart = false;
         }
 
         public void ActivateMenu()
         {
             bool NeedtoChangeView = true;
-            while (true)
+            while (_gameStart != true)
             {
                 if (NeedtoChangeView)
                 {
@@ -56,7 +60,8 @@ namespace Menu_Practice
                     }
                     else if (key == ConsoleKey.DownArrow)
                     {
-                        if (_chooser < _currentList.Options.Count - 1)
+                        var currentLIst = _menuStack.Peek();
+                        if (_chooser < currentLIst.Options.Count - 1)
                         {
                             _chooser++;
                             changed = true;
@@ -78,8 +83,9 @@ namespace Menu_Practice
 
         private void ChangeList()
         {
+            var currentList = _menuStack.Peek();
             MenuOption CurrentOption = GetCurrentOption();
-            if (_currentList.IsRootList)
+            if (currentList.IsRootList)
             {
                 if(CurrentOption.OptionName == "Exit")
                 {
@@ -89,31 +95,41 @@ namespace Menu_Practice
             
             if (CurrentOption.OptionName == "Back")
             {
-                _currentList = _currentList.PrevList;
+                _menuStack.Pop();
             }
             else
             {
-                if (CurrentOption.NextMenuList == null) throw new Exception("Next Menu does not exist!");
-                    
-                _currentList = CurrentOption.NextMenuList;
+                if (CurrentOption.NextMenuList == null)
+                {
+                    _gameStart = true;
+                    return;
+                }
+
+                _menuStack.Push(CurrentOption.NextMenuList);
             }
+        }
+
+        public (Character character, Character opponent) GetChosenCharacterAndChosenOpponent()
+        {
+            return (_chosenCharacter, _chosenOpponent);
         }
 
         private MenuOption GetCurrentOption()
         {
-            return _currentList.Options[_chooser];
+            return _menuStack.Peek().Options[_chooser];
         }
 
         private void Show()
         {
             Console.Clear();
-
-            if (_currentList.GetType() == typeof(CharacterInfoMenu))
+            var currentList = _menuStack.Peek();
+            if (currentList.GetType() == typeof(CharacterInfoMenu))
             {
-                _currentList.ShowInfo();
+                currentList.ShowInfo();
+                _chosenCharacter = ((CharacterInfoMenu)currentList).Character;
             }
 
-            var list = _currentList;
+            var list = currentList;
             for(int i = 0; i < list.Options.Count; i++)
             {
                 if(_chooser == i)

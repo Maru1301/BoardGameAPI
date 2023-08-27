@@ -9,11 +9,10 @@ namespace Menu_Practice
 {
     internal class MenuBuilder
     {
-        private readonly Menu _menu;
+        private MenuList _rootMenuList;
         private readonly CharacterList _characterList;
         public MenuBuilder()
         {
-            _menu = new Menu();
             _characterList = new CharacterList();
         }
 
@@ -26,8 +25,7 @@ namespace Menu_Practice
                 MenuOption menuOptionStart = new("Start");
                 menuList.Push(menuOptionStart);
                 BuildMenuList(ref menuList);
-
-                _menu.Push(menuList);
+                _rootMenuList = menuList;
 
                 MenuList characterMenuList = new();
 
@@ -42,15 +40,12 @@ namespace Menu_Practice
                     currentCharacterInfoMenu = new CharacterInfoMenu(character);
                     BuildMenuList(ref currentCharacterInfoMenu);
                     currentMenuOption.NextMenuList = currentCharacterInfoMenu;
-                    currentCharacterInfoMenu.AddParent(characterMenuList);
                 }
 
-                characterMenuList.AddParent(menuList);
                 BuildMenuList(ref characterMenuList);
 
                 menuOptionStart.NextMenuList = characterMenuList;
 
-                _menu.Push(characterMenuList);
             }
             catch(Exception ex) 
             {
@@ -79,9 +74,9 @@ namespace Menu_Practice
             }
         }
 
-        public Menu BuildMenu()
+        public MenuList GetRootMenuList()
         {
-            return _menu;
+            return _rootMenuList;
         }
     }
 }

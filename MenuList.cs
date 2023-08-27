@@ -10,11 +10,8 @@ namespace Menu_Practice
     {
         private readonly List<MenuOption> _options;
         private readonly bool _isRootList;
-        private MenuList? _prevList = null;
 
         public List<MenuOption> Options { get => _options; }
-
-        public MenuList? PrevList { get => _prevList; }
 
         public bool IsRootList { get => _isRootList; }
 
@@ -27,11 +24,6 @@ namespace Menu_Practice
         public void Push(MenuOption option)
         {
             _options.Add(option);
-        }
-
-        public void AddParent(MenuList parentList)
-        {
-            _prevList = parentList;
         }
 
         public virtual void ShowInfo()
