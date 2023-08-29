@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Menu_Practice.Characters;
 
-namespace Menu_Practice
+namespace Menu_Practice.Menu
 {
     internal class CharacterInfoMenu : MenuList
     {

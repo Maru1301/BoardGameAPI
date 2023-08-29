@@ -1,4 +1,5 @@
 ﻿using Menu_Practice.Characters;
+using Menu_Practice.Menu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,19 +15,19 @@ namespace Menu_Practice
         private int _chooser;
         private Character _chosenCharacter;
         private Character _chosenOpponent;
-        private bool _gameStart;
+        private Status _status;
 
         public MenuController(MenuList rootMenuList)
         {
             _menuStack.Push(rootMenuList);
             _chooser = 0;
-            _gameStart = false;
         }
 
-        public void ActivateMenu()
+        public Status ActivateMenu()
         {
+            _status = Status.InMenu;
             bool NeedtoChangeView = true;
-            while (_gameStart != true)
+            while (_status == Status.InMenu)
             {
                 if (NeedtoChangeView)
                 {
@@ -34,6 +35,8 @@ namespace Menu_Practice
                 }
                 NeedtoChangeView = ReadUserInput();
             }
+
+            return _status;
         }
 
         private bool ReadUserInput()
@@ -89,7 +92,7 @@ namespace Menu_Practice
             {
                 if(CurrentOption.OptionName == "Exit")
                 {
-                    Environment.Exit(0);
+                    _status = Status.End;
                 }
             }
             
@@ -101,7 +104,7 @@ namespace Menu_Practice
             {
                 if (CurrentOption.NextMenuList == null)
                 {
-                    _gameStart = true;
+                    _status = Status.InGame;
                     return;
                 }
 
@@ -130,6 +133,7 @@ namespace Menu_Practice
             }
 
             var list = currentList;
+            Console.WriteLine(list.Title);
             for(int i = 0; i < list.Options.Count; i++)
             {
                 if(_chooser == i)

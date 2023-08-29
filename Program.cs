@@ -1,34 +1,41 @@
 ﻿using Menu_Practice.Characters;
+using Menu_Practice.Menu;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Menu_Practice
 {
     internal partial class Program
     {
-
-        private Status _status;
         static void Main(string[] args)
         {
-
             Console.CursorVisible = false;
 
             Loading.Show();
 
-            MenuBuilder menuBuilder = new();
+            IMenuBuilder menuBuilder = new MenuBuilder();
 
-            menuBuilder.ConstructMenu();
+            MenuDirector menuDirector = new(menuBuilder);
+
+            menuDirector.ConstructMenu();
 
             var rootMenuList = menuBuilder.GetRootMenuList();
 
             MenuController controller = new(rootMenuList);
 
-            controller.ActivateMenu();
+            Status status = Status.InMenu;
+            while(status != Status.End)
+            {
+                status = controller.ActivateMenu();
 
-            (Character character, Character opponent) = controller.GetChosenCharacterAndChosenOpponent();
+                if(status == Status.InGame)
+                {
+                    (Character character, Character opponent) = controller.GetChosenCharacterAndChosenOpponent();
 
-            Game game = new(character, opponent);
+                    Game game = new(character, opponent);
 
-            game.Start();
+                    status = game.Start();
+                }
+            }
         }
     }
 }

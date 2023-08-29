@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Menu_Practice.Program;
 
 namespace Menu_Practice
 {
@@ -16,9 +17,9 @@ namespace Menu_Practice
             _character = character;
             _opponent = opponent;
         }
-        public void Start()
+        public Status Start()
         {
-
+            return Status.InMenu;
         }
     }
 }
