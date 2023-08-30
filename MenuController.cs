@@ -19,6 +19,8 @@ namespace Menu_Practice
 
         public MenuController(MenuList rootMenuList)
         {
+            _chosenCharacter = new();
+            _chosenOpponent = new();  
             _menuStack.Push(rootMenuList);
             _chooser = 0;
         }
@@ -130,6 +132,9 @@ namespace Menu_Practice
             {
                 currentList.ShowInfo();
                 _chosenCharacter = ((CharacterInfoMenu)currentList).Character;
+            }else if(currentList.GetType() == typeof(OpponentMenu))
+            {
+                _chosenOpponent = ((OpponentMenu)currentList).Options[_chooser].Character;
             }
 
             var list = currentList;

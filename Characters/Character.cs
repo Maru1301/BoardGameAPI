@@ -10,7 +10,7 @@ namespace Menu_Practice.Characters
     {
         private string _name = string.Empty;
         private string _rule = string.Empty;
-        private int[] _cards = Array.Empty<int>();
+        private List<int> _cards = new();
         private string _disqualificationCondition = string.Empty;
         private string _evolutionCondition = string.Empty;
         private string _additionalPointCondition = string.Empty;
@@ -19,7 +19,7 @@ namespace Menu_Practice.Characters
         
         public string Rule { get => _rule; set => _rule = value; }
         
-        public int[] Cards { get => _cards; set => _cards = value; }
+        public List<int> Cards { get => _cards; set => _cards = value; }
         
         public string DisqualificationCondition { get => _disqualificationCondition; set => _disqualificationCondition = value; }
         

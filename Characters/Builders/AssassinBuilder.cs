@@ -26,7 +26,7 @@ namespace Menu_Practice.Characters.Builders
 
         public void BuildCards()
         {
-            int[] cards = { 2, 2, 5 };
+            List<int> cards = new(){ 2, 2, 5 };
             _character.Cards = cards;
         }
         public void BuildDisqualificationCondition()

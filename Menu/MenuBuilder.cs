@@ -54,12 +54,12 @@ namespace Menu_Practice.Menu
 
         public MenuList BuildOpponentMenuList(string title)
         {
-            MenuOption menuOption;
+            OpponentMenuOption opponentMenuOption;
             MenuList opponentMenuList = new(title);
             foreach((string name, Character character) in _characterList.Characters)
             {
-                menuOption = new(name);
-                opponentMenuList.Push(menuOption);
+                opponentMenuOption = new(name, character);
+                opponentMenuList.Push(opponentMenuOption);
             }
 
             return opponentMenuList;
