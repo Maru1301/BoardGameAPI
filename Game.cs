@@ -40,13 +40,13 @@ namespace Menu_Practice
                 //todo start each round one by one
                 if (_player.GoFirst)
                 {
-                    round = new(_player.Character.Rule);
+                    round = new(_player.Character.UseRuleLogic);
                     _player.GoFirst = false;
                     _npc.GoFirst = true;
                 }
                 else
                 {
-                    round = new(_npc.Character.Rule);
+                    round = new(_npc.Character.UseRuleLogic);
                     _npc.GoFirst = false;
                     _player.GoFirst = true;
                 }
@@ -64,15 +64,19 @@ namespace Menu_Practice
             public bool GoFirst { get; set; }
         }
 
+        public delegate (bool, OutComeCallback) RunRule(int card1, int card2);
+
+        public delegate void OutComeCallback();
+
         private class Round
         {
             private int _playerChosenCard;
             private int _npcChosenCard;
-            public Func<int> Rule { get; set; }
+            private RunRule _runRule;
 
-            public Round(Func<int> func)
+            public Round(RunRule callback)
             {
-                Rule = func;
+                _runRule = callback;
             }
 
             internal void ChooseCard(List<int> playerCards, List<int> npcCards)
@@ -92,6 +96,13 @@ namespace Menu_Practice
                             break;
                     }
                 }
+            }
+
+            internal void Judge(int playerChosenCard, int npcChosenCard)
+            {
+                (bool playerWin, OutComeCallback outComeCallback) = _runRule(playerChosenCard, npcChosenCard);
+
+                outComeCallback();
             }
         }
     }
