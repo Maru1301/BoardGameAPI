@@ -10,12 +10,12 @@ namespace Menu_Practice
     {
         static readonly List<string> Loadings = new()
             {
-                "L",
-                "Lo",
-                "Loa",
-                "Load",
-                "Loadi",
-                "Loadin",
+                //"L",
+                //"Lo",
+                //"Loa",
+                //"Load",
+                //"Loadi",
+                //"Loadin",
                 "Loading",
                 "Loading.",
                 "Loading..",
@@ -25,8 +25,8 @@ namespace Menu_Practice
         {
             int x = 0;
 
-            int time = 10;
-            int millisec = 150;
+            int time = 12;
+            int millisec = 100;
             while (x < time)
             {
                 Console.Clear();

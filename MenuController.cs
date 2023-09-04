@@ -95,6 +95,7 @@ namespace Menu_Practice
                 if(CurrentOption.OptionName == "Exit")
                 {
                     _status = Status.End;
+                    return;
                 }
             }
             

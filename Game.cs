@@ -96,6 +96,7 @@ namespace Menu_Practice
                             break;
                     }
                 }
+                Console.ReadKey();
             }
 
             internal void Judge(int playerChosenCard, int npcChosenCard)

@@ -20,16 +20,21 @@ namespace Menu_Practice
 
             var rootMenuList = menuBuilder.GetRootMenuList();
 
-            MenuController controller = new(rootMenuList);
+            MenuController menuController = new(rootMenuList);
+            ConsoleController consoleController = new();
+            consoleController.SetCurrentMenuList(rootMenuList);
+            consoleController.ShowMenuList();
 
             Status status = Status.InMenu;
             while(status != Status.End)
             {
-                status = controller.ActivateMenu();
+                status = menuController.ActivateMenu();
 
-                if(status == Status.InGame)
+                if (status == Status.InGame)
                 {
-                    (Character character, Character opponent) = controller.GetChosenCharacterAndChosenOpponent();
+                    Loading.Show();
+
+                    (Character character, Character opponent) = menuController.GetChosenCharacterAndChosenOpponent();
 
                     Game game = new(character, opponent);
 
