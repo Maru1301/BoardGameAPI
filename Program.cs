@@ -1,6 +1,9 @@
 ﻿using Menu_Practice.Characters;
 using Menu_Practice.Menu;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using static Menu_Practice.Game;
+using static Menu_Practice.Program;
 
 namespace Menu_Practice
 {
@@ -9,38 +12,87 @@ namespace Menu_Practice
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
+            
+            MenuList currentMenuList = GenerateMenu();
 
-            Loading.Show();
+            MenuController menuController = new(currentMenuList);
 
-            IMenuBuilder menuBuilder = new MenuBuilder();
-
-            MenuDirector menuDirector = new(menuBuilder);
-
-            menuDirector.ConstructMenu();
-
-            var rootMenuList = menuBuilder.GetRootMenuList();
-
-            MenuController menuController = new(rootMenuList);
             ConsoleController consoleController = new();
-            consoleController.SetCurrentMenuList(rootMenuList);
-            consoleController.ShowMenuList();
+            consoleController.ShowLoading();
 
             Status status = Status.InMenu;
-            while(status != Status.End)
+            while (status != Status.End)
             {
-                status = menuController.ActivateMenu();
+                status = OperateMenu(status, consoleController, currentMenuList, menuController);
 
-                if (status == Status.InGame)
+                if(status == Status.InGame)
                 {
-                    Loading.Show();
+                    consoleController.ShowLoading();
 
-                    (Character character, Character opponent) = menuController.GetChosenCharacterAndChosenOpponent();
+                    (Character player, Character opponent) = menuController.GetChosenCharacterAndChosenOpponent();
 
-                    Game game = new(character, opponent);
+                    Game game = new(player, opponent);
 
                     status = game.Start();
+
+                    bool playerGoFirst = true;
+                    while (status == Status.InGame)
+                    {
+                        Round round;
+                        //todo start each round one by one
+                        if (game.WhoGoFirst() == playerGoFirst)
+                        {
+                            round = new(_player.Character.UseRuleLogic);
+                            _player.GoFirst = false;
+                            _npc.GoFirst = true;
+                        }
+                        else
+                        {
+                            round = new(_npc.Character.UseRuleLogic);
+                            _npc.GoFirst = false;
+                            _player.GoFirst = true;
+                        }
+
+                        var playerCards = game.GetPlayerCards();
+
+                        var playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
+                        var npcChosenCard = round.GetNPCChosenCard();
+
+                        round.Judge(playerChosenCard, npcChosenCard);
+                    }
                 }
             }
+        }
+
+        private static MenuList GenerateMenu()
+        {
+            IMenuBuilder menuBuilder = new MenuBuilder();
+            MenuDirector menuDirector = new(menuBuilder);
+            menuDirector.ConstructMenu();
+
+            return menuBuilder.GetRootMenuList();
+        }
+
+        private static Status OperateMenu(Status status, ConsoleController consoleController, MenuList currentMenuList, MenuController menuController)
+        {
+            while (status == Status.InMenu)
+            {
+                MenuOption menuOption = consoleController.GetMenuOption(currentMenuList);
+                if (currentMenuList.IsRootList && menuOption.OptionName == "Exit")
+                {
+                    status = Status.End;
+                    break;
+                }
+
+                if (currentMenuList.IsLastMenuList && menuOption.OptionName == "Select")
+                {
+                    status = Status.InGame;
+                }
+
+                currentMenuList = menuController.GetNextMenuList(menuOption);
+            }
+
+            return status;
         }
     }
 }

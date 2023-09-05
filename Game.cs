@@ -33,26 +33,6 @@ namespace Menu_Practice
                 _player.GoFirst = false;
                 _npc.GoFirst = true;
             }
-
-            while (true)
-            {
-                Round round;
-                //todo start each round one by one
-                if (_player.GoFirst)
-                {
-                    round = new(_player.Character.UseRuleLogic);
-                    _player.GoFirst = false;
-                    _npc.GoFirst = true;
-                }
-                else
-                {
-                    round = new(_npc.Character.UseRuleLogic);
-                    _npc.GoFirst = false;
-                    _player.GoFirst = true;
-                }
-
-                round.ChooseCard(_player.Character.Cards, _npc.Character.Cards);
-            }
             
             return Status.InMenu;
         }
@@ -68,7 +48,7 @@ namespace Menu_Practice
 
         public delegate void OutComeCallback();
 
-        private class Round
+        public class Round
         {
             private int _playerChosenCard;
             private int _npcChosenCard;

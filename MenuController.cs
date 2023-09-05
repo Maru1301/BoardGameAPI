@@ -25,132 +25,144 @@ namespace Menu_Practice
             _chooser = 0;
         }
 
-        public Status ActivateMenu()
+        public MenuList GetNextMenuList(MenuOption menuOption)
         {
-            _status = Status.InMenu;
-            bool NeedtoChangeView = true;
-            while (_status == Status.InMenu)
+            MenuList menuList = new();
+
+            if (menuOption.NextMenuList != null)
             {
-                if (NeedtoChangeView)
-                {
-                    Show();
-                }
-                NeedtoChangeView = ReadUserInput();
+                menuList = menuOption.NextMenuList;
             }
 
-            return _status;
+            return menuList;
         }
 
-        private bool ReadUserInput()
-        {
-            bool changed = false;
-            ConsoleKey key = Console.ReadKey().Key;
-            try
-            {
-                if (key != ConsoleKey.Escape)
-                {
-                    if (key == ConsoleKey.Enter)
-                    {
-                        ChangeList();
-                        _chooser = 0;
-                        changed = true;
-                    }
-                    else if (key == ConsoleKey.UpArrow)
-                    {
-                        if (_chooser > 0)
-                        {
-                            _chooser--;
-                            changed = true;
-                        }
-                    }
-                    else if (key == ConsoleKey.DownArrow)
-                    {
-                        var currentLIst = _menuStack.Peek();
-                        if (_chooser < currentLIst.Options.Count - 1)
-                        {
-                            _chooser++;
-                            changed = true;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                Console.WriteLine("Press any key to go on...");
-                Console.ReadKey();
-                Console.Clear();
-                changed = true;
-            }
+        //public Status ActivateMenu()
+        //{
+        //    _status = Status.InMenu;
+        //    bool NeedtoChangeView = true;
+        //    while (_status == Status.InMenu)
+        //    {
+        //        if (NeedtoChangeView)
+        //        {
+        //            Show();
+        //        }
+        //        NeedtoChangeView = ReadUserInput();
+        //    }
 
-            return changed;
-        }
+        //    return _status;
+        //}
 
-        private void ChangeList()
-        {
-            var currentList = _menuStack.Peek();
-            MenuOption CurrentOption = GetCurrentOption();
-            if (currentList.IsRootList)
-            {
-                if(CurrentOption.OptionName == "Exit")
-                {
-                    _status = Status.End;
-                    return;
-                }
-            }
+        //private bool ReadUserInput()
+        //{
+        //    bool changed = false;
+        //    ConsoleKey key = Console.ReadKey().Key;
+        //    try
+        //    {
+        //        if (key != ConsoleKey.Escape)
+        //        {
+        //            if (key == ConsoleKey.Enter)
+        //            {
+        //                ChangeList();
+        //                _chooser = 0;
+        //                changed = true;
+        //            }
+        //            else if (key == ConsoleKey.UpArrow)
+        //            {
+        //                if (_chooser > 0)
+        //                {
+        //                    _chooser--;
+        //                    changed = true;
+        //                }
+        //            }
+        //            else if (key == ConsoleKey.DownArrow)
+        //            {
+        //                var currentLIst = _menuStack.Peek();
+        //                if (_chooser < currentLIst.Options.Count - 1)
+        //                {
+        //                    _chooser++;
+        //                    changed = true;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.ToString());
+        //        Console.WriteLine("Press any key to go on...");
+        //        Console.ReadKey();
+        //        Console.Clear();
+        //        changed = true;
+        //    }
+
+        //    return changed;
+        //}
+
+        //private void ChangeList()
+        //{
+        //    var currentList = _menuStack.Peek();
+        //    MenuOption CurrentOption = GetCurrentOption();
+        //    if (currentList.IsRootList)
+        //    {
+        //        if(CurrentOption.OptionName == "Exit")
+        //        {
+        //            _status = Status.End;
+        //            return;
+        //        }
+        //    }
             
-            if (CurrentOption.OptionName == "Back")
-            {
-                _menuStack.Pop();
-            }
-            else
-            {
-                if (CurrentOption.NextMenuList == null)
-                {
-                    _status = Status.InGame;
-                    return;
-                }
+        //    if (CurrentOption.OptionName == "Back")
+        //    {
+        //        _menuStack.Pop();
+        //    }
+        //    else
+        //    {
+        //        if (CurrentOption.NextMenuList == null)
+        //        {
+        //            _status = Status.InGame;
+        //            return;
+        //        }
 
-                _menuStack.Push(CurrentOption.NextMenuList);
-            }
-        }
+        //        _menuStack.Push(CurrentOption.NextMenuList);
+        //    }
+        //}
 
         public (Character character, Character opponent) GetChosenCharacterAndChosenOpponent()
         {
             return (_chosenCharacter, _chosenOpponent);
         }
 
-        private MenuOption GetCurrentOption()
-        {
-            return _menuStack.Peek().Options[_chooser];
-        }
+        //private MenuOption GetCurrentOption()
+        //{
+        //    return _menuStack.Peek().Options[_chooser];
+        //}
 
-        private void Show()
-        {
-            Console.Clear();
-            var currentList = _menuStack.Peek();
-            if (currentList.GetType() == typeof(CharacterInfoMenu))
-            {
-                currentList.ShowInfo();
-                _chosenCharacter = ((CharacterInfoMenu)currentList).Character;
-            }else if(currentList.GetType() == typeof(OpponentMenu))
-            {
-                _chosenOpponent = ((OpponentMenu)currentList).Options[_chooser].Character;
-            }
+        //private void Show()
+        //{
+        //    Console.Clear();
+        //    var currentList = _menuStack.Peek();
+        //    if (currentList.GetType() == typeof(CharacterInfoMenu))
+        //    {
+        //        currentList.ShowInfo();
+        //        _chosenCharacter = ((CharacterInfoMenu)currentList).Character;
+        //    }else if(currentList.GetType() == typeof(OpponentMenu))
+        //    {
+        //        _chosenOpponent = ((OpponentMenu)currentList).Options[_chooser].Character;
+        //    }
 
-            var list = currentList;
-            Console.WriteLine(list.Title);
-            for(int i = 0; i < list.Options.Count; i++)
-            {
-                if(_chooser == i)
-                {
-                    Console.WriteLine($"=>  {list.Options[i].OptionName}");
-                }
-                else
-                {
-                    Console.WriteLine($"    {list.Options[i].OptionName}");
-                }
-            }
-        }
+        //    var list = currentList;
+        //    Console.WriteLine(list.Title);
+        //    for(int i = 0; i < list.Options.Count; i++)
+        //    {
+        //        if(_chooser == i)
+        //        {
+        //            Console.WriteLine($"=>  {list.Options[i].OptionName}");
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine($"    {list.Options[i].OptionName}");
+        //        }
+        //    }
+        //}
     }
 }
