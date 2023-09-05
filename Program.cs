@@ -9,34 +9,44 @@ namespace Menu_Practice
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
+            ConsoleController consoleController = new();
 
-            Loading.Show();
+            consoleController.ShowLoading();
 
             IMenuBuilder menuBuilder = new MenuBuilder();
-
             MenuDirector menuDirector = new(menuBuilder);
-
             menuDirector.ConstructMenu();
+            MenuList currentMenuList = menuBuilder.GetRootMenuList();
 
-            var rootMenuList = menuBuilder.GetRootMenuList();
-
-            MenuController menuController = new(rootMenuList);
-            ConsoleController consoleController = new();
-            consoleController.SetCurrentMenuList(rootMenuList);
-            consoleController.ShowMenuList();
+            MenuController menuController = new(currentMenuList);
 
             Status status = Status.InMenu;
-            while(status != Status.End)
+            while (status != Status.End)
             {
-                status = menuController.ActivateMenu();
-
-                if (status == Status.InGame)
+                while(status == Status.InMenu)
                 {
-                    Loading.Show();
+                    MenuOption menuOption = consoleController.GetMenuOption(currentMenuList);
+                    if(currentMenuList.IsRootList && menuOption.OptionName == "Exit")
+                    {
+                        status = Status.End; 
+                        break;
+                    }
 
-                    (Character character, Character opponent) = menuController.GetChosenCharacterAndChosenOpponent();
+                    if (currentMenuList.IsLastMenuList && menuOption.OptionName == "Select")
+                    {
+                        status = Status.InGame;
+                    }
 
-                    Game game = new(character, opponent);
+                    currentMenuList = menuController.GetNextMenuList(menuOption);
+                }
+
+                if(status == Status.InGame)
+                {
+                    consoleController.ShowLoading();
+
+                    (Character player, Character opponent) = menuController.GetChosenCharacterAndChosenOpponent();
+
+                    Game game = new(player, opponent);
 
                     status = game.Start();
                 }

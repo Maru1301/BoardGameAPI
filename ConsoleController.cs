@@ -9,53 +9,79 @@ namespace Menu_Practice
 {
     internal class ConsoleController
     {
-        private MenuList _menuList;
+        private static readonly List<string> Loadings = new()
+            {
+                "Loading",
+                "Loading.",
+                "Loading..",
+                "Loading..."
+            };
+
         private int _chooser;
         public ConsoleController()
         {
-            _menuList = new MenuList();
             _chooser = 0;
         }
 
-        public void SetCurrentMenuList(MenuList menuList)
+        public void ShowLoading()
         {
-            _menuList = menuList;
+            int x = 0;
+
+            int time = 12;
+            int millisec = 100;
+            while (x < time)
+            {
+                Console.Clear();
+                Console.WriteLine(Loadings[x % Loadings.Count]);
+                Thread.Sleep(millisec);
+                x++;
+            }
         }
 
-        public void ShowMenuList()
+        private void ShowMenuList(MenuList menuList)
         {
+            if (menuList.GetType() == typeof(CharacterInfoMenu))
+            {
+                menuList.ShowInfo();
+            }
+            
             Console.Clear();
 
-            Console.WriteLine(_menuList.Title);
-            for (int i = 0; i < _menuList.Options.Count; i++)
+            Console.WriteLine(menuList.Title);
+            for (int i = 0; i < menuList.Options.Count; i++)
             {
                 if (_chooser == i)
                 {
-                    Console.WriteLine($"=>  {_menuList.Options[i].OptionName}");
+                    Console.WriteLine($"=>  {menuList.Options[i].OptionName}");
                 }
                 else
                 {
-                    Console.WriteLine($"    {_menuList.Options[i].OptionName}");
+                    Console.WriteLine($"    {menuList.Options[i].OptionName}");
                 }
             }
         }
 
-        public MenuOption GetMenuOption()
+        public MenuOption GetMenuOption(MenuList menuList)
         {
+            _chooser = 0;
+
             ConsoleKey key;
+
             {
+                ShowMenuList(menuList);
+
                 key = Console.ReadKey().Key;
 
-                if (key == ConsoleKey.UpArrow)
+                if (key == ConsoleKey.UpArrow || key == ConsoleKey.W)
                 {
                     if (_chooser > 0)
                     {
                         _chooser--;
                     }
                 }
-                else if (key == ConsoleKey.DownArrow)
+                else if (key == ConsoleKey.DownArrow || key == ConsoleKey.S)
                 {
-                    if (_chooser < _menuList.Options.Count - 1)
+                    if (_chooser < menuList.Options.Count - 1)
                     {
                         _chooser++;
                     }
@@ -63,7 +89,7 @@ namespace Menu_Practice
             }
             while (key != ConsoleKey.Enter) ;
 
-            return _menuList.Options[_chooser];
+            return menuList.Options[_chooser];
         }
     }
 }

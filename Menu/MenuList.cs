@@ -11,6 +11,7 @@ namespace Menu_Practice
         private readonly string _title;
         private readonly List<MenuOption> _options;
         private readonly bool _isRootList;
+        private readonly bool _isLastMenuList;
 
         public string Title { get => _title; }
 
@@ -18,11 +19,14 @@ namespace Menu_Practice
 
         public bool IsRootList { get => _isRootList; }
 
-        public MenuList(string title = "" ,bool isRootList = false)
+        public bool IsLastMenuList { get => _isLastMenuList; }
+
+        public MenuList(string title = "" , bool isLastMenuList = false, bool isRootList = false)
         {
             _title = title;
             this._options = new();
             _isRootList = isRootList;
+            _isLastMenuList = isLastMenuList;
         }
 
         public void Push(MenuOption option)
