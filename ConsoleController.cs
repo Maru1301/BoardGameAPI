@@ -40,12 +40,12 @@ namespace Menu_Practice
 
         private void ShowMenuList(MenuList menuList)
         {
+            Console.Clear();
             if (menuList.GetType() == typeof(CharacterInfoMenu))
             {
-                menuList.ShowInfo();
+                string info = menuList.GetInfo();
+                Console.WriteLine(info);
             }
-            
-            Console.Clear();
 
             Console.WriteLine(menuList.Title);
             for (int i = 0; i < menuList.Options.Count; i++)
@@ -67,6 +67,7 @@ namespace Menu_Practice
 
             ConsoleKey key;
 
+            do
             {
                 ShowMenuList(menuList);
 
@@ -86,8 +87,7 @@ namespace Menu_Practice
                         _chooser++;
                     }
                 }
-            }
-            while (key != ConsoleKey.Enter) ;
+            }while (key != ConsoleKey.Enter);
 
             return menuList.Options[_chooser];
         }

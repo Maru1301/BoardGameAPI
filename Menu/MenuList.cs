@@ -34,9 +34,9 @@ namespace Menu_Practice
             _options.Add(option);
         }
 
-        public virtual void ShowInfo()
+        public virtual string GetInfo()
         {
-
+            return string.Empty;
         }
     }
 }

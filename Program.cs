@@ -25,42 +25,42 @@ namespace Menu_Practice
             {
                 status = OperateMenu(status, consoleController, currentMenuList, menuController);
 
-                if(status == Status.InGame)
-                {
-                    consoleController.ShowLoading();
+                //if(status == Status.InGame)
+                //{
+                //    consoleController.ShowLoading();
 
                     (Character player, Character opponent) = menuController.GetChosenCharacterAndChosenOpponent();
 
-                    Game game = new(player, opponent);
+                //    Game game = new(player, opponent);
 
-                    status = game.Start();
+                //    status = game.Start();
 
-                    bool playerGoFirst = true;
-                    while (status == Status.InGame)
-                    {
-                        Round round;
-                        //todo start each round one by one
-                        if (game.WhoGoFirst() == playerGoFirst)
-                        {
-                            round = new(_player.Character.UseRuleLogic);
-                            _player.GoFirst = false;
-                            _npc.GoFirst = true;
-                        }
-                        else
-                        {
-                            round = new(_npc.Character.UseRuleLogic);
-                            _npc.GoFirst = false;
-                            _player.GoFirst = true;
-                        }
+                //    bool playerGoFirst = true;
+                //    while (status == Status.InGame)
+                //    {
+                //        Round round;
+                //        //todo start each round one by one
+                //        if (game.WhoGoFirst() == playerGoFirst)
+                //        {
+                //            round = new(_player.Character.UseRuleLogic);
+                //            _player.GoFirst = false;
+                //            _npc.GoFirst = true;
+                //        }
+                //        else
+                //        {
+                //            round = new(_npc.Character.UseRuleLogic);
+                //            _npc.GoFirst = false;
+                //            _player.GoFirst = true;
+                //        }
 
-                        var playerCards = game.GetPlayerCards();
+                //        var playerCards = game.GetPlayerCards();
 
-                        var playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
-                        var npcChosenCard = round.GetNPCChosenCard();
+                //       var playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
+                //        var npcChosenCard = round.GetNPCChosenCard();
 
-                        round.Judge(playerChosenCard, npcChosenCard);
-                    }
-                }
+                //        round.Judge(playerChosenCard, npcChosenCard);
+                //    }
+                //}
             }
         }
 
@@ -87,9 +87,26 @@ namespace Menu_Practice
                 if (currentMenuList.IsLastMenuList && menuOption.OptionName == "Select")
                 {
                     status = Status.InGame;
+                    break;
                 }
 
-                currentMenuList = menuController.GetNextMenuList(menuOption);
+                if(currentMenuList.GetType() ==  typeof(CharacterInfoMenu) && menuOption.OptionName == "Select")
+                {
+                    menuController.SetChosenCharacter(((CharacterInfoMenu)currentMenuList).Character);
+                }
+                else if(currentMenuList.GetType() == typeof(OpponentMenu))
+                {
+                    menuController.SetChosenOpponent(((OpponentMenuOption)menuOption).Character);
+                }
+
+                if (menuOption.OptionName == "Back")
+                {
+                    currentMenuList = menuController.GetPrevMenuList();
+                }
+                else
+                {
+                    currentMenuList = menuController.GetNextMenuList(menuOption);
+                }
             }
 
             return status;

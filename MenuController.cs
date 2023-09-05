@@ -12,17 +12,14 @@ namespace Menu_Practice
     internal class MenuController
     {
         private readonly Stack<MenuList> _menuStack = new();
-        private int _chooser;
         private Character _chosenCharacter;
         private Character _chosenOpponent;
-        private Status _status;
 
         public MenuController(MenuList rootMenuList)
         {
             _chosenCharacter = new();
             _chosenOpponent = new();  
             _menuStack.Push(rootMenuList);
-            _chooser = 0;
         }
 
         public MenuList GetNextMenuList(MenuOption menuOption)
@@ -32,11 +29,28 @@ namespace Menu_Practice
             if (menuOption.NextMenuList != null)
             {
                 menuList = menuOption.NextMenuList;
+                _menuStack.Push(menuList);
             }
 
             return menuList;
         }
 
+        public MenuList GetPrevMenuList()
+        {
+            _menuStack.Pop();
+
+            return _menuStack.Peek();
+        }
+
+        public void SetChosenCharacter(Character chosenCharacter)
+        {
+            _chosenCharacter = chosenCharacter;
+        }
+
+        public void SetChosenOpponent(Character chosenOpponent)
+        {
+            _chosenOpponent = chosenOpponent;
+        }
         //public Status ActivateMenu()
         //{
         //    _status = Status.InMenu;

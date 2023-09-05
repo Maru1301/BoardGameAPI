@@ -56,12 +56,14 @@ namespace Menu_Practice.Menu
         {
             OpponentMenuOption opponentMenuOption;
             bool IsLastMenuList = true;
-            MenuList opponentMenuList = new(title, true);
+            MenuList opponentMenuList = new(title, IsLastMenuList);
             foreach((string name, Character character) in _characterList.Characters)
             {
                 opponentMenuOption = new(name, character);
                 opponentMenuList.Push(opponentMenuOption);
             }
+
+            ConstructMenuList(ref opponentMenuList);
 
             return opponentMenuList;
         }
