@@ -84,7 +84,7 @@ namespace Menu_Practice
                     break;
                 }
 
-                if (currentMenuList.IsLastMenuList && menuOption.OptionName == "Select")
+                if (menuOption.OptionName == "Select" && menuOption.NextMenuList == null)
                 {
                     status = Status.InGame;
                     break;
@@ -94,7 +94,7 @@ namespace Menu_Practice
                 {
                     menuController.SetChosenCharacter(((CharacterInfoMenu)currentMenuList).Character);
                 }
-                else if(currentMenuList.GetType() == typeof(OpponentMenu))
+                else if(currentMenuList.GetType() == typeof(OpponentMenu) && menuOption.OptionName != "Back")
                 {
                     menuController.SetChosenOpponent(((OpponentMenuOption)menuOption).Character);
                 }

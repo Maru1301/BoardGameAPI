@@ -41,6 +41,7 @@ namespace Menu_Practice
         private void ShowMenuList(MenuList menuList)
         {
             Console.Clear();
+
             if (menuList.GetType() == typeof(CharacterInfoMenu))
             {
                 string info = menuList.GetInfo();
@@ -48,15 +49,36 @@ namespace Menu_Practice
             }
 
             Console.WriteLine(menuList.Title);
-            for (int i = 0; i < menuList.Options.Count; i++)
+
+            if (menuList.GetType() == typeof(OpponentMenu))
             {
-                if (_chooser == i)
+                for(int i = 0; i < menuList.Options.Count; i++)
                 {
-                    Console.WriteLine($"=>  {menuList.Options[i].OptionName}");
+                    if (!((OpponentMenu)menuList).Options[i].Selected)
+                    {
+                        if (_chooser == i)
+                        {
+                            Console.WriteLine($"=>  {menuList.Options[i].OptionName}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"    {menuList.Options[i].OptionName}");
+                        }
+                    }
                 }
-                else
+            }
+            else
+            {
+                for (int i = 0; i < menuList.Options.Count; i++)
                 {
-                    Console.WriteLine($"    {menuList.Options[i].OptionName}");
+                    if (_chooser == i)
+                    {
+                        Console.WriteLine($"=>  {menuList.Options[i].OptionName}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"    {menuList.Options[i].OptionName}");
+                    }
                 }
             }
         }

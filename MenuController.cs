@@ -29,6 +29,12 @@ namespace Menu_Practice
             if (menuOption.NextMenuList != null)
             {
                 menuList = menuOption.NextMenuList;
+
+                //if(menuList.GetType() == typeof(OpponentMenu))
+                //{
+                //    ((OpponentMenu)menuList).FilterOutOptions(opponentMenuOption => opponentMenuOption.Character == _chosenCharacter);
+                //}
+
                 _menuStack.Push(menuList);
             }
 
@@ -145,38 +151,5 @@ namespace Menu_Practice
         {
             return (_chosenCharacter, _chosenOpponent);
         }
-
-        //private MenuOption GetCurrentOption()
-        //{
-        //    return _menuStack.Peek().Options[_chooser];
-        //}
-
-        //private void Show()
-        //{
-        //    Console.Clear();
-        //    var currentList = _menuStack.Peek();
-        //    if (currentList.GetType() == typeof(CharacterInfoMenu))
-        //    {
-        //        currentList.ShowInfo();
-        //        _chosenCharacter = ((CharacterInfoMenu)currentList).Character;
-        //    }else if(currentList.GetType() == typeof(OpponentMenu))
-        //    {
-        //        _chosenOpponent = ((OpponentMenu)currentList).Options[_chooser].Character;
-        //    }
-
-        //    var list = currentList;
-        //    Console.WriteLine(list.Title);
-        //    for(int i = 0; i < list.Options.Count; i++)
-        //    {
-        //        if(_chooser == i)
-        //        {
-        //            Console.WriteLine($"=>  {list.Options[i].OptionName}");
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine($"    {list.Options[i].OptionName}");
-        //        }
-        //    }
-        //}
     }
 }

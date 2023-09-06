@@ -55,8 +55,7 @@ namespace Menu_Practice.Menu
         public MenuList BuildOpponentMenuList(string title)
         {
             OpponentMenuOption opponentMenuOption;
-            bool IsLastMenuList = true;
-            MenuList opponentMenuList = new(title, IsLastMenuList);
+            MenuList opponentMenuList = new(title);
             foreach((string name, Character character) in _characterList.Characters)
             {
                 opponentMenuOption = new(name, character);
