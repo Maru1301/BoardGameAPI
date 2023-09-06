@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Menu_Practice.Game;
+using static Menu_Practice.GameController;
 
 namespace Menu_Practice.Characters
 {
@@ -28,7 +28,7 @@ namespace Menu_Practice.Characters
         
         public string AdditionalPointCondition { get => _additionalPointCondition; set => _additionalPointCondition = value; }
 
-        public virtual (bool, OutComeCallback callback) UseRuleLogic(int card1, int card2) { return (false, OutComeCallback); }
+        public virtual (bool, Action callback) UseRuleLogic(int card1, int card2) { return (false, OutComeCallback); }
 
         public virtual void OutComeCallback() { }
     }

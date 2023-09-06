@@ -2,7 +2,7 @@
 using Menu_Practice.Menu;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using static Menu_Practice.Game;
+using static Menu_Practice.GameController;
 using static Menu_Practice.Program;
 
 namespace Menu_Practice
@@ -25,43 +25,43 @@ namespace Menu_Practice
             {
                 status = OperateMenu(status, consoleController, currentMenuList, menuController);
 
-                //if(status == Status.InGame)
-                //{
-                //    consoleController.ShowLoading();
+                if (status == Status.InGame)
+                {
+                    consoleController.ShowLoading();
 
-                    (Character player, Character opponent) = menuController.GetChosenCharacterAndChosenOpponent();
+                    (Character playerCharacter, Character opponentCharacter) = menuController.GetChosenCharacterAndChosenOpponent();
 
-                //    Game game = new(player, opponent);
+                    GameController gameController = new(playerCharacter, opponentCharacter);
+                    
+                    status = gameController.BeginNewGame(status);
 
-                //    status = game.Start();
+                    //    bool playerGoFirst = true;
+                    //    while (status == Status.InGame)
+                    //    {
+                    //        Round round;
+                    //        //todo start each round one by one
+                    //        if (game.WhoGoFirst() == playerGoFirst)
+                    //        {
+                    //            round = new(_player.Character.UseRuleLogic);
+                    //            _player.GoFirst = false;
+                    //            _npc.GoFirst = true;
+                    //        }
+                    //        else
+                    //        {
+                    //            round = new(_npc.Character.UseRuleLogic);
+                    //            _npc.GoFirst = false;
+                    //            _player.GoFirst = true;
+                    //        }
 
-                //    bool playerGoFirst = true;
-                //    while (status == Status.InGame)
-                //    {
-                //        Round round;
-                //        //todo start each round one by one
-                //        if (game.WhoGoFirst() == playerGoFirst)
-                //        {
-                //            round = new(_player.Character.UseRuleLogic);
-                //            _player.GoFirst = false;
-                //            _npc.GoFirst = true;
-                //        }
-                //        else
-                //        {
-                //            round = new(_npc.Character.UseRuleLogic);
-                //            _npc.GoFirst = false;
-                //            _player.GoFirst = true;
-                //        }
+                    //        var playerCards = game.GetPlayerCards();
 
-                //        var playerCards = game.GetPlayerCards();
+                    //       var playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
+                    //        var npcChosenCard = round.GetNPCChosenCard();
 
-                //       var playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
-                //        var npcChosenCard = round.GetNPCChosenCard();
-
-                //        round.Judge(playerChosenCard, npcChosenCard);
-                //    }
-                //}
-            }
+                    //        round.Judge(playerChosenCard, npcChosenCard);
+                    //    }
+                    //}
+                }
         }
 
         private static MenuList GenerateMenu()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Menu_Practice.Game;
+using static Menu_Practice.GameController;
 
 namespace Menu_Practice.Characters.Builders
 {

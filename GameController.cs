@@ -9,32 +9,44 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Menu_Practice
 {
-    internal class Game
+    internal class GameController
     {
         private readonly Player _player = new();
         private readonly Player _npc = new();
-        public Game(Character character, Character opponent)
+        private bool _playerGoFirst;
+        public GameController(Character character, Character opponent)
         {
             _player.Character = character;
             _npc.Character = opponent;
         }
-        public Status Start()
+        public bool IsPlayerGoFirst()
         {
             //who go first
             var random = new Random();
             int WhoGoFirst = random.Next(2);
-            if(WhoGoFirst == 1)
+            int PlayerGoFirst = 1;
+
+            return WhoGoFirst == PlayerGoFirst;
+        }
+
+        public Status BeginNewGame(Status status)
+        {
+            _playerGoFirst = IsPlayerGoFirst();
+
+            while(status == Status.InGame)
             {
-                _player.GoFirst = true;
-                _npc.GoFirst = false;
+                status = BeginNewRound();
             }
-            else
-            {
-                _player.GoFirst = false;
-                _npc.GoFirst = true;
-            }
-            
-            return Status.InMenu;
+
+            return status;
+        }
+
+        public Status BeginNewRound()
+        {
+            Round round = _playerGoFirst ? new(_player.Character.UseRuleLogic) : new(_npc.Character.UseRuleLogic);
+            _playerGoFirst = !_playerGoFirst;
+
+            return Status.InGame;
         }
 
         private class Player
@@ -44,17 +56,13 @@ namespace Menu_Practice
             public bool GoFirst { get; set; }
         }
 
-        public delegate (bool, OutComeCallback) RunRule(int card1, int card2);
-
-        public delegate void OutComeCallback();
-
         public class Round
         {
             private int _playerChosenCard;
             private int _npcChosenCard;
-            private RunRule _runRule;
+            private Func<int, int, (bool, Action)> _runRule;
 
-            public Round(RunRule callback)
+            public Round(Func<int, int, (bool, Action)> callback)
             {
                 _runRule = callback;
             }
@@ -81,7 +89,7 @@ namespace Menu_Practice
 
             internal void Judge(int playerChosenCard, int npcChosenCard)
             {
-                (bool playerWin, OutComeCallback outComeCallback) = _runRule(playerChosenCard, npcChosenCard);
+                (bool playerWin, Action outComeCallback) = _runRule(playerChosenCard, npcChosenCard);
 
                 outComeCallback();
             }
