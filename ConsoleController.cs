@@ -113,5 +113,33 @@ namespace Menu_Practice
 
             return menuList.Options[_chooser];
         }
+
+        public int GetPlayerChosenCard(List<int> playerCards)
+        {
+            foreach (var item in playerCards.Select((cardAmount, index) => new { index, cardAmount }))
+            {
+                if(_chooser == item.index)
+                {
+                    Console.Write("=>  ");
+                }
+                else
+                {
+                    Console.Write("    ");
+                }
+
+                switch (item.index)
+                {
+                    case 1:
+                        Console.WriteLine($"");
+                        break;
+                    case 2:
+                        Console.WriteLine($"");
+                        break;
+                    case 3:
+                        Console.WriteLine();
+                        break;
+                }
+            }
+        }
     }
 }

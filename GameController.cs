@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Menu_Practice.GameController;
 using static Menu_Practice.Program;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -29,24 +30,41 @@ namespace Menu_Practice
             return WhoGoFirst == PlayerGoFirst;
         }
 
-        public Status BeginNewGame(Status status)
+        public void BeginNewGame()
         {
             _playerGoFirst = IsPlayerGoFirst();
-
-            while(status == Status.InGame)
-            {
-                status = BeginNewRound();
-            }
-
-            return status;
         }
 
-        public Status BeginNewRound()
+        public Round BeginNewRound()
         {
             Round round = _playerGoFirst ? new(_player.Character.UseRuleLogic) : new(_npc.Character.UseRuleLogic);
             _playerGoFirst = !_playerGoFirst;
 
-            return Status.InGame;
+            return round;
+        }
+
+        public List<int> GetPlayerCards()
+        {
+            return _player.Character.Cards;
+        }
+
+        public int GetNPCChosenCard()
+        {
+            Random random = new Random();
+            List<int> npcCards = _npc.Character.Cards;
+
+            List<int> canChooseCards = new List<int>();
+            foreach(var item in npcCards.Select((cardAmount, index) => new { index, cardAmount }))
+            {
+                if(item.cardAmount > 0)
+                {
+                    canChooseCards.Add(item.index);
+                }
+            }
+
+            int chosenCard = random.Next(canChooseCards.Count);
+
+            return chosenCard;
         }
 
         private class Player

@@ -23,7 +23,7 @@ namespace Menu_Practice
             Status status = Status.InMenu;
             while (status != Status.End)
             {
-                status = OperateMenu(status, consoleController, currentMenuList, menuController);
+                status = RunMenu(status, consoleController, currentMenuList, menuController);
 
                 if (status == Status.InGame)
                 {
@@ -33,7 +33,18 @@ namespace Menu_Practice
 
                     GameController gameController = new(playerCharacter, opponentCharacter);
                     
-                    status = gameController.BeginNewGame(status);
+                    gameController.BeginNewGame();
+
+                    while (status == Status.InGame)
+                    {
+                        Round round = gameController.BeginNewRound();
+
+                        List<int> playerCards = gameController.GetPlayerCards();
+
+                        int playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
+                        int npcChosenCard = gameController.GetNPCChosenCard();
+                        round.Judge(playerChosenCard, npcChosenCard);
+                    }
 
                     //    bool playerGoFirst = true;
                     //    while (status == Status.InGame)
@@ -60,11 +71,11 @@ namespace Menu_Practice
 
                     //        round.Judge(playerChosenCard, npcChosenCard);
                     //    }
-                    //}
                 }
+            }
         }
 
-        private static MenuList GenerateMenu()
+        static MenuList GenerateMenu()
         {
             IMenuBuilder menuBuilder = new MenuBuilder();
             MenuDirector menuDirector = new(menuBuilder);
@@ -73,7 +84,7 @@ namespace Menu_Practice
             return menuBuilder.GetRootMenuList();
         }
 
-        private static Status OperateMenu(Status status, ConsoleController consoleController, MenuList currentMenuList, MenuController menuController)
+        static Status RunMenu(Status status, ConsoleController consoleController, MenuList currentMenuList, MenuController menuController)
         {
             while (status == Status.InMenu)
             {
