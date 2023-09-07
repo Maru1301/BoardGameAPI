@@ -9,7 +9,7 @@ namespace Menu_Practice
     internal class MenuList
     {
         private readonly string _title;
-        private readonly List<MenuOption> _options;
+        protected readonly List<MenuOption> _options;
         private readonly bool _isRootList;
 
         public string Title { get => _title; }

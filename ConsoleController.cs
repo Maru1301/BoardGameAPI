@@ -18,6 +18,8 @@ namespace Menu_Practice
             };
 
         private int _chooser;
+        private string _hint;
+
         public ConsoleController()
         {
             _chooser = 0;
@@ -54,16 +56,13 @@ namespace Menu_Practice
             {
                 for(int i = 0; i < menuList.Options.Count; i++)
                 {
-                    if (!((OpponentMenu)menuList).Options[i].Selected)
+                    if (_chooser == i)
                     {
-                        if (_chooser == i)
-                        {
-                            Console.WriteLine($"=>  {menuList.Options[i].OptionName}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"    {menuList.Options[i].OptionName}");
-                        }
+                        Console.WriteLine($"=>  {menuList.Options[i].OptionName}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"    {menuList.Options[i].OptionName}");
                     }
                 }
             }
@@ -116,9 +115,55 @@ namespace Menu_Practice
 
         public int GetPlayerChosenCard(List<int> playerCards)
         {
+            _chooser = 0;
+
+            ConsoleKey key;
+
+            do
+            {
+                ShowPlayerCards(playerCards);
+
+                key = Console.ReadKey().Key;
+
+                if (key == ConsoleKey.UpArrow || key == ConsoleKey.W)
+                {
+                    if (_chooser > 0)
+                    {
+                        _chooser--;
+                    }
+                }
+                else if (key == ConsoleKey.DownArrow || key == ConsoleKey.S)
+                {
+                    if (_chooser < playerCards.Count - 1)
+                    {
+                        _chooser++;
+                    }
+                } 
+
+            } while (IsChosenCardMoreThanOne(playerCards, key) && key != ConsoleKey.Enter);
+
+            return _chooser;
+        }
+
+        private bool IsChosenCardMoreThanOne(List<int> playerCards, ConsoleKey key)
+        {
+            if (key == ConsoleKey.Enter && playerCards[_chooser] == 0)
+            {
+                _hint = "所選卡片剩餘0張，請選別張卡";
+                return false;
+            }
+
+            return true;
+        }
+
+        private void ShowPlayerCards(List<int> playerCards)
+        {
+            Console.Clear();
+
+            Console.WriteLine("選擇你要出的卡");
             foreach (var item in playerCards.Select((cardAmount, index) => new { index, cardAmount }))
             {
-                if(_chooser == item.index)
+                if (_chooser == item.index)
                 {
                     Console.Write("=>  ");
                 }
@@ -129,17 +174,19 @@ namespace Menu_Practice
 
                 switch (item.index)
                 {
+                    case 0:
+                        Console.WriteLine($"皇冠x{item.cardAmount}");
+                        break;
                     case 1:
-                        Console.WriteLine($"");
+                        Console.WriteLine($"盾牌x{item.cardAmount}");
                         break;
                     case 2:
-                        Console.WriteLine($"");
-                        break;
-                    case 3:
-                        Console.WriteLine();
+                        Console.WriteLine($"匕首x{item.cardAmount}");
                         break;
                 }
             }
+            Console.WriteLine(_hint);
+            _hint = string.Empty;
         }
     }
 }

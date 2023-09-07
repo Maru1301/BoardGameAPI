@@ -45,32 +45,6 @@ namespace Menu_Practice
                         int npcChosenCard = gameController.GetNPCChosenCard();
                         round.Judge(playerChosenCard, npcChosenCard);
                     }
-
-                    //    bool playerGoFirst = true;
-                    //    while (status == Status.InGame)
-                    //    {
-                    //        Round round;
-                    //        //todo start each round one by one
-                    //        if (game.WhoGoFirst() == playerGoFirst)
-                    //        {
-                    //            round = new(_player.Character.UseRuleLogic);
-                    //            _player.GoFirst = false;
-                    //            _npc.GoFirst = true;
-                    //        }
-                    //        else
-                    //        {
-                    //            round = new(_npc.Character.UseRuleLogic);
-                    //            _npc.GoFirst = false;
-                    //            _player.GoFirst = true;
-                    //        }
-
-                    //        var playerCards = game.GetPlayerCards();
-
-                    //       var playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
-                    //        var npcChosenCard = round.GetNPCChosenCard();
-
-                    //        round.Judge(playerChosenCard, npcChosenCard);
-                    //    }
                 }
             }
         }
@@ -95,12 +69,6 @@ namespace Menu_Practice
                     break;
                 }
 
-                if (menuOption.OptionName == "Select" && menuOption.NextMenuList == null)
-                {
-                    status = Status.InGame;
-                    break;
-                }
-
                 if(currentMenuList.GetType() ==  typeof(CharacterInfoMenu) && menuOption.OptionName == "Select")
                 {
                     menuController.SetChosenCharacter(((CharacterInfoMenu)currentMenuList).Character);
@@ -108,6 +76,8 @@ namespace Menu_Practice
                 else if(currentMenuList.GetType() == typeof(OpponentMenu) && menuOption.OptionName != "Back")
                 {
                     menuController.SetChosenOpponent(((OpponentMenuOption)menuOption).Character);
+                    status = Status.InGame;
+                    break;
                 }
 
                 if (menuOption.OptionName == "Back")

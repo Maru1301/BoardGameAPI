@@ -24,7 +24,7 @@ namespace Menu_Practice
         {
             //who go first
             var random = new Random();
-            int WhoGoFirst = random.Next(2);
+            int WhoGoFirst = random.Next(1);
             int PlayerGoFirst = 1;
 
             return WhoGoFirst == PlayerGoFirst;

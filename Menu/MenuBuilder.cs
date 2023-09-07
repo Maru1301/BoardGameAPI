@@ -24,7 +24,7 @@ namespace Menu_Practice.Menu
             menuList = new(title, IsRootList);
             MenuOption menuOptionStart = new("Start");
             menuList.Push(menuOptionStart);
-            ConstructMenuList(ref menuList);
+            ConstructMenuList(menuList);
             _rootMenuList = menuList;
 
             return menuList;
@@ -43,11 +43,11 @@ namespace Menu_Practice.Menu
                 CharacterMenuList.Push(CurrentMenuOption);
                 CurrentCharacter = character;
                 CharacterInfoMenu = new CharacterInfoMenu(character);
-                ConstructMenuList(ref CharacterInfoMenu);
+                ConstructMenuList(CharacterInfoMenu);
                 CurrentMenuOption.NextMenuList = CharacterInfoMenu;
             }
 
-            ConstructMenuList(ref CharacterMenuList);
+            ConstructMenuList(CharacterMenuList);
 
             return CharacterMenuList;
         }
@@ -55,19 +55,19 @@ namespace Menu_Practice.Menu
         public MenuList BuildOpponentMenuList(string title)
         {
             OpponentMenuOption opponentMenuOption;
-            MenuList opponentMenuList = new(title);
+            OpponentMenu opponentMenuList = new(title);
             foreach((string name, Character character) in _characterList.Characters)
             {
                 opponentMenuOption = new(name, character);
                 opponentMenuList.Push(opponentMenuOption);
             }
 
-            ConstructMenuList(ref opponentMenuList);
+            ConstructMenuList((MenuList)opponentMenuList);
 
             return opponentMenuList;
         }
 
-        public static void ConstructMenuList(ref MenuList list)
+        public static void ConstructMenuList(MenuList list)
         {
             if (list.IsRootList)
             {
