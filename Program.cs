@@ -27,24 +27,7 @@ namespace Menu_Practice
 
                 if (status == Status.InGame)
                 {
-                    consoleController.ShowLoading();
-
-                    (Character playerCharacter, Character opponentCharacter) = menuController.GetChosenCharacterAndChosenOpponent();
-
-                    GameController gameController = new(playerCharacter, opponentCharacter);
-                    
-                    gameController.BeginNewGame();
-
-                    while (status == Status.InGame)
-                    {
-                        Round round = gameController.BeginNewRound();
-
-                        List<int> playerCards = gameController.GetPlayerCards();
-
-                        int playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
-                        int npcChosenCard = gameController.GetNPCChosenCard();
-                        round.Judge(playerChosenCard, npcChosenCard);
-                    }
+                    RunGame(status, consoleController, menuController);
                 }
             }
         }
@@ -88,6 +71,33 @@ namespace Menu_Practice
                 {
                     currentMenuList = menuController.GetNextMenuList(menuOption);
                 }
+            }
+
+            return status;
+        }
+        
+        static Status RunGame(Status status, ConsoleController consoleController, MenuController menuController)
+        {
+            consoleController.ShowLoading();
+
+            (Character playerCharacter, Character opponentCharacter) = menuController.GetChosenCharacterAndChosenOpponent();
+
+            GameController gameController = new(playerCharacter, opponentCharacter);
+
+            gameController.BeginNewGame();
+
+            while (status == Status.InGame)
+            {
+                Round round = gameController.BeginNewRound();
+
+                List<int> playerCards = gameController.GetPlayerCards();
+                List<int> npcCards = gameController.GetNPCCards();
+
+                int playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
+                int npcChosenCard = gameController.GetNPCChosenCard();
+                PlayerInfoContainer playerInfoContainer = new(playerCards, playerChosenCard);
+                PlayerInfoContainer npcInfoContainer = new(npcCards, npcChosenCard);
+                round.Judge(playerInfoContainer, npcInfoContainer);
             }
 
             return status;

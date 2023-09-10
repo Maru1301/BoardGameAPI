@@ -1,4 +1,5 @@
 ﻿using Menu_Practice.Characters;
+using Menu_Practice.Characters.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,6 +49,11 @@ namespace Menu_Practice
             return _player.Character.Cards;
         }
 
+        public List<int> GetNPCCards()
+        {
+            return _npc.Character.Cards;
+        }
+
         public int GetNPCChosenCard()
         {
             Random random = new Random();
@@ -78,39 +84,39 @@ namespace Menu_Practice
         {
             private int _playerChosenCard;
             private int _npcChosenCard;
-            private Func<int, int, (bool, Action)> _runRule;
+            private Func<PlayerInfoContainer, PlayerInfoContainer, Result> _useRule;
 
-            public Round(Func<int, int, (bool, Action)> callback)
+            public Round(Func<PlayerInfoContainer, PlayerInfoContainer, Result> useRule)
             {
-                _runRule = callback;
+                _useRule = useRule;
             }
 
-            internal void ChooseCard(List<int> playerCards, List<int> npcCards)
+            internal void Judge(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
             {
-                for(int i = 0; i < playerCards.Count; i++)
+                var result = _useRule(playerInfo, ncpInfo);
+
+                if(result == Result.BasicWin)
                 {
-                    switch (i)
-                    {
-                        case 0:
-                            Console.WriteLine($"皇冠x{playerCards[i]}");
-                            break;
-                        case 1:
-                            Console.WriteLine($"盾牌x{playerCards[i]}");
-                            break;
-                        case 2:
-                            Console.WriteLine($"匕首x{playerCards[i]}");
-                            break;
-                    }
+
                 }
-                Console.ReadKey();
-            }
+                else if(result == Result.BasicLose)
+                {
 
-            internal void Judge(int playerChosenCard, int npcChosenCard)
-            {
-                (bool playerWin, Action outComeCallback) = _runRule(playerChosenCard, npcChosenCard);
-
-                outComeCallback();
+                }
             }
         }
+    }
+}
+
+class PlayerInfoContainer
+{
+    public List<int> Cards = new List<int>();
+
+    public int ChosenCard;
+
+    public PlayerInfoContainer(List<int> Cards, int ChosenCard)
+    {
+        this.Cards = Cards;
+        this.ChosenCard = ChosenCard;
     }
 }

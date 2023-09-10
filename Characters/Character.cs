@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Menu_Practice.Characters.Builders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,8 +29,6 @@ namespace Menu_Practice.Characters
         
         public string AdditionalPointCondition { get => _additionalPointCondition; set => _additionalPointCondition = value; }
 
-        public virtual (bool, Action callback) UseRuleLogic(int card1, int card2) { return (false, OutComeCallback); }
-
-        public virtual void OutComeCallback() { }
+        public Func<PlayerInfoContainer, PlayerInfoContainer, Result> UseRuleLogic { get; set; }
     }
 }
