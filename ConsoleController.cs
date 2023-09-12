@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Menu_Practice.Program;
 
 namespace Menu_Practice
 {
@@ -187,6 +188,11 @@ namespace Menu_Practice
             }
             Console.WriteLine(_hint);
             _hint = string.Empty;
+        }
+
+        public Card GetPlayerWinCard(List<int> npcCards)
+        {
+
         }
     }
 }

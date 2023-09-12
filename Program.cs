@@ -1,4 +1,5 @@
 ﻿using Menu_Practice.Characters;
+using Menu_Practice.Characters.Builders;
 using Menu_Practice.Menu;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -97,8 +98,23 @@ namespace Menu_Practice
                 int npcChosenCard = gameController.GetNPCChosenCard();
                 PlayerInfoContainer playerInfoContainer = new(playerCards, playerChosenCard);
                 PlayerInfoContainer npcInfoContainer = new(npcCards, npcChosenCard);
-                round.Judge(playerInfoContainer, npcInfoContainer);
+                (Result result, Card card) = round.Judge(playerInfoContainer, npcInfoContainer);
+
+                if(result == Result.BasicWin)
+                {
+                    card = consoleController.GetPlayerWinCard(npcInfoContainer.Cards);
+                }
+                else if(result == Result.BasicLose)
+                {
+                    card = gameController.GetNPCWinCard(playerInfoContainer.Cards);
+                }
+
+                gameController.ProcessSettlement(result, card);
             }
+
+            var outcome = gameController.GetOutcome();
+
+            consoleController.ShowOutcome(outcome);
 
             return status;
         }

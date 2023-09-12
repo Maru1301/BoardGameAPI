@@ -31,6 +31,17 @@ namespace Menu_Practice
             return WhoGoFirst == PlayerGoFirst;
         }
 
+        public bool? IsPlayerWin(Result result)
+        {
+            int resultNum = (int)result;
+            if(resultNum % 2 == 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public void BeginNewGame()
         {
             _playerGoFirst = IsPlayerGoFirst();
@@ -73,6 +84,31 @@ namespace Menu_Practice
             return chosenCard;
         }
 
+        public Card GetNPCWinCard(List<int> playerCards)
+        {
+            return Card.None;
+        }
+
+        public void ProcessSettlement(Result result, Card card)
+        {
+            bool? playerWin = IsPlayerWin(result);
+
+            if(playerWin == null)
+            {
+                return;
+            }
+            else if(playerWin == true)
+            {
+                _player.Character.Cards[(int)card]++;
+                _npc.Character.Cards[(int)card]--;
+            }
+            else
+            {
+                _npc.Character.Cards[(int)card]++;
+                _player.Character.Cards[(int)card]--;
+            }
+        }
+
         private class Player
         {
             public Character Character { get; set; } = new();
@@ -84,25 +120,18 @@ namespace Menu_Practice
         {
             private int _playerChosenCard;
             private int _npcChosenCard;
-            private Func<PlayerInfoContainer, PlayerInfoContainer, Result> _useRule;
+            private Func<PlayerInfoContainer, PlayerInfoContainer, (Result, Card)> _useRule;
 
-            public Round(Func<PlayerInfoContainer, PlayerInfoContainer, Result> useRule)
+            public Round(Func<PlayerInfoContainer, PlayerInfoContainer, (Result, Card)> useRule)
             {
                 _useRule = useRule;
             }
 
-            internal void Judge(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
+            internal (Result, Card) Judge(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
             {
-                var result = _useRule(playerInfo, ncpInfo);
+                (Result result, Card card) = _useRule(playerInfo, ncpInfo);
 
-                if(result == Result.BasicWin)
-                {
-
-                }
-                else if(result == Result.BasicLose)
-                {
-
-                }
+                return (result, card);
             }
         }
     }

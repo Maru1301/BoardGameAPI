@@ -22,13 +22,4 @@ namespace Menu_Practice.Characters.Builders
 
         public abstract Character GetCharacter();
     }
-
-    enum Result
-    {
-        BasicWin = 0,
-        BasicLose = 1,
-        CharacterRuleWin = 2,
-        CharacterRuleLose = 3,
-        Draw = 4
-    }
 }

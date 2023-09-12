@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Menu_Practice.GameController;
+using static Menu_Practice.Program;
 
 namespace Menu_Practice.Characters
 {
@@ -29,6 +29,6 @@ namespace Menu_Practice.Characters
         
         public string AdditionalPointCondition { get => _additionalPointCondition; set => _additionalPointCondition = value; }
 
-        public Func<PlayerInfoContainer, PlayerInfoContainer, Result> UseRuleLogic { get; set; }
+        public Func<PlayerInfoContainer, PlayerInfoContainer, (Result, Card)> UseRuleLogic { get; set; }
     }
 }

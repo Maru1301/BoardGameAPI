@@ -4,7 +4,7 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Menu_Practice.GameController;
+using static Menu_Practice.Program;
 
 namespace Menu_Practice.Characters.Builders
 {
@@ -51,69 +51,71 @@ namespace Menu_Practice.Characters.Builders
             _character.UseRuleLogic = RuleLogic;
         }
 
-        public Result RuleLogic(PlayerInfoContainer player1Info, PlayerInfoContainer player2Info)
+        public (Result, Card) RuleLogic(PlayerInfoContainer player1Info, PlayerInfoContainer player2Info)
         {
             switch ((player1Info.ChosenCard, player2Info.ChosenCard))
             {
                 case (0, 0):
                     if (player1Info.Cards[0] > player2Info.Cards[0])
                     {
-                        return Result.CharacterRuleWin;
+                        return (Result.CharacterRuleWin, Card.Crown);
                     }
                     else if (player1Info.Cards[0] == player2Info.Cards[0])
                     {
-                        return Result.Draw;
+                        return (Result.Draw, Card.None);
                     }
                     else
                     {
-                        return Result.CharacterRuleLose;
+                        return (Result.CharacterRuleLose, Card.Crown);
                     }
                 case (0, 1):
-                    return Result.BasicWin;
+                    return (Result.BasicWin, Card.None);
                 case (0, 2):
-                    return Result.BasicLose;
+                    return (Result.BasicLose, Card.None);
                 case (1, 0):
                     if (player1Info.Cards[0] == 0 || player2Info.Cards[0] == 0)
                     {
-                        return Result.Draw;
+                        return (Result.Draw, Card.None);
                     }
                     else
                     {
-                        return Result.BasicLose;
+                        return (Result.BasicLose, Card.None);
                     }
                 case (1, 1):
                     if (player1Info.Cards[1] > player2Info.Cards[1])
                     {
-                        return Result.CharacterRuleWin;
+                        return (Result.CharacterRuleWin, Card.Shield);
                     }
                     else if (player1Info.Cards[1] == player2Info.Cards[1])
                     {
-                        return Result.Draw;
+                        return (Result.Draw, Card.None);
                     }
                     else
                     {
-                        return Result.CharacterRuleLose;
+                        return (Result.CharacterRuleLose, Card.Shield);
                     }
                 case (1, 2):
-                    return Result.BasicLose;
+                    return (Result.BasicWin, Card.None);
                 case (2, 0):
-                    return Result.BasicWin;
+                    return (Result.BasicWin, Card.None);
                 case (2, 1):
-                    return Result.BasicLose;
+                    return (Result.BasicLose, Card.None);
                 case (2, 2):
                     if (player1Info.Cards[0] < player2Info.Cards[0])
                     {
-                        return Result.CharacterRuleWin;
+                        return (Result.CharacterRuleWin, Card.Dagger);
                     }
                     else if (player1Info.Cards[0] == player2Info.Cards[0])
                     {
-                        return Result.Draw;
+                        return (Result.Draw, Card.None);
                     }
                     else
                     {
-                        return Result.CharacterRuleLose;
+                        return (Result.CharacterRuleLose, Card.Dagger);
                     }
             }
+
+            return (Result.Draw, Card.None);
         }
 
         public Character GetCharacter()
