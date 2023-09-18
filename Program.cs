@@ -98,8 +98,9 @@ namespace Menu_Practice
                 int npcChosenCard = gameController.GetNPCChosenCard();
                 PlayerInfoContainer playerInfoContainer = new(playerCards, playerChosenCard);
                 PlayerInfoContainer npcInfoContainer = new(npcCards, npcChosenCard);
-                (Result result, Card card) = round.Judge(playerInfoContainer, npcInfoContainer);
+                Result result = round.Judge(playerInfoContainer, npcInfoContainer);
 
+                Card card = Card.None;
                 if(result == Result.BasicWin)
                 {
                     card = consoleController.GetPlayerWinCard(npcInfoContainer.Cards);
@@ -108,13 +109,23 @@ namespace Menu_Practice
                 {
                     card = gameController.GetNPCWinCard(playerInfoContainer.Cards);
                 }
+                else if(result != Result.CharacterRuleWin)
+                {
+                    card = (Card)npcChosenCard;
+                }
+                else if(result == Result.CharacterRuleLose)
+                {
+                    card = (Card)playerChosenCard;
+                }
 
                 gameController.ProcessSettlement(result, card);
+
+                gameController.EndRound();
             }
 
-            var outcome = gameController.GetOutcome();
+            //var outcome = gameController.GetOutcome();
 
-            consoleController.ShowOutcome(outcome);
+            //consoleController.ShowOutcome(outcome);
 
             return status;
         }

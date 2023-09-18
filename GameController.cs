@@ -50,7 +50,6 @@ namespace Menu_Practice
         public Round BeginNewRound()
         {
             Round round = _playerGoFirst ? new(_player.Character.UseRuleLogic) : new(_npc.Character.UseRuleLogic);
-            _playerGoFirst = !_playerGoFirst;
 
             return round;
         }
@@ -109,6 +108,11 @@ namespace Menu_Practice
             }
         }
 
+        public void EndRound()
+        {
+            _playerGoFirst = !_playerGoFirst;
+        }
+
         private class Player
         {
             public Character Character { get; set; } = new();
@@ -120,18 +124,18 @@ namespace Menu_Practice
         {
             private int _playerChosenCard;
             private int _npcChosenCard;
-            private Func<PlayerInfoContainer, PlayerInfoContainer, (Result, Card)> _useRule;
+            private Func<PlayerInfoContainer, PlayerInfoContainer, Result> _useRule;
 
-            public Round(Func<PlayerInfoContainer, PlayerInfoContainer, (Result, Card)> useRule)
+            public Round(Func<PlayerInfoContainer, PlayerInfoContainer, Result> useRule)
             {
                 _useRule = useRule;
             }
 
-            internal (Result, Card) Judge(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
+            internal Result Judge(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
             {
-                (Result result, Card card) = _useRule(playerInfo, ncpInfo);
+                Result result = _useRule(playerInfo, ncpInfo);
 
-                return (result, card);
+                return result;
             }
         }
     }

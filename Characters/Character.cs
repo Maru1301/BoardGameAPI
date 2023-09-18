@@ -29,6 +29,6 @@ namespace Menu_Practice.Characters
         
         public string AdditionalPointCondition { get => _additionalPointCondition; set => _additionalPointCondition = value; }
 
-        public Func<PlayerInfoContainer, PlayerInfoContainer, (Result, Card)> UseRuleLogic { get; set; }
+        public Func<PlayerInfoContainer, PlayerInfoContainer, Result> UseRuleLogic { get; set; }
     }
 }
