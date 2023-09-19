@@ -19,10 +19,13 @@ namespace Menu_Practice
             };
 
         private int _chooser;
+        private string _title;
         private string _hint;
 
         public ConsoleController()
         {
+            _title = string.Empty;
+            _hint = string.Empty;
             _chooser = 0;
         }
 
@@ -120,9 +123,10 @@ namespace Menu_Practice
 
             ConsoleKey key;
 
+            _title = "請選擇你要出的卡";
             do
             {
-                ShowPlayerCards(playerCards);
+                ShowCards(playerCards);
 
                 key = Console.ReadKey().Key;
 
@@ -141,12 +145,12 @@ namespace Menu_Practice
                     }
                 } 
 
-            } while (IsChosenCardMoreThanOne(playerCards, key) && key != ConsoleKey.Enter);
+            } while (IsChosenCardMoreThanZero(playerCards, key) && key != ConsoleKey.Enter);
 
             return _chooser;
         }
 
-        private bool IsChosenCardMoreThanOne(List<int> playerCards, ConsoleKey key)
+        private bool IsChosenCardMoreThanZero(List<int> playerCards, ConsoleKey key)
         {
             if (key == ConsoleKey.Enter && playerCards[_chooser] == 0)
             {
@@ -157,12 +161,12 @@ namespace Menu_Practice
             return true;
         }
 
-        private void ShowPlayerCards(List<int> playerCards)
+        private void ShowCards(List<int> cards)
         {
             Console.Clear();
 
-            Console.WriteLine("選擇你要出的卡");
-            foreach (var item in playerCards.Select((cardAmount, index) => new { index, cardAmount }))
+            Console.WriteLine(_title);
+            foreach (var item in cards.Select((cardAmount, index) => new { index, cardAmount }))
             {
                 if (_chooser == item.index)
                 {
@@ -192,7 +196,43 @@ namespace Menu_Practice
 
         public Card GetPlayerWinCard(List<int> npcCards)
         {
+            _chooser = 0;
 
+            ConsoleKey key;
+
+            _title = "請選擇你要取得的卡";
+            do
+            {
+                ShowCards(npcCards);
+
+                key = Console.ReadKey().Key;
+
+                if (key == ConsoleKey.UpArrow || key == ConsoleKey.W)
+                {
+                    if (_chooser > 0)
+                    {
+                        _chooser--;
+                    }
+                }
+                else if (key == ConsoleKey.DownArrow || key == ConsoleKey.S)
+                {
+                    if (_chooser < npcCards.Count - 1)
+                    {
+                        _chooser++;
+                    }
+                }
+
+            } while (IsChosenCardMoreThanZero(npcCards, key) && key != ConsoleKey.Enter);
+
+            return (Card)_chooser;
+        }
+
+        public void ShowChosenCards(int playerChosenCard, int npcChosenCard)
+        {
+            //Console.WriteLine("勝負");
+            Console.WriteLine();
+            Console.WriteLine("yours");
+            Console.WriteLine("npcs");
         }
     }
 }

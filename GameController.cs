@@ -16,6 +16,8 @@ namespace Menu_Practice
         private readonly Player _player = new();
         private readonly Player _npc = new();
         private bool _playerGoFirst;
+        private Func<PlayerInfoContainer, PlayerInfoContainer, Result> _useRule;
+
         public GameController(Character character, Character opponent)
         {
             _player.Character = character;
@@ -45,13 +47,12 @@ namespace Menu_Practice
         public void BeginNewGame()
         {
             _playerGoFirst = IsPlayerGoFirst();
+            
         }
 
-        public Round BeginNewRound()
+        public void BeginNewRound()
         {
-            Round round = _playerGoFirst ? new(_player.Character.UseRuleLogic) : new(_npc.Character.UseRuleLogic);
-
-            return round;
+            _useRule = _playerGoFirst ? _player.Character.UseRuleLogic : _npc.Character.UseRuleLogic;
         }
 
         public List<int> GetPlayerCards()
@@ -66,10 +67,10 @@ namespace Menu_Practice
 
         public int GetNPCChosenCard()
         {
-            Random random = new Random();
+            Random random = new();
             List<int> npcCards = _npc.Character.Cards;
 
-            List<int> canChooseCards = new List<int>();
+            List<int> canChooseCards = new();
             foreach(var item in npcCards.Select((cardAmount, index) => new { index, cardAmount }))
             {
                 if(item.cardAmount > 0)
@@ -81,6 +82,13 @@ namespace Menu_Practice
             int chosenCard = random.Next(canChooseCards.Count);
 
             return chosenCard;
+        }
+
+        public Result JudgeRound(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
+        {
+            Result result = _useRule(playerInfo, ncpInfo);
+
+            return result;
         }
 
         public Card GetNPCWinCard(List<int> playerCards)
@@ -119,31 +127,12 @@ namespace Menu_Practice
 
             public bool GoFirst { get; set; }
         }
-
-        public class Round
-        {
-            private int _playerChosenCard;
-            private int _npcChosenCard;
-            private Func<PlayerInfoContainer, PlayerInfoContainer, Result> _useRule;
-
-            public Round(Func<PlayerInfoContainer, PlayerInfoContainer, Result> useRule)
-            {
-                _useRule = useRule;
-            }
-
-            internal Result Judge(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
-            {
-                Result result = _useRule(playerInfo, ncpInfo);
-
-                return result;
-            }
-        }
     }
 }
 
 class PlayerInfoContainer
 {
-    public List<int> Cards = new List<int>();
+    public List<int> Cards = new();
 
     public int ChosenCard;
 

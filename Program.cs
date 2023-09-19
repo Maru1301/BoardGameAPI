@@ -89,16 +89,17 @@ namespace Menu_Practice
 
             while (status == Status.InGame)
             {
-                Round round = gameController.BeginNewRound();
+                gameController.BeginNewRound();
 
                 List<int> playerCards = gameController.GetPlayerCards();
                 List<int> npcCards = gameController.GetNPCCards();
 
                 int playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
                 int npcChosenCard = gameController.GetNPCChosenCard();
+                consoleController.ShowChosenCards(playerChosenCard, npcChosenCard);
                 PlayerInfoContainer playerInfoContainer = new(playerCards, playerChosenCard);
                 PlayerInfoContainer npcInfoContainer = new(npcCards, npcChosenCard);
-                Result result = round.Judge(playerInfoContainer, npcInfoContainer);
+                Result result = gameController.JudgeRound(playerInfoContainer, npcInfoContainer);
 
                 Card card = Card.None;
                 if(result == Result.BasicWin)
