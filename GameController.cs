@@ -91,9 +91,23 @@ namespace Menu_Practice
             return result;
         }
 
-        public Card GetNPCWinCard(List<int> playerCards)
+        public Card GetNPCWinCard()
         {
-            return Card.None;
+            Random random = new();
+            List<int> playerCards = _player.Character.Cards;
+
+            List<int> canChooseCards = new();
+            foreach (var item in playerCards.Select((cardAmount, index) => new { index, cardAmount }))
+            {
+                if (item.cardAmount > 0)
+                {
+                    canChooseCards.Add(item.index);
+                }
+            }
+
+            int chosenCard = random.Next(canChooseCards.Count);
+
+            return (Card)chosenCard;
         }
 
         public void ProcessSettlement(Result result, Card card)

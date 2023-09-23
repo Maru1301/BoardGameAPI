@@ -23,6 +23,7 @@ namespace Menu_Practice.Characters
             _builder.BuildDisqualificationCondition();
             _builder.BuildEvolutionCondition();
             _builder.BuildAdditionalPointCondition();
+            _builder.BuildGameLogic();
         }
     }
 }

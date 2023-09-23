@@ -20,6 +20,8 @@ namespace Menu_Practice.Characters.Builders
 
         public abstract void BuildAdditionalPointCondition();
 
+        public abstract void BuildGameLogic();
+
         public abstract Character GetCharacter();
     }
 }

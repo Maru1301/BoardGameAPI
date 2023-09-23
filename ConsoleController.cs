@@ -234,5 +234,35 @@ namespace Menu_Practice
             Console.WriteLine("yours");
             Console.WriteLine("npcs");
         }
+
+        public void ShowRoundResult(Result result, Card card)
+        {
+            string cardName = string.Empty;
+            switch (card)
+            {
+                case Card.Crown:
+                    cardName = "皇冠";
+                    break;
+                case Card.Shield:
+                    cardName = "盾牌";
+                    break;
+                case Card.Dagger:
+                    cardName = "匕首";
+                    break;
+            }
+
+            if (result == Result.Draw)
+            {
+                Console.WriteLine("平手!");
+            }
+            else if((int)result % 2 == 0)
+            {
+                Console.WriteLine($"勝利!\r\n取得一張{cardName}");
+            }
+            else
+            {
+                Console.WriteLine($"失敗!\r\n失去一張{cardName}");
+            }
+        }
     }
 }

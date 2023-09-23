@@ -108,7 +108,7 @@ namespace Menu_Practice
                 }
                 else if(result == Result.BasicLose)
                 {
-                    card = gameController.GetNPCWinCard(playerInfoContainer.Cards);
+                    card = gameController.GetNPCWinCard();
                 }
                 else if(result != Result.CharacterRuleWin)
                 {
@@ -120,6 +120,7 @@ namespace Menu_Practice
                 }
 
                 gameController.ProcessSettlement(result, card);
+                consoleController.ShowRoundResult(result, card);
 
                 gameController.EndRound();
             }

@@ -46,7 +46,7 @@ namespace Menu_Practice.Characters.Builders
             _character.AdditionalPointCondition = "盾牌數";
         }
 
-        public void BuilGameLogic()
+        public void BuildGameLogic()
         {
             _character.UseRuleLogic = RuleLogic;
         }
