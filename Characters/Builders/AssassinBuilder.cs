@@ -44,6 +44,11 @@ namespace Menu_Practice.Characters.Builders
             _character.AdditionalPointCondition = "匕首數 - 皇冠數 - 2";
         }
 
+        public void BuildGameLogic()
+        {
+
+        }
+
         public Character GetCharacter()
         {
             return _character;

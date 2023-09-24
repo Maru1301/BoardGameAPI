@@ -44,6 +44,11 @@ namespace Menu_Practice.Characters.Builders
             _character.AdditionalPointCondition = "盾牌數 + 1";
         }
 
+        public void BuildGameLogic()
+        {
+
+        }
+
         public Character GetCharacter()
         {
             return _character;

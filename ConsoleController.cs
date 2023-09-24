@@ -145,20 +145,20 @@ namespace Menu_Practice
                     }
                 } 
 
-            } while (IsChosenCardMoreThanZero(playerCards, key) && key != ConsoleKey.Enter);
+            } while (IsChosenCardEqualZero(playerCards, key) || key != ConsoleKey.Enter);
 
             return _chooser;
         }
 
-        private bool IsChosenCardMoreThanZero(List<int> playerCards, ConsoleKey key)
+        private bool IsChosenCardEqualZero(List<int> playerCards, ConsoleKey key)
         {
             if (key == ConsoleKey.Enter && playerCards[_chooser] == 0)
             {
                 _hint = "所選卡片剩餘0張，請選別張卡";
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         private void ShowCards(List<int> cards)
@@ -222,17 +222,53 @@ namespace Menu_Practice
                     }
                 }
 
-            } while (IsChosenCardMoreThanZero(npcCards, key) && key != ConsoleKey.Enter);
+            } while (IsChosenCardEqualZero(npcCards, key) || key != ConsoleKey.Enter);
 
             return (Card)_chooser;
         }
 
         public void ShowChosenCards(int playerChosenCard, int npcChosenCard)
         {
-            //Console.WriteLine("勝負");
-            Console.WriteLine();
-            Console.WriteLine("yours");
-            Console.WriteLine("npcs");
+            string playerCardName = GetCardName(playerChosenCard);
+            string npcCardName = GetCardName(npcChosenCard);
+            string t;
+            int millisec = 200;
+
+            for (int i = 0; i < 12; i++)
+            {
+                if(i % 4 == 0)
+                {
+                    t = "|";
+                }
+                else if(i % 4 == 1)
+                {
+                    t = "/";
+                }
+                else if(i % 4 == 2)
+                {
+                    t = "-";
+                }
+                else
+                {
+                    t = "\\";
+                }
+                Console.Clear();
+                Console.WriteLine();
+                Console.WriteLine("玩家\t對上\t電腦");
+                Console.WriteLine($"{playerCardName}\t{t}\t{npcCardName}");
+                Thread.Sleep(millisec);
+            }
+        }
+
+        private string GetCardName(int card)
+        {
+            return card switch
+            {
+                0 => "皇冠",
+                1 => "盾牌",
+                2 => "匕首",
+                _ => "",
+            };
         }
 
         public void ShowRoundResult(Result result, Card card)
@@ -263,6 +299,12 @@ namespace Menu_Practice
             {
                 Console.WriteLine($"失敗!\r\n失去一張{cardName}");
             }
+            Console.WriteLine("按下Enter繼續");
+            ConsoleKey key;
+            do
+            {
+                key = Console.ReadKey().Key;
+            } while (key != ConsoleKey.Enter);
         }
     }
 }

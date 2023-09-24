@@ -20,8 +20,8 @@ namespace Menu_Practice
 
         public GameController(Character character, Character opponent)
         {
-            _player.Character = character;
-            _npc.Character = opponent;
+            _player.Character = new(character);
+            _npc.Character = new(opponent);
         }
         public bool IsPlayerGoFirst()
         {
@@ -35,6 +35,8 @@ namespace Menu_Practice
 
         public bool? IsPlayerWin(Result result)
         {
+            if (result.Equals(Result.Draw)) return null;
+
             int resultNum = (int)result;
             if(resultNum % 2 == 0)
             {
@@ -79,7 +81,7 @@ namespace Menu_Practice
                 }
             }
 
-            int chosenCard = random.Next(canChooseCards.Count);
+            int chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
 
             return chosenCard;
         }
@@ -105,7 +107,7 @@ namespace Menu_Practice
                 }
             }
 
-            int chosenCard = random.Next(canChooseCards.Count);
+            int chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
 
             return (Card)chosenCard;
         }

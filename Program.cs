@@ -110,7 +110,7 @@ namespace Menu_Practice
                 {
                     card = gameController.GetNPCWinCard();
                 }
-                else if(result != Result.CharacterRuleWin)
+                else if(result == Result.CharacterRuleWin)
                 {
                     card = (Card)npcChosenCard;
                 }
