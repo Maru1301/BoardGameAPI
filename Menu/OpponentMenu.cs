@@ -1,8 +1,11 @@
-﻿using Menu_Practice.Characters;
+﻿using Menu_Practice;
+using Menu_Practice.Characters;
+using Menu_Practice.Menu;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,7 +15,7 @@ namespace Menu_Practice.Menu
     {
         public OpponentMenu(string title) : base(title)
         {
-            
+
         }
 
         public void Push(OpponentMenuOption option)
@@ -32,5 +35,23 @@ namespace Menu_Practice.Menu
         {
             _character = character;
         }
+    }
+}
+
+internal static class OpponentMenuExt
+{
+    public static (MenuOption, int) FilterChosenCharacter(this OpponentMenu menu, Character character)
+    {
+        for (int i = 0; i < menu.Options.Count; i++)
+        {
+            if (menu.Options[i].OptionName == character.Name)
+            {
+                MenuOption removeOption = menu.Options[i];
+                menu.Options.Remove(menu.Options[i]);
+                return (removeOption, i);
+            }
+        }
+
+        return (new(), 0);
     }
 }

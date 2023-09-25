@@ -21,6 +21,11 @@ namespace Menu_Practice
 
         public MenuList? NextMenuList { get => _nextMenuList; set => _nextMenuList = value; }
 
+        public MenuOption()
+        {
+            
+        }
+
         public MenuOption(string optionName, MenuList? prevMenuList = null, MenuList? nextMenuList = null)
         {
             this._optionName = optionName;

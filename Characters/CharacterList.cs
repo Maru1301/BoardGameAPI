@@ -21,32 +21,32 @@ namespace Menu_Practice.Characters
             Character character;
 
             //build Character "Lord"
-            characterName = "Lord";
+            characterName = "領主";
             character = BuildCharacter(new LordBuilder());
             _characters[characterName] = character;
 
             //build Character "Knight"
-            characterName = "Knight";
+            characterName = "騎士";
             character = BuildCharacter(new KnightBuilder());
             _characters[characterName] = character;
 
             //build Character "Soldier"
-            characterName = "Soldier";
+            characterName = "士兵";
             character = BuildCharacter(new SoldierBuilder());
             _characters[characterName] = character;
 
             //build Character "Lobbyist"
-            characterName = "Lobbyist";
+            characterName = "說客";
             character = BuildCharacter(new LobbyistBuilder());
             _characters[characterName] = character;
 
             //build Character "Assassin"
-            characterName = "Assassin";
+            characterName = "刺客";
             character = BuildCharacter(new AssassinBuilder());
             _characters[characterName] = character;
 
             //build Character "Deceiver"
-            characterName = "Deceiver";
+            characterName = "詐欺師*";
             character = BuildCharacter(new DeceiverBuilder());
             _characters[characterName] = character;
         }

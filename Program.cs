@@ -44,6 +44,8 @@ namespace Menu_Practice
 
         static Status RunMenu(Status status, ConsoleController consoleController, MenuList currentMenuList, MenuController menuController)
         {
+            int removedIndex = 0;
+            MenuOption removedOption = new();
             while (status == Status.InMenu)
             {
                 MenuOption menuOption = consoleController.GetMenuOption(currentMenuList);
@@ -56,15 +58,24 @@ namespace Menu_Practice
                 if(currentMenuList.GetType() ==  typeof(CharacterInfoMenu) && menuOption.OptionName == "Select")
                 {
                     menuController.SetChosenCharacter(((CharacterInfoMenu)currentMenuList).Character);
+                    currentMenuList = menuController.GetNextMenuList(menuOption);
+                    (removedOption, removedIndex) = ((OpponentMenu)currentMenuList).FilterChosenCharacter(menuController.GetChosenCharacter());
                 }
-                else if(currentMenuList.GetType() == typeof(OpponentMenu) && menuOption.OptionName != "Back")
+                else if(currentMenuList.GetType() == typeof(OpponentMenu))
                 {
-                    menuController.SetChosenOpponent(((OpponentMenuOption)menuOption).Character);
-                    status = Status.InGame;
-                    break;
+                    if(menuOption.OptionName == "Back")
+                    {
+                        currentMenuList.Insert(removedIndex, removedOption);
+                        currentMenuList = menuController.GetPrevMenuList();
+                    }
+                    else
+                    {
+                        menuController.SetChosenOpponent(((OpponentMenuOption)menuOption).Character);
+                        status = Status.InGame;
+                        break;
+                    }
                 }
-
-                if (menuOption.OptionName == "Back")
+                else if (menuOption.OptionName == "Back")
                 {
                     currentMenuList = menuController.GetPrevMenuList();
                 }
@@ -81,7 +92,8 @@ namespace Menu_Practice
         {
             consoleController.ShowLoading();
 
-            (Character playerCharacter, Character opponentCharacter) = menuController.GetChosenCharacterAndChosenOpponent();
+            Character playerCharacter = menuController.GetChosenCharacter();
+            Character opponentCharacter = menuController.GetChosenOpponent();
 
             GameController gameController = new(playerCharacter, opponentCharacter);
 

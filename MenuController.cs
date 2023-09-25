@@ -53,9 +53,14 @@ namespace Menu_Practice
             _chosenOpponent = chosenOpponent;
         }
 
-        public (Character character, Character opponent) GetChosenCharacterAndChosenOpponent()
+        public Character GetChosenCharacter()
         {
-            return (_chosenCharacter, _chosenOpponent);
+            return _chosenCharacter;
+        }
+
+        public Character GetChosenOpponent()
+        {
+            return _chosenOpponent;
         }
     }
 }
