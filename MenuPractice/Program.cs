@@ -28,7 +28,7 @@ namespace Menu_Practice
 
                 if (status == Status.InGame)
                 {
-                    RunGame(status, consoleController, menuController);
+                    status = RunGame(status, consoleController, menuController);
                 }
             }
         }
@@ -134,12 +134,12 @@ namespace Menu_Practice
                 gameController.ProcessSettlement(result, card);
                 consoleController.ShowRoundResult(result, card);
 
-                gameController.EndRound();
+                status = gameController.EndRound();
             }
 
-            //var outcome = gameController.GetOutcome();
+            var outcome = gameController.GetOutcome();
 
-            //consoleController.ShowOutcome(outcome);
+            consoleController.Show(outcome);
 
             return status;
         }

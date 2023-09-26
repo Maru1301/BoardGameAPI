@@ -306,5 +306,10 @@ namespace Menu_Practice
                 key = Console.ReadKey().Key;
             } while (key != ConsoleKey.Enter);
         }
+
+        public void Show(string text)
+        {
+            Console.WriteLine(text);
+        }
     }
 }

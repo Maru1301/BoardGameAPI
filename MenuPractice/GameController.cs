@@ -16,6 +16,8 @@ namespace Menu_Practice
         private readonly Player _player = new();
         private readonly Player _npc = new();
         private bool _playerGoFirst;
+        private int _roundCount;
+        private int _endGame = 5;
         private Func<PlayerInfoContainer, PlayerInfoContainer, Result> _useRule;
 
         public GameController(Character character, Character opponent)
@@ -27,7 +29,7 @@ namespace Menu_Practice
         public void BeginNewGame()
         {
             _playerGoFirst = IsPlayerGoFirst();
-            
+            _roundCount = 0;
         }
 
         private bool IsPlayerGoFirst()
@@ -43,6 +45,7 @@ namespace Menu_Practice
         public void BeginNewRound()
         {
             _useRule = _playerGoFirst ? _player.Character.UseRuleLogic : _npc.Character.UseRuleLogic;
+            _roundCount++;
         }
 
         public List<int> GetPlayerCards()
@@ -133,9 +136,26 @@ namespace Menu_Practice
             return false;
         }
 
-        public void EndRound()
+        public Status EndRound()
         {
+            if (_roundCount == _endGame) return Status.InMenu;
+
             _playerGoFirst = !_playerGoFirst;
+
+            return Status.InGame;
+        }
+
+        public string GetOutcome()
+        {
+            int playerPoint = _player.Character.PointLogic();
+            int npcPoint = _npc.Character.PointLogic();
+
+            if(playerPoint == npcPoint)
+            {
+                return "平手";
+            }
+
+            return playerPoint > npcPoint ? "勝利" : "敗北";
         }
 
         private class Player
