@@ -23,7 +23,14 @@ namespace Menu_Practice
             _player.Character = new(character);
             _npc.Character = new(opponent);
         }
-        public bool IsPlayerGoFirst()
+
+        public void BeginNewGame()
+        {
+            _playerGoFirst = IsPlayerGoFirst();
+            
+        }
+
+        private bool IsPlayerGoFirst()
         {
             //who go first
             var random = new Random();
@@ -31,25 +38,6 @@ namespace Menu_Practice
             int PlayerGoFirst = 1;
 
             return WhoGoFirst == PlayerGoFirst;
-        }
-
-        public bool? IsPlayerWin(Result result)
-        {
-            if (result.Equals(Result.Draw)) return null;
-
-            int resultNum = (int)result;
-            if(resultNum % 2 == 0)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public void BeginNewGame()
-        {
-            _playerGoFirst = IsPlayerGoFirst();
-            
         }
 
         public void BeginNewRound()
@@ -130,6 +118,19 @@ namespace Menu_Practice
                 _npc.Character.Cards[(int)card]++;
                 _player.Character.Cards[(int)card]--;
             }
+        }
+
+        private bool? IsPlayerWin(Result result)
+        {
+            if (result.Equals(Result.Draw)) return null;
+
+            int resultNum = (int)result;
+            if (resultNum % 2 == 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public void EndRound()
