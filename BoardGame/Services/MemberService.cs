@@ -1,38 +1,58 @@
-﻿namespace BoardGame.Services
+﻿using BoardGame.Models.DTOs;
+using BoardGame.Infrastractures;
+using BoardGame.Repositories;
+
+namespace BoardGame.Services
 {
-    public class MemberService
+    public class MemberService : IService, IMemberService
     {
-        public (bool Success, string Message) Register(MemberRegisterDTO dto, string urlTemplate)
+        private readonly IMemberRepository _memberRepository;
+        private readonly IConfiguration _configuration;
+
+        public MemberService(IMemberRepository repo, IConfiguration configuration)
         {
-            if (_memberRepository.IsExist(dto.MemberAccount!))
-            {
-                return (false, "帳號已存在");
-            }
-            // 驗證暱稱是否重複
-            if (_memberRepository.NickNameExist(dto.MemberNickName!))
-            {
-                return (false, "暱稱已存在");
-            }
+            _memberRepository = repo;
+            _configuration = configuration;
+        }
 
-            if (_memberRepository.EmailExist(dto.MemberEmail!))
-            {
-                return (false, "信箱已存在");
-            }
+        /// <summary>
+        /// Registers a new user based on the provided MemberRegisterDTO details.
+        /// </summary>
+        /// <param name="dto">The MemberRegisterDTO object containing user registration information.</param>
+        /// <param name="confirmationUrlTemplate">The template for generating the confirmation URL.</param>
+        /// <returns>A tuple indicating success (bool) and a message (string). 
+        ///  - True with "Registration successful! Confirmation email sent!" if successful. 
+        ///  - False with an error message if registration fails due to duplicate account, 
+        ///    name, or email.</returns>
+        public (bool Success, string Message) Register(MemberRegisterDTO dto, string confirmationUrlTemplate)
+        {
+            //if (_memberRepository.CheckAccountExist(dto.MemberAccount))
+            //{
+            //    return (false, "Account already exists");
+            //}
+            //if (_memberRepository.CheckNameExist(dto.MemberName))
+            //{
+            //    return (false, "Name already exists");
+            //}
+            //if (_memberRepository.CheckEmailExist(dto.MemberEmail))
+            //{
+            //    return (false, "Email already exists");
+            //}
 
+            //create a new confirm code
             dto.ConfirmCode = Guid.NewGuid().ToString("N");
 
-            _memberRepository.MemberRegister(dto);
+            _memberRepository.Register(dto);
 
-            MemberDTO entity = _memberRepository.GetByAccount(dto.MemberAccount);
-            // 發email
-            string url = string.Format(urlTemplate, entity.Id, dto.ConfirmCode);
+            MemberDTO entity = _memberRepository.SearchByAccount(dto.Account);
+            
+            // Generate confirmation URL (consider using string interpolation instead of string.Format)
+            string url = $"{confirmationUrlTemplate}/{entity.Id}/{dto.ConfirmCode}";
 
-            new EmailHelper().SendConfirmRegisterEmail(url, dto.MemberNickName!, dto.MemberEmail!);
+            // Send confirmation email asynchronously (assuming SendConfirmRegisterEmail is async)
+            new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
 
-            // 創建播放佇列
-            _queueRepository.CreateQueue(entity.Id);
-
-            return (true, "註冊成功，已發送驗證信");
+            return (true, "Registration successful! Confirmation email sent!");
         }
     }
 }

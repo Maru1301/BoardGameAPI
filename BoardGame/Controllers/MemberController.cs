@@ -1,6 +1,7 @@
-﻿using BoardGame.Services;
+﻿using BoardGame.Models.EFModels;
+using BoardGame.Models.ViewModels;
+using BoardGame.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.Metrics;
 
 namespace BoardGame.Controllers
 {
@@ -8,23 +9,25 @@ namespace BoardGame.Controllers
     [Route("[controller]")]
     public class MemberController : ControllerBase
     {
-        private readonly MemberService _memberService;
+        private readonly IMemberService _memberService;
 
-        public MemberController(MemberService memberService)
+        public MemberController(IMemberService memberService)
         {
             _memberService = memberService;
         }
 
         [HttpPost("[action]")]
-        public IActionResult Register()
+        public IActionResult Register(RegisterVM register)
         {
-            var result = _memberService.Register(member.ToMemberDTO(), urlTemplate);
-            if (!result.Success)
+            string confirmationUrlTemplate = "http://localhost:8080/Member/MemberActivate";
+
+            (bool Success,string Message) = _memberService.Register(register.ToMemberDTO(), confirmationUrlTemplate);
+            if (!Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(Message);
             }
 
-            return Ok(result.Message);
+            return Ok(Message);
         }
     }
 }
