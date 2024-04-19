@@ -1,7 +1,8 @@
-﻿using BoardGame.Models.EFModels;
-using BoardGame.Models.ViewModels;
+﻿using BoardGame.Models.ViewModels;
 using BoardGame.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace BoardGame.Controllers
 {
@@ -17,17 +18,47 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost("[action]")]
+        [AllowAnonymous]
         public IActionResult Register(RegisterVM register)
         {
-            string confirmationUrlTemplate = "http://localhost:8080/Member/MemberActivate";
-
-            (bool Success,string Message) = _memberService.Register(register.ToMemberDTO(), confirmationUrlTemplate);
-            if (!Success)
+            try
             {
-                return BadRequest(Message);
-            }
+                // Define a template for the confirmation email URL.
+                string confirmationUrlTemplate = "https://localhost:44318/Member/ActivateRegistration";
 
-            return Ok(Message);
+                string Message = _memberService.Register(register.ToMemberDTO(), confirmationUrlTemplate);
+
+                return Ok(Message);
+            }
+            catch (MemberServiceException ex) // Catch specific member service exceptions
+            {
+                return BadRequest($"Registration failed. Please check the provided information. {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
+
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public IActionResult ActivateRegistration(string memberId, string confirmationCode)
+        {
+            try
+            {
+                string Message = _memberService.ActivateRegistration(memberId, confirmationCode);
+
+                return Ok(Message);
+            }
+            catch (MemberServiceException ex) // Catch specific member service exceptions
+            {
+                return BadRequest($"Activation failed. Please check the provided information. {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
     }
 }

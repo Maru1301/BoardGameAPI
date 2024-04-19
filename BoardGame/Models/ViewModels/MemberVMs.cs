@@ -27,8 +27,16 @@ namespace BoardGame.Models.ViewModels
         public string Email { get; set; } = string.Empty;
     }
 
+    /// <summary>
+    /// Provides extension methods for the RegisterVM class.
+    /// </summary>
     public static class RegisterVMExt
     {
+        /// <summary>
+        /// Converts a RegisterVM instance to a MemberRegisterDTO instance.
+        /// </summary>
+        /// <param name="vm">The RegisterVM instance to convert.</param>
+        /// <returns>A new MemberRegisterDTO instance with corresponding data.</returns>
         public static MemberRegisterDTO ToMemberDTO(this RegisterVM vm)
         {
             return new MemberRegisterDTO()

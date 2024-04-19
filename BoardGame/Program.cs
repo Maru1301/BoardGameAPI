@@ -1,6 +1,7 @@
 using BoardGame.Models.EFModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MongoDB.Driver;
 using System.Reflection;
 
 namespace BoardGame
@@ -36,7 +37,11 @@ namespace BoardGame
                 builder.Services.AddScoped(interfaceType, repositoryType);
             }
 
-            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext")));
+            builder.Services.AddSingleton<IMongoClient>(sp =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("MONGODB_URI");
+                return new MongoClient(connectionString);
+            });
 
             var app = builder.Build();
 

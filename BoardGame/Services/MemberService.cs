@@ -1,6 +1,9 @@
 ﻿using BoardGame.Models.DTOs;
 using BoardGame.Infrastractures;
 using BoardGame.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using MongoDB.Bson;
 
 namespace BoardGame.Services
 {
@@ -24,35 +27,58 @@ namespace BoardGame.Services
         ///  - True with "Registration successful! Confirmation email sent!" if successful. 
         ///  - False with an error message if registration fails due to duplicate account, 
         ///    name, or email.</returns>
-        public (bool Success, string Message) Register(MemberRegisterDTO dto, string confirmationUrlTemplate)
+        public string Register(MemberRegisterDTO dto, string confirmationUrlTemplate)
         {
-            //if (_memberRepository.CheckAccountExist(dto.MemberAccount))
-            //{
-            //    return (false, "Account already exists");
-            //}
-            //if (_memberRepository.CheckNameExist(dto.MemberName))
-            //{
-            //    return (false, "Name already exists");
-            //}
-            //if (_memberRepository.CheckEmailExist(dto.MemberEmail))
-            //{
-            //    return (false, "Email already exists");
-            //}
+            if (_memberRepository.CheckAccountExist(dto.Account))
+            {
+                throw new Exception("Account already exists");
+            }
+            if (_memberRepository.CheckNameExist(dto.Name))
+            {
+                throw new Exception("Name already exists");
+            }
+            if (_memberRepository.CheckEmailExist(dto.Email))
+            {
+                throw new Exception("Email already exists");
+            }
 
             //create a new confirm code
             dto.ConfirmCode = Guid.NewGuid().ToString("N");
 
             _memberRepository.Register(dto);
 
-            MemberDTO entity = _memberRepository.SearchByAccount(dto.Account);
-            
-            // Generate confirmation URL (consider using string interpolation instead of string.Format)
+            MemberDTO entity = _memberRepository.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
+
+            // Generate confirmation URL
             string url = $"{confirmationUrlTemplate}/{entity.Id}/{dto.ConfirmCode}";
 
-            // Send confirmation email asynchronously (assuming SendConfirmRegisterEmail is async)
+            // Send confirmation email
             new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
 
-            return (true, "Registration successful! Confirmation email sent!");
+            return "Registration successful! Confirmation email sent!";
         }
+
+        /// <summary>
+        /// Activates a member's registration by verifying their ID and confirmation code.
+        /// Throws an exception if the member is not found or the code is wrong.
+        /// </summary>
+        /// <param name="memberId">The ID of the member to activate.</param>
+        /// <param name="confirmCode">The confirmation code provided by the user.</param>
+        /// <returns>"Activation Succeed" or "Wrong confirm code!" based on the verification.</returns>
+        /// <exception cref="Exception">Thrown if the member is not found.</exception>
+        public string ActivateRegistration(string memberId, string confirmCode)
+        {
+            MemberDTO entity = _memberRepository.SearchById(memberId) ?? throw new Exception("Member doesn't exist!");
+
+            if (string.Compare(entity.ConfirmCode, confirmCode) != 0) return "Wrong confirm code!";
+
+            _memberRepository.ActivateRegistration(memberId);
+            return "Activation successful";
+        }
+    }
+
+    public class MemberServiceException : Exception
+    {
+        public MemberServiceException(string message) : base(message){}
     }
 }
