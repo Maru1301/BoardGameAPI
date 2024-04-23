@@ -1,10 +1,15 @@
-using BoardGame.Repositories;
-using BoardGame.Services;
-using JWT;
+using BoardGame.Controllers;
+using BoardGame.Filters;
 using JWT.Extensions.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Text;
 
 namespace BoardGame
 {
@@ -27,36 +32,6 @@ namespace BoardGame
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllers();
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
-            RegisterScopedServices(services);
-
-            services.AddSingleton<IMongoClient>(sp =>
-            {
-                var connectionString = configuration.GetConnectionString("MONGODB_URI");
-                return new MongoClient(connectionString);
-            });
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddJwt(options =>
-            {
-                options.Keys = new string[] { configuration.GetValue<string>("JwtSettings:Secret")?.ToString() ?? "defaultSecretKey" };
-                options.VerifySignature = true;
-            });
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("RequireAuthenticatedUser", policy =>
-                {
-                    policy.RequireAuthenticatedUser();
-                });
-            });
-
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowEveryone", builder =>
@@ -65,6 +40,63 @@ namespace BoardGame
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
+            });
+
+            //清除預設映射
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            //註冊JwtHelper
+            services.AddSingleton<JwtHelper>();
+            //使用選項模式註冊
+            services.Configure<JwtSettingsOptions>(configuration.GetSection("JwtSettings"));
+            //設定認證方式
+            services
+              //使用bearer token方式認證並且token用jwt格式
+              .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(options => {
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      // 可以讓[Authorize]判斷角色
+                      RoleClaimType = "roles",
+                      // 預設會認證發行人
+                      ValidateIssuer = true,
+                      ValidIssuer = configuration.GetValue<string>("JwtSettings:ValidIssuer"),
+                      // 不認證使用者
+                      ValidateAudience = false,
+                      // 如果 Token 中包含 key 才需要驗證，一般都只有簽章而已
+                      ValidateIssuerSigningKey = true,
+                      // 簽章所使用的key
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtSettings:Secret")))
+                  };
+              });
+
+            services.AddControllers();
+            RegisterScopedServices(services);
+            services.AddSingleton<IMongoClient>(sp =>
+            {
+                var connectionString = configuration.GetConnectionString("MONGODB_URI");
+                return new MongoClient(connectionString);
+            });
+
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen(options =>
+            {
+                // 說明api如何受到保護
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    // 選擇類型，type選擇http時，透過swagger畫面做認證時可以省略Bearer前綴詞(如下圖)
+                    Type = SecuritySchemeType.Http,
+                    // 採用Bearer token
+                    Scheme = "Bearer",
+                    // bearer格式使用jwt
+                    BearerFormat = "JWT",
+                    // 認證放在http request的header上
+                    In = ParameterLocation.Header,
+                    // 描述
+                    Description = "JWT驗證描述"
+                });
+                // 製作額外的過濾器，過濾Authorize、AllowAnonymous，甚至是沒有打attribute
+                options.OperationFilter<AuthorizeCheckOperationFilter>();
             });
         }
 
@@ -76,14 +108,16 @@ namespace BoardGame
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
             app.UseCors("AllowEveryone");
+            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
         }
 
         private static void RegisterScopedServices(IServiceCollection services)
         {
+            services.AddSingleton<JwtHelper>();
+
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => i.Name == "IService" || i.Name == "IRepository"));
 
@@ -97,6 +131,5 @@ namespace BoardGame
                 }
             }
         }
-
     }
 }
