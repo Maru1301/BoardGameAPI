@@ -1,4 +1,5 @@
-﻿using BoardGame.Models.DTOs;
+﻿using BoardGame.Infrastractures;
+using BoardGame.Models.DTOs;
 using BoardGame.Models.EFModels;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
@@ -12,6 +13,13 @@ namespace BoardGame.Repositories
         public MemberRepository(IMongoClient client)
         {
             _db = AppDbContext.Create(client.GetDatabase("BoardGameDB"));
+        }
+
+        public IEnumerable<MemberDTO> GetAll()
+        {
+            var members = _db.Members.ToList();
+
+            return members.Select(m => m.ToDTO<MemberDTO>());
         }
 
         public bool CheckAccountExist(string account)
@@ -35,7 +43,7 @@ namespace BoardGame.Repositories
             return entity != null;
         }
 
-        public void Register(MemberRegisterDTO dto)
+        public void Register(RegisterDTO dto)
         {
             var member = new Member
             {
@@ -63,14 +71,14 @@ namespace BoardGame.Repositories
         {
             var member = await _db.Members.FirstOrDefaultAsync(member => member.Account == account);
 
-            return member?.ToDTO();
+            return member?.ToDTO<MemberDTO>();
         }
 
         public MemberDTO? SearchById(string id)
         {
             var member = _db.Members.FirstOrDefault(member => member.Id.ToString() == id);
 
-            return member?.ToDTO();
+            return member?.ToDTO<MemberDTO>();
         }
     }
 }

@@ -1,9 +1,7 @@
-using BoardGame.Controllers;
 using BoardGame.Filters;
-using JWT.Extensions.AspNetCore;
+using BoardGame.Infrastractures;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
@@ -45,7 +43,7 @@ namespace BoardGame
             //清除預設映射
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             //註冊JwtHelper
-            services.AddSingleton<JwtHelper>();
+            services.AddSingleton<JWTHelper>();
             //使用選項模式註冊
             services.Configure<JwtSettingsOptions>(configuration.GetSection("JwtSettings"));
             //設定認證方式
@@ -116,8 +114,6 @@ namespace BoardGame
 
         private static void RegisterScopedServices(IServiceCollection services)
         {
-            services.AddSingleton<JwtHelper>();
-
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => i.Name == "IService" || i.Name == "IRepository"));
 

@@ -29,7 +29,7 @@ namespace BoardGame.Services
         ///  - True with "Registration successful! Confirmation email sent!" if successful. 
         ///  - False with an error message if registration fails due to duplicate account, 
         ///    name, or email.</returns>
-        public async Task<string> Register(MemberRegisterDTO dto, string confirmationUrlTemplate)
+        public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
         {
             if (_memberRepository.CheckAccountExist(dto.Account))
             {
@@ -78,7 +78,7 @@ namespace BoardGame.Services
             return "Activation successful";
         }
 
-        public async Task<bool> ValidateUser(MemberLoginDTO dto)
+        public async Task<bool> ValidateUser(LoginDTO dto)
         {
             var member = await _memberRepository.SearchByAccount(dto.Account);
             if (member == null || !ValidatePassword(member, dto.Password))
@@ -98,7 +98,7 @@ namespace BoardGame.Services
         {
             // 生成JWT令牌
             var member = await _memberRepository.SearchByAccount(account) ?? throw new MemberServiceException("Member doesn't exist!");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"] ?? string.Empty));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(1);
 
@@ -122,6 +122,10 @@ namespace BoardGame.Services
             return tokenHandler.WriteToken(token);
         }
 
+        public  IEnumerable<MemberDTO> ListMembers()
+        {
+            return _memberRepository.GetAll();
+        }
     }
 
     public class MemberServiceException : Exception

@@ -13,14 +13,14 @@ namespace BoardGame.Models.DTOs
         public string ConfirmCode { get; set; } = string.Empty;
     }
 
-    public class MemberLoginDTO
+    public class LoginDTO
     {
         public string Account { get; set; } = string.Empty;
 
         public string Password { get; set; } = string.Empty;
     }
 
-    public class MemberRegisterDTO
+    public class RegisterDTO
     {
         public string Account { get; set; } = string.Empty;
 
@@ -42,18 +42,6 @@ namespace BoardGame.Models.DTOs
         public string Email { get; set; } = string.Empty;
 
         public string ConfirmCode { get; set; } = string.Empty;
-    }
-
-    public static class MemberDTOExt
-    {
-        public static MemberDTO ToDTO(this Member member)
-            => new()
-            {
-                Id = member.Id.ToString(),
-                EncryptedPassword = member.EncryptedPassword,
-                Salt = member.Salt,
-                ConfirmCode = member.ConfirmCode,
-            };
     }
 }
 
