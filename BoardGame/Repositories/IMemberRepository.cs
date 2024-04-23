@@ -1,5 +1,4 @@
 ﻿using BoardGame.Models.DTOs;
-using MongoDB.Bson;
 
 namespace BoardGame.Repositories
 {
@@ -10,7 +9,7 @@ namespace BoardGame.Repositories
         public bool CheckEmailExist(string email);
         public void Register(MemberRegisterDTO dto);
         public void ActivateRegistration(string memberId);
-        public MemberDTO? SearchByAccount(string account);
+        public Task<MemberDTO?> SearchByAccount(string account);
         public MemberDTO? SearchById(string id);
     }
 }

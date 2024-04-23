@@ -1,6 +1,8 @@
-using BoardGame.Models.EFModels;
+using BoardGame.Repositories;
+using BoardGame.Services;
+using JWT;
+using JWT.Extensions.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
 using System.Reflection;
 
@@ -12,54 +14,89 @@ namespace BoardGame
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            // Register each type of services as a scoped service
-            var assembly = Assembly.GetExecutingAssembly();
-            var ServiceTypes = assembly.GetTypes()
-                .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => i.Name == "IService"));
-            foreach (var serviceType in ServiceTypes)
-            {
-                var interfaceType = serviceType.GetInterfaces().First(i => i.Name != "IService");
-                builder.Services.AddScoped(interfaceType, serviceType);
-            }
-
-            // Register each type of repositories as a scoped service
-            var RepositoryTypes = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => i.Name == "IRepository"));
-            foreach (var repositoryType in RepositoryTypes)
-            {
-                var interfaceType = repositoryType.GetInterfaces().First(i => i.Name != "IRepository");
-                builder.Services.AddScoped(interfaceType, repositoryType);
-            }
-
-            builder.Services.AddSingleton<IMongoClient>(sp =>
-            {
-                var connectionString = builder.Configuration.GetConnectionString("MONGODB_URI");
-                return new MongoClient(connectionString);
-            });
+            ConfigureServices(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            Configure(app, app.Environment);
+
+            app.MapControllers();
+
+            app.Run();
+        }
+
+        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddControllers();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
+            RegisterScopedServices(services);
+
+            services.AddSingleton<IMongoClient>(sp =>
+            {
+                var connectionString = configuration.GetConnectionString("MONGODB_URI");
+                return new MongoClient(connectionString);
+            });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddJwt(options =>
+            {
+                options.Keys = new string[] { configuration.GetValue<string>("JwtSettings:Secret")?.ToString() ?? "defaultSecretKey" };
+                options.VerifySignature = true;
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAuthenticatedUser", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowEveryone", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
+        }
+
+        private static void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
+        {
+            if (environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors("AllowEveryone");
+            app.UseAuthentication();
             app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            app.Run();
         }
+
+        private static void RegisterScopedServices(IServiceCollection services)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => i.Name == "IService" || i.Name == "IRepository"));
+
+            foreach (var type in types)
+            {
+                var interfaces = type.GetInterfaces().Where(i => i.Name != "IService" || i.Name != "IRepository");
+
+                foreach (var interfaceType in interfaces)
+                {
+                    services.AddScoped(interfaceType, type);
+                }
+            }
+        }
+
     }
 }

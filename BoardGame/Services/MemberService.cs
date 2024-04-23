@@ -1,9 +1,11 @@
 ﻿using BoardGame.Models.DTOs;
 using BoardGame.Infrastractures;
 using BoardGame.Repositories;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using MongoDB.Bson;
+using Utilities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace BoardGame.Services
 {
@@ -27,7 +29,7 @@ namespace BoardGame.Services
         ///  - True with "Registration successful! Confirmation email sent!" if successful. 
         ///  - False with an error message if registration fails due to duplicate account, 
         ///    name, or email.</returns>
-        public string Register(MemberRegisterDTO dto, string confirmationUrlTemplate)
+        public async Task<string> Register(MemberRegisterDTO dto, string confirmationUrlTemplate)
         {
             if (_memberRepository.CheckAccountExist(dto.Account))
             {
@@ -47,10 +49,10 @@ namespace BoardGame.Services
 
             _memberRepository.Register(dto);
 
-            MemberDTO entity = _memberRepository.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
+            MemberDTO entity = await _memberRepository.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
 
             // Generate confirmation URL
-            string url = $"{confirmationUrlTemplate}/{entity.Id}/{dto.ConfirmCode}";
+            string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={dto.ConfirmCode}";
 
             // Send confirmation email
             new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
@@ -75,6 +77,51 @@ namespace BoardGame.Services
             _memberRepository.ActivateRegistration(memberId);
             return "Activation successful";
         }
+
+        public async Task<bool> ValidateUser(MemberLoginDTO dto)
+        {
+            var member = await _memberRepository.SearchByAccount(dto.Account);
+            if (member == null || !ValidatePassword(member, dto.Password))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool ValidatePassword(MemberDTO member, string password)
+        {
+            return HashUtility.ToSHA256(password, member.Salt) == member.EncryptedPassword;
+        }
+
+        public async Task<string> GenerateToken(string account)
+        {
+            // 生成JWT令牌
+            var member = await _memberRepository.SearchByAccount(account) ?? throw new MemberServiceException("Member doesn't exist!");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.Now.AddDays(1);
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, member.Id.ToString()),
+                new Claim(ClaimTypes.Email, member.Email),
+                new Claim(ClaimTypes.NameIdentifier, member.Account)
+                // 在这里可以添加更多的claim
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JwtSettings:ValidIssuer"],
+                audience: _configuration["JwtSettings:ValidAudience"],
+                claims: claims,
+                expires: expires,
+                signingCredentials: creds
+            );
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            return tokenHandler.WriteToken(token);
+        }
+
     }
 
     public class MemberServiceException : Exception

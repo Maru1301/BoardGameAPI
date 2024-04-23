@@ -44,6 +44,7 @@ namespace BoardGame.Repositories
                 Name = dto.Name,
                 Email = dto.Email,
                 IsConfirmed = false, //default is Unconfirmed
+                Salt = dto.Salt, //default is Unactive
                 ConfirmCode = dto.ConfirmCode
             };
             _db.Members.Add(member);
@@ -58,9 +59,9 @@ namespace BoardGame.Repositories
             _db.SaveChanges();
         }
 
-        public MemberDTO? SearchByAccount(string account)
+        public async Task<MemberDTO?> SearchByAccount(string account)
         {
-            var member = _db.Members.FirstOrDefault(member => member.Account == account);
+            var member = await _db.Members.FirstOrDefaultAsync(member => member.Account == account);
 
             return member?.ToDTO();
         }

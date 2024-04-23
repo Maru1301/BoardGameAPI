@@ -16,6 +16,8 @@ namespace BoardGame.Models.EFModels
 
         public string ConfirmCode { get; set; } = string.Empty;
 
+        public string Salt { get; set; } = string.Empty;
+
         public bool IsConfirmed { get; set; }
     }
 }

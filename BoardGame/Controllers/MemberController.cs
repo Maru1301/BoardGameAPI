@@ -6,8 +6,9 @@ using System.Net;
 
 namespace BoardGame.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class MemberController : ControllerBase
     {
         private readonly IMemberService _memberService;
@@ -17,16 +18,49 @@ namespace BoardGame.Controllers
             _memberService = memberService;
         }
 
+        [HttpGet("[action]")]
+        public bool Test()
+        {
+            return true;
+        }
+
         [HttpPost("[action]")]
         [AllowAnonymous]
-        public IActionResult Register(RegisterVM register)
+        public async Task<IActionResult> Login([FromBody] LoginVM login)
+        {
+            try
+            {
+                 var result = await _memberService.ValidateUser(login.ToDTO());
+                if (result == false)
+                {
+                    return BadRequest("Invalid username or password.");
+                }
+
+                // Authorize the user and generate a JWT token.
+                var token = _memberService.GenerateToken(login.Account);
+                return Ok(token);
+            }
+            catch(MemberServiceException ex)
+            {
+                return BadRequest($"Registration failed. Please check the provided information. {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        
+
+        [HttpPost("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register(RegisterVM register)
         {
             try
             {
                 // Define a template for the confirmation email URL.
                 string confirmationUrlTemplate = "https://localhost:44318/Member/ActivateRegistration";
 
-                string Message = _memberService.Register(register.ToMemberDTO(), confirmationUrlTemplate);
+                string Message = await _memberService.Register(register.ToDTO(), confirmationUrlTemplate);
 
                 return Ok(Message);
             }

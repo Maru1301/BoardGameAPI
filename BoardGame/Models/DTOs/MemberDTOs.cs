@@ -1,5 +1,4 @@
 ﻿using BoardGame.Models.EFModels;
-using MongoDB.Bson;
 using Utilities;
 
 namespace BoardGame.Models.DTOs
@@ -7,7 +6,18 @@ namespace BoardGame.Models.DTOs
     public class MemberDTO
     {
         public string Id { get; set; } = string.Empty;
+        public string Account { get; set; } = string.Empty;
+        public string EncryptedPassword { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Salt { get; set; } = string.Empty;
         public string ConfirmCode { get; set; } = string.Empty;
+    }
+
+    public class MemberLoginDTO
+    {
+        public string Account { get; set; } = string.Empty;
+
+        public string Password { get; set; } = string.Empty;
     }
 
     public class MemberRegisterDTO
@@ -16,12 +26,13 @@ namespace BoardGame.Models.DTOs
 
         public string Password { get; set; } = string.Empty;
 
+        public string Salt { get; set; } = HashUtility.GenerateSalt();
+
         public string EncryptedPassword
         {
             get
             {
-                string salt = HashUtility.GenerateSalt();
-                string result = HashUtility.ToSHA256(this.Password!, salt);
+                string result = HashUtility.ToSHA256(this.Password!, Salt);
                 return result;
             }
         }
@@ -39,6 +50,8 @@ namespace BoardGame.Models.DTOs
             => new()
             {
                 Id = member.Id.ToString(),
+                EncryptedPassword = member.EncryptedPassword,
+                Salt = member.Salt,
                 ConfirmCode = member.ConfirmCode,
             };
     }
