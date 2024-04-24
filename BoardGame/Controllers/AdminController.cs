@@ -33,6 +33,10 @@ namespace BoardGame.Controllers
 
                 return Ok();
             }
+            catch (AdminServiceException ex)
+            {
+                return BadRequest($"Add admin failed. Please check the provided information. {ex.Message}");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

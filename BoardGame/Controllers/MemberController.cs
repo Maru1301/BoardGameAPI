@@ -34,7 +34,7 @@ namespace BoardGame.Controllers
             }
             catch (MemberServiceException ex)
             {
-                return BadRequest($"Registration failed. Please check the provided information. {ex.Message}");
+                return BadRequest($"List failed. Please check the provided information. {ex.Message}");
             }
             catch (Exception ex)
             {

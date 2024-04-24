@@ -1,6 +1,5 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
-using BoardGame.Repositories;
 using BoardGame.Repositories.Interfaces;
 using BoardGame.Services.Interfaces;
 using Utilities;
@@ -20,7 +19,7 @@ namespace BoardGame.Services
         {
             if (_adminRepository.CheckAccountExist(dto.Account))
             {
-                throw new Exception("Account already exists");
+                throw new AdminServiceException("Account already exists");
             }
 
             _adminRepository.AddAdmin(dto);
@@ -44,6 +43,9 @@ namespace BoardGame.Services
     }
     public class AdminServiceException : Exception
     {
-
+        public AdminServiceException(string ex) : base(ex)
+        {
+            
+        }
     }
 }
