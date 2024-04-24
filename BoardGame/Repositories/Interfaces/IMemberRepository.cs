@@ -1,6 +1,6 @@
 ﻿using BoardGame.Models.DTOs;
 
-namespace BoardGame.Repositories
+namespace BoardGame.Repositories.Interfaces
 {
     public interface IMemberRepository
     {

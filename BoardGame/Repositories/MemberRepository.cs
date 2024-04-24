@@ -1,6 +1,7 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
 using BoardGame.Models.EFModels;
+using BoardGame.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 

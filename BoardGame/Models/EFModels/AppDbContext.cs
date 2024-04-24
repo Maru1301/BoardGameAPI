@@ -9,6 +9,7 @@ namespace BoardGame.Models.EFModels
     public class AppDbContext : IdentityDbContext<IdentityUser>
     {
         public DbSet<Member> Members { get; init; }
+        public DbSet<Admin> Admins { get; init; }
         public static AppDbContext Create(IMongoDatabase database) =>
         new(new DbContextOptionsBuilder<AppDbContext>()
             .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
@@ -21,6 +22,7 @@ namespace BoardGame.Models.EFModels
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Member>().ToCollection("members");
+            modelBuilder.Entity<Admin>().ToCollection("admins");
         }
     }
 }

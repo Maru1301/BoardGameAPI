@@ -40,32 +40,40 @@ namespace BoardGame
                 });
             });
 
-            //清除預設映射
+            // Clear the default mapping
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            //註冊JwtHelper
+            // Register JwtHelper
             services.AddSingleton<JWTHelper>();
-            //使用選項模式註冊
+            // Register using option mode
             services.Configure<JwtSettingsOptions>(configuration.GetSection("JwtSettings"));
-            //設定認證方式
+            // Set authentication method
             services
-              //使用bearer token方式認證並且token用jwt格式
+              // Authenticate using bearer token and jwt format for token
               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options => {
                   options.TokenValidationParameters = new TokenValidationParameters
                   {
-                      // 可以讓[Authorize]判斷角色
+                      // Allow [Authorize] to determine roles
                       RoleClaimType = "roles",
-                      // 預設會認證發行人
+                      // Validate the issuer by default
                       ValidateIssuer = true,
                       ValidIssuer = configuration.GetValue<string>("JwtSettings:ValidIssuer"),
-                      // 不認證使用者
+                      // Do not validate the audience
                       ValidateAudience = false,
-                      // 如果 Token 中包含 key 才需要驗證，一般都只有簽章而已
+                      // Validate only if the token contains a key, usually only the signature
                       ValidateIssuerSigningKey = true,
-                      // 簽章所使用的key
-                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtSettings:Secret")))
+                      // Key used for the signature
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtSettings:Secret") ?? string.Empty))
                   };
               });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdmin", policy =>
+                    policy.RequireRole(Roles.Admin));
+                options.AddPolicy("RequireMember", policy =>
+                    policy.RequireRole(Roles.Member));
+            });
 
             services.AddControllers();
             RegisterScopedServices(services);
@@ -78,22 +86,22 @@ namespace BoardGame
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>
             {
-                // 說明api如何受到保護
+                // Describe how the api is protected
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    // 選擇類型，type選擇http時，透過swagger畫面做認證時可以省略Bearer前綴詞(如下圖)
+                    // When type is chosen as http, the Bearer prefix can be omitted when making authentication through the swagger interface (as shown in the figure below)
                     Type = SecuritySchemeType.Http,
-                    // 採用Bearer token
+                    // Use Bearer token
                     Scheme = "Bearer",
-                    // bearer格式使用jwt
+                    // Bearer format uses jwt
                     BearerFormat = "JWT",
-                    // 認證放在http request的header上
+                    // Authentication is placed in the header of the http request
                     In = ParameterLocation.Header,
-                    // 描述
-                    Description = "JWT驗證描述"
+                    // Description
+                    Description = "JWT authentication description"
                 });
-                // 製作額外的過濾器，過濾Authorize、AllowAnonymous，甚至是沒有打attribute
+                // Create additional filters to filter Authorize, AllowAnonymous, or even those without attributes
                 options.OperationFilter<AuthorizeCheckOperationFilter>();
             });
         }

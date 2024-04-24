@@ -1,11 +1,12 @@
 ﻿using BoardGame.Models.DTOs;
 using BoardGame.Infrastractures;
-using BoardGame.Repositories;
 using Utilities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using BoardGame.Services.Interfaces;
+using BoardGame.Repositories.Interfaces;
 
 namespace BoardGame.Services
 {
@@ -78,15 +79,15 @@ namespace BoardGame.Services
             return "Activation successful";
         }
 
-        public async Task<bool> ValidateUser(LoginDTO dto)
+        public async Task<string> ValidateUser(LoginDTO dto)
         {
             var member = await _memberRepository.SearchByAccount(dto.Account);
             if (member == null || !ValidatePassword(member, dto.Password))
             {
-                return false;
+                return string.Empty;
             }
 
-            return true;
+            return member.IsConfirmed ? Roles.Member : Roles.Guest;
         }
 
         private static bool ValidatePassword(MemberDTO member, string password)
@@ -125,6 +126,11 @@ namespace BoardGame.Services
         public  IEnumerable<MemberDTO> ListMembers()
         {
             return _memberRepository.GetAll();
+        }
+        public async Task<MemberDTO> GetMemberInfo(string account) 
+        {
+            var dto = await _memberRepository.SearchByAccount(account);
+            return dto ?? throw new MemberServiceException("Member doesn't exist!");
         }
     }
 

@@ -1,10 +1,11 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
-using BoardGame.Models.ViewModels;
 using BoardGame.Services;
+using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using static BoardGame.Models.ViewModels.MemberVMs;
 
 namespace BoardGame.Controllers
 {
@@ -23,7 +24,7 @@ namespace BoardGame.Controllers
             _jwt = jwt;
         }
 
-        [HttpGet("[action]"), Authorize(Roles = "admin")]
+        [HttpGet("[action]"), Authorize("RequireAdmin")]
         public IActionResult ListMembers()
         {
             try
@@ -41,24 +42,54 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginVM login)
+        [HttpGet("[action]"), Authorize("RequireMember")]
+        public IActionResult GetMemberInfo()
         {
             try
             {
-                 var result = await _memberService.ValidateUser(login.ToDTO<LoginDTO>());
-                if (result == false)
+                // Get the current user from the HttpContext
+                var user = HttpContext.User;
+
+                // Extract the user ID (or other relevant claim) from the JWT claim
+                string userAccount = user.Identity?.Name ?? string.Empty;
+
+                if(string.IsNullOrEmpty(userAccount)) return NotFound();
+
+                // Use the user ID to retrieve member information from your database
+                var member = _memberService.GetMemberInfo(userAccount);
+
+                // Return the member information 
+                return Ok(member);
+            }
+            catch (MemberServiceException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately, consider logging or returning error details
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("[action]"), AllowAnonymous]
+        public async Task<IActionResult> Login([FromQuery] LoginVM login)
+        {
+            try
+            {
+                 var role = await _memberService.ValidateUser(login.ToDTO<LoginDTO>());
+                if (string.IsNullOrEmpty(role))
                 {
                     return BadRequest("Invalid username or password.");
                 }
 
                 // Authorize the user and generate a JWT token.
-                var token = _jwt.GenerateToken(login.Account);
+                var token = _jwt.GenerateToken(login.Account, role);
                 return Ok(token);
             }
             catch(MemberServiceException ex)
             {
-                return BadRequest($"Registration failed. Please check the provided information. {ex.Message}");
+                return BadRequest($"Login failed. Please check the provided information. {ex.Message}");
             }
             catch (Exception ex)
             {
@@ -66,9 +97,7 @@ namespace BoardGame.Controllers
             }
         }
         
-
-        [HttpPost("[action]")]
-        [AllowAnonymous]
+        [HttpPost("[action]"), AllowAnonymous]
         public async Task<IActionResult> Register(RegisterVM register)
         {
             try
@@ -90,8 +119,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
-        [AllowAnonymous]
+        [HttpGet("[action]"), AllowAnonymous]
         public IActionResult ActivateRegistration(string memberId, string confirmationCode)
         {
             try

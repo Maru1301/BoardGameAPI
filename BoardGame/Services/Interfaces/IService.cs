@@ -1,4 +1,4 @@
-﻿namespace BoardGame.Services
+﻿namespace BoardGame.Services.Interfaces
 {
     public interface IService
     {

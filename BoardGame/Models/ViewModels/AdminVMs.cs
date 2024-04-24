@@ -2,15 +2,8 @@
 
 namespace BoardGame.Models.ViewModels
 {
-    public class MemberVMs
-    {
-        public class MemberVM
-        {
-            public string Name { get; set; } = string.Empty;
-            public string Account { get; set; } = string.Empty;
-            public string Email { get; set; } = string.Empty;
-        }
-
+    public class AdminVMs 
+    { 
         public class LoginVM
         {
             [Required(ErrorMessage = "Account is required!")]
@@ -22,29 +15,23 @@ namespace BoardGame.Models.ViewModels
             public string Password { get; set; } = string.Empty;
         }
 
-        public class RegisterVM
+        public class AdminCreateVM
         {
-            [Required]
-            [StringLength(50)]
-            public string Name { get; set; } = string.Empty;
 
             [Required]
-            [StringLength(50)]
+            [StringLength(30)]
             public string Account { get; set; } = string.Empty;
 
             [Required]
-            [StringLength(50)]
+            [StringLength(70)]
+            [DataType(DataType.Password)]
             public string Password { get; set; } = string.Empty;
 
             [Required]
-            [StringLength(50)]
+            [StringLength(70)]
+            [DataType(DataType.Password)]
             [Compare(nameof(Password))]
             public string ConfirmPassword { get; set; } = string.Empty;
-
-            [EmailAddress]
-            [Required]
-            [StringLength(50)]
-            public string Email { get; set; } = string.Empty;
         }
     }
 }

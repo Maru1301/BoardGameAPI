@@ -14,38 +14,43 @@ namespace BoardGame.Infrastractures
             _settings = settings.CurrentValue;
         }
 
-        public string GenerateToken(string userName, int expireMinutes = 120)
+        public string GenerateToken(string userName, string role, int expireMinutes = 120)
         {
-            //發行人
             var issuer = _settings.ValidIssuer;
-            //加密的key，拿來比對jwt-token沒有
             var signKey = _settings.Secret;
-            //建立JWT - Token
-            var token = JwtBuilder.Create()
-                      //所採用的雜湊演算法
-                      .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-                                                                //加密key
-                      .WithSecret(signKey)
-                      //角色
-                      .AddClaim("roles", "admin")
-                      //JWT ID
-                      .AddClaim("jti", Guid.NewGuid().ToString())
-                      //發行人
-                      .AddClaim("iss", issuer)
-                      //使用對象名稱
-                      .AddClaim("sub", userName) // User.Identity.Name
-                                                 //過期時間
-                      .AddClaim("exp", DateTimeOffset.UtcNow.AddMinutes(expireMinutes).ToUnixTimeSeconds())
-                      //此時間以前是不可以使用
-                      .AddClaim("nbf", DateTimeOffset.UtcNow.ToUnixTimeSeconds())
-                      //發行時間
-                      .AddClaim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds())
-                      //使用者全名
-                      .AddClaim(ClaimTypes.Name, userName)
-                      //進行編碼
-                      .Encode();
+
+            var token = BuildToken(userName, role, expireMinutes, issuer, signKey);
+
             return token;
         }
+
+        private static string BuildToken(string userName,string role, int expireMinutes, string issuer, string signKey)
+        {
+            var jwtBuilder = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(signKey)
+                .AddClaim("roles", role)
+                .AddClaim("jti", Guid.NewGuid().ToString())
+                .AddClaim("iss", issuer)
+                .AddClaim("sub", userName)
+                .AddClaim("exp", GetExpirationTime(expireMinutes))
+                .AddClaim("nbf", GetCurrentTime())
+                .AddClaim("iat", GetCurrentTime())
+                .AddClaim(ClaimTypes.Name, userName);
+
+            return jwtBuilder.Encode();
+        }
+
+        private static long GetExpirationTime(int expireMinutes)
+        {
+            return DateTimeOffset.UtcNow.AddMinutes(expireMinutes).ToUnixTimeSeconds();
+        }
+
+        private static long GetCurrentTime()
+        {
+            return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        }
+
     }
 
     public class JwtSettingsOptions
