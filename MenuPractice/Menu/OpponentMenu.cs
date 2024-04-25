@@ -1,13 +1,6 @@
 ﻿using Menu_Practice;
 using Menu_Practice.Characters;
 using Menu_Practice.Menu;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Menu_Practice.Menu
 {

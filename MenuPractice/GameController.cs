@@ -1,13 +1,5 @@
 ﻿using Menu_Practice.Characters;
-using Menu_Practice.Characters.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Menu_Practice.GameController;
 using static Menu_Practice.Program;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Menu_Practice
 {

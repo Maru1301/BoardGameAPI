@@ -1,11 +1,4 @@
-﻿using Menu_Practice.Characters.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Menu_Practice.Menu
+﻿namespace Menu_Practice.Menu
 {
     internal class MenuDirector
     {
