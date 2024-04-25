@@ -19,9 +19,9 @@ namespace BoardGame.Filters
             var Descriptor = _endpointDataSource.Endpoints.FirstOrDefault(x =>
                 x.Metadata.GetMetadata<ControllerActionDescriptor>() == context.ApiDescription.ActionDescriptor);
             //取得包含Authorize的Attribute
-            var Authorize = Descriptor.Metadata.GetMetadata<AuthorizeAttribute>() != null;
+            var Authorize = Descriptor?.Metadata.GetMetadata<AuthorizeAttribute>() != null;
             //取得包含AllowAnonymous的Attribute
-            var AllowAnonymous = Descriptor.Metadata.GetMetadata<AllowAnonymousAttribute>() != null;
+            var AllowAnonymous = Descriptor?.Metadata.GetMetadata<AllowAnonymousAttribute>() != null;
             //如果不需要鎖頭則return回去
             if (!Authorize || AllowAnonymous)
                 return;

@@ -1,10 +1,6 @@
 ﻿using BoardGame.Models.DTOs;
 using BoardGame.Infrastractures;
 using Utilities;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using BoardGame.Services.Interfaces;
 using BoardGame.Repositories.Interfaces;
 
@@ -12,15 +8,13 @@ namespace BoardGame.Services
 {
     public class MemberService : IService, IMemberService
     {
-        private readonly IMemberRepository _memberRepository;
+        private readonly IMemberRepository _repository;
         private readonly IConfiguration _configuration;
-        private readonly IRepository _repository;
 
-        public MemberService(IMemberRepository repo, IConfiguration configuration, IRepository repository)
+        public MemberService(IMemberRepository repo, IConfiguration configuration)
         {
-            _memberRepository = repo;
+            _repository = repo;
             _configuration = configuration;
-            _repository = repository;
         }
 
         /// <summary>
@@ -34,18 +28,18 @@ namespace BoardGame.Services
         ///    name, or email.</returns>
         public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
         {
-            using var transaction = await _memberRepository.GetContext().Database.BeginTransactionAsync();
+            using var session = _repository.GetMongoClient().StartSession();
             try
             {
-                if (_memberRepository.CheckAccountExist(dto.Account))
+                if (_repository.CheckAccountExist(dto.Account))
                 {
                     throw new Exception("Account already exists");
                 }
-                if (_memberRepository.CheckNameExist(dto.Name))
+                if (_repository.CheckNameExist(dto.Name))
                 {
                     throw new Exception("Name already exists");
                 }
-                if (_memberRepository.CheckEmailExist(dto.Email))
+                if (_repository.CheckEmailExist(dto.Email))
                 {
                     throw new Exception("Email already exists");
                 }
@@ -53,9 +47,9 @@ namespace BoardGame.Services
                 //create a new confirm code
                 dto.ConfirmCode = Guid.NewGuid().ToString("N");
 
-                _memberRepository.Register(dto);
+                _repository.Register(dto);
 
-                MemberDTO entity = await _memberRepository.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
+                MemberDTO entity = await _repository.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
 
                 // Generate confirmation URL
                 string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={dto.ConfirmCode}";
@@ -63,16 +57,15 @@ namespace BoardGame.Services
                 // Send confirmation email
                 new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
 
-                transaction.Commit();
-
+                session.CommitTransaction();
                 return "Registration successful! Confirmation email sent!";
             }
             catch (Exception)
             {
-                transaction.Rollback(); // Roll back the transaction on error
+                session.AbortTransaction(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
             }
-        }
+}
 
         /// <summary>
         /// Activates a member's registration by verifying their ID and confirmation code.
@@ -84,17 +77,27 @@ namespace BoardGame.Services
         /// <exception cref="Exception">Thrown if the member is not found.</exception>
         public string ActivateRegistration(string memberId, string confirmCode)
         {
-            MemberDTO entity = _memberRepository.SearchById(memberId) ?? throw new Exception("Member doesn't exist!");
+            using var session = _repository.GetMongoClient().StartSession();
+            try
+            {
+                MemberDTO entity = _repository.SearchById(memberId) ?? throw new Exception("Member doesn't exist!");
 
-            if (string.Compare(entity.ConfirmCode, confirmCode) != 0) return "Wrong confirm code!";
+                if (string.Compare(entity.ConfirmCode, confirmCode) != 0) return "Wrong confirm code!";
 
-            _memberRepository.ActivateRegistration(memberId);
-            return "Activation successful";
+                _repository.ActivateRegistration(memberId);
+                session.CommitTransaction();
+                return "Activation successful";
+            }
+            catch (Exception)
+            {
+                session.AbortTransaction(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
         }
 
         public async Task<string> ValidateUser(LoginDTO dto)
         {
-            var member = await _memberRepository.SearchByAccount(dto.Account);
+            var member = await _repository.SearchByAccount(dto.Account);
             if (member == null || !ValidatePassword(member, dto.Password))
             {
                 return string.Empty;
@@ -108,41 +111,13 @@ namespace BoardGame.Services
             return HashUtility.ToSHA256(password, member.Salt) == member.EncryptedPassword;
         }
 
-        public async Task<string> GenerateToken(string account)
-        {
-            // 生成JWT令牌
-            var member = await _memberRepository.SearchByAccount(account) ?? throw new MemberServiceException("Member doesn't exist!");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"] ?? string.Empty));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(1);
-
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, member.Id.ToString()),
-                new Claim(ClaimTypes.Email, member.Email),
-                new Claim(ClaimTypes.NameIdentifier, member.Account)
-                // 在这里可以添加更多的claim
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JwtSettings:ValidIssuer"],
-                audience: _configuration["JwtSettings:ValidAudience"],
-                claims: claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
-        }
-
         public  IEnumerable<MemberDTO> ListMembers()
         {
-            return _memberRepository.GetAll();
+            return _repository.GetAll();
         }
         public async Task<MemberDTO> GetMemberInfo(string account) 
         {
-            var dto = await _memberRepository.SearchByAccount(account);
+            var dto = await _repository.SearchByAccount(account);
             return dto ?? throw new MemberServiceException("Member doesn't exist!");
         }
     }

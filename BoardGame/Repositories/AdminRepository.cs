@@ -10,13 +10,20 @@ namespace BoardGame.Repositories
     public class AdminRepository : IRepository, IAdminRepository
     {
         private readonly AppDbContext _db;
+        private readonly IMongoClient _mongoClient;
 
         public AdminRepository(IMongoClient client)
         {
             _db = AppDbContext.Create(client.GetDatabase("BoardGameDB"));
+            _mongoClient = client;
         }
 
-        public void AddAdmin(AdminCreateDTO dto)
+        public IMongoClient GetMongoClient()
+        {
+            return _mongoClient;
+        }
+
+        public async void AddAdmin(AdminCreateDTO dto)
         {
             var admin = new Admin
             {
@@ -25,7 +32,7 @@ namespace BoardGame.Repositories
                 Salt = dto.Salt,
             };
             _db.Admins.Add(admin);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
         public bool CheckAccountExist(string account)

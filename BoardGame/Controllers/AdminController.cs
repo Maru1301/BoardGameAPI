@@ -25,11 +25,11 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddAdmin(AdminCreateVM createVM)
+        public IActionResult AddAdmin(AdminCreateVM createVM)
         {
             try
             {
-                string result = await _adminService.AddAdmin(createVM.ToDTO<AdminCreateDTO>());
+                string result = _adminService.AddAdmin(createVM.ToDTO<AdminCreateDTO>());
 
                 return Ok(result);
             }
