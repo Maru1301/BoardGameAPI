@@ -1,5 +1,6 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
+using BoardGame.Repositories;
 using BoardGame.Repositories.Interfaces;
 using BoardGame.Services.Interfaces;
 using Utilities;
@@ -8,26 +9,38 @@ namespace BoardGame.Services
 {
     public class AdminService : IService, IAdminService
     {
-        private IAdminRepository _adminRepository;
+        private IAdminRepository _repository;
         private readonly IConfiguration _configuration;
         public AdminService(IAdminRepository adminRepository, IConfiguration configuration)
         {
-            _adminRepository = adminRepository;
+            _repository = adminRepository;
             _configuration = configuration;
         }
-        public void AddAdmin(AdminCreateDTO dto)
+        public async Task<string> AddAdmin(AdminCreateDTO dto)
         {
-            if (_adminRepository.CheckAccountExist(dto.Account))
+            using var transaction = await _repository.GetContext().Database.BeginTransactionAsync();
+            try
             {
-                throw new AdminServiceException("Account already exists");
-            }
+                if (_repository.CheckAccountExist(dto.Account))
+                {
+                    throw new AdminServiceException("Account already exists");
+                }
 
-            _adminRepository.AddAdmin(dto);
+                _repository.AddAdmin(dto);
+
+                transaction.Commit();
+                return "Admin created successfully";
+            }
+            catch (Exception)
+            {
+                transaction.Rollback(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
         }
 
         public async Task<string> ValidateUser(LoginDTO dto)
         {
-            var admin = await _adminRepository.SearchByAccount(dto.Account);
+            var admin = await _repository.SearchByAccount(dto.Account);
             if (admin == null || !ValidatePassword(admin, dto.Password))
             {
                 return string.Empty;

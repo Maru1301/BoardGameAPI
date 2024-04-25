@@ -16,6 +16,11 @@ namespace BoardGame.Repositories
             _db = AppDbContext.Create(client.GetDatabase("BoardGameDB"));
         }
 
+        public DbContext GetContext()
+        {
+            return _db;
+        }
+
         public IEnumerable<MemberDTO> GetAll()
         {
             var members = _db.Members.ToList();

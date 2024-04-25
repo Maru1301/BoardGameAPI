@@ -14,11 +14,13 @@ namespace BoardGame.Services
     {
         private readonly IMemberRepository _memberRepository;
         private readonly IConfiguration _configuration;
+        private readonly IRepository _repository;
 
-        public MemberService(IMemberRepository repo, IConfiguration configuration)
+        public MemberService(IMemberRepository repo, IConfiguration configuration, IRepository repository)
         {
             _memberRepository = repo;
             _configuration = configuration;
+            _repository = repository;
         }
 
         /// <summary>
@@ -32,33 +34,44 @@ namespace BoardGame.Services
         ///    name, or email.</returns>
         public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
         {
-            if (_memberRepository.CheckAccountExist(dto.Account))
+            using var transaction = await _memberRepository.GetContext().Database.BeginTransactionAsync();
+            try
             {
-                throw new Exception("Account already exists");
+                if (_memberRepository.CheckAccountExist(dto.Account))
+                {
+                    throw new Exception("Account already exists");
+                }
+                if (_memberRepository.CheckNameExist(dto.Name))
+                {
+                    throw new Exception("Name already exists");
+                }
+                if (_memberRepository.CheckEmailExist(dto.Email))
+                {
+                    throw new Exception("Email already exists");
+                }
+
+                //create a new confirm code
+                dto.ConfirmCode = Guid.NewGuid().ToString("N");
+
+                _memberRepository.Register(dto);
+
+                MemberDTO entity = await _memberRepository.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
+
+                // Generate confirmation URL
+                string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={dto.ConfirmCode}";
+
+                // Send confirmation email
+                new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
+
+                transaction.Commit();
+
+                return "Registration successful! Confirmation email sent!";
             }
-            if (_memberRepository.CheckNameExist(dto.Name))
+            catch (Exception)
             {
-                throw new Exception("Name already exists");
+                transaction.Rollback(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
             }
-            if (_memberRepository.CheckEmailExist(dto.Email))
-            {
-                throw new Exception("Email already exists");
-            }
-
-            //create a new confirm code
-            dto.ConfirmCode = Guid.NewGuid().ToString("N");
-
-            _memberRepository.Register(dto);
-
-            MemberDTO entity = await _memberRepository.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
-
-            // Generate confirmation URL
-            string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={dto.ConfirmCode}";
-
-            // Send confirmation email
-            new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
-
-            return "Registration successful! Confirmation email sent!";
         }
 
         /// <summary>

@@ -1,9 +1,11 @@
 ﻿using BoardGame.Models.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace BoardGame.Repositories.Interfaces
 {
     public interface IMemberRepository
     {
+        public DbContext GetContext();
         public IEnumerable<MemberDTO> GetAll();
         public bool CheckAccountExist(string account);
         public bool CheckNameExist(string nickName);

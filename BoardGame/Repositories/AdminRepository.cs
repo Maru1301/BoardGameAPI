@@ -35,6 +35,11 @@ namespace BoardGame.Repositories
             return entity != null;
         }
 
+        public DbContext GetContext()
+        {
+            return _db;
+        }
+
         public async Task<AdminDTO?> SearchByAccount(string account)
         {
             var admin = await _db.Admins.FirstOrDefaultAsync(admin => admin.Account == account);
