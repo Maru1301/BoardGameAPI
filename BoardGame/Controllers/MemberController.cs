@@ -120,11 +120,11 @@ namespace BoardGame.Controllers
         }
 
         [HttpGet("[action]"), AllowAnonymous]
-        public IActionResult ActivateRegistration(string memberId, string confirmationCode)
+        public async Task<IActionResult> ActivateRegistration(string memberId, string confirmationCode)
         {
             try
             {
-                string Message = _memberService.ActivateRegistration(memberId, confirmationCode);
+                string Message = await _memberService.ActivateRegistration(memberId, confirmationCode);
 
                 return Ok(Message);
             }

@@ -10,17 +10,15 @@ namespace BoardGame.Repositories
     public class AdminRepository : IRepository, IAdminRepository
     {
         private readonly AppDbContext _db;
-        private readonly IMongoClient _mongoClient;
 
         public AdminRepository(IMongoClient client)
         {
             _db = AppDbContext.Create(client.GetDatabase("BoardGameDB"));
-            _mongoClient = client;
         }
 
-        public IMongoClient GetMongoClient()
+        public DbContext GetMongoClient()
         {
-            return _mongoClient;
+            return _db;
         }
 
         public async void AddAdmin(AdminCreateDTO dto)

@@ -3,6 +3,7 @@ using BoardGame.Infrastractures;
 using Utilities;
 using BoardGame.Services.Interfaces;
 using BoardGame.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BoardGame.Services
 {
@@ -28,7 +29,8 @@ namespace BoardGame.Services
         ///    name, or email.</returns>
         public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
         {
-            using var session = _repository.GetMongoClient().StartSession();
+            //var databaseFacade = _repository.GetContext().Database;
+            //using IDbContextTransaction transaction = await databaseFacade.BeginTransactionAsync();
             try
             {
                 if (_repository.CheckAccountExist(dto.Account))
@@ -57,12 +59,12 @@ namespace BoardGame.Services
                 // Send confirmation email
                 new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
 
-                session.CommitTransaction();
+                //transaction.Commit();
                 return "Registration successful! Confirmation email sent!";
             }
             catch (Exception)
             {
-                session.AbortTransaction(); // Roll back the transaction on error
+                //transaction.Rollback(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
             }
 }
@@ -75,9 +77,9 @@ namespace BoardGame.Services
         /// <param name="confirmCode">The confirmation code provided by the user.</param>
         /// <returns>"Activation Succeed" or "Wrong confirm code!" based on the verification.</returns>
         /// <exception cref="Exception">Thrown if the member is not found.</exception>
-        public string ActivateRegistration(string memberId, string confirmCode)
+        public async Task<string> ActivateRegistration(string memberId, string confirmCode)
         {
-            using var session = _repository.GetMongoClient().StartSession();
+            //using var transaction = await _repository.GetContext().Database.BeginTransactionAsync();
             try
             {
                 MemberDTO entity = _repository.SearchById(memberId) ?? throw new Exception("Member doesn't exist!");
@@ -85,12 +87,13 @@ namespace BoardGame.Services
                 if (string.Compare(entity.ConfirmCode, confirmCode) != 0) return "Wrong confirm code!";
 
                 _repository.ActivateRegistration(memberId);
-                session.CommitTransaction();
+
+                //transaction.Commit();
                 return "Activation successful";
             }
             catch (Exception)
             {
-                session.AbortTransaction(); // Roll back the transaction on error
+                //transaction.Rollback(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
             }
         }

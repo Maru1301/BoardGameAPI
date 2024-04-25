@@ -1,5 +1,6 @@
 using BoardGame.Filters;
 using BoardGame.Infrastractures;
+using BoardGame.Models.EFModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -77,11 +78,16 @@ namespace BoardGame
 
             services.AddControllers();
             RegisterScopedServices(services);
+
             services.AddSingleton<IMongoClient>(sp =>
             {
                 var connectionString = configuration.GetConnectionString("MONGODB_URI");
                 return new MongoClient(connectionString);
             });
+
+            var mongoDBSettings = configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>();
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseMongoDB(mongoDBSettings?.AtlasURI ?? "", mongoDBSettings?.DatabaseName ?? ""), ServiceLifetime.Scoped);
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>

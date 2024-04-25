@@ -1,12 +1,11 @@
 ﻿using BoardGame.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
 
 namespace BoardGame.Repositories.Interfaces
 {
     public interface IMemberRepository
     {
-        public IMongoClient GetMongoClient();
+        public DbContext GetContext();
         public IEnumerable<MemberDTO> GetAll();
         public bool CheckAccountExist(string account);
         public bool CheckNameExist(string nickName);

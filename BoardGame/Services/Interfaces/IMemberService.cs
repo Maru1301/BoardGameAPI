@@ -1,5 +1,4 @@
 ﻿using BoardGame.Models.DTOs;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BoardGame.Services.Interfaces
 {
@@ -11,7 +10,7 @@ namespace BoardGame.Services.Interfaces
 
         public Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate);
 
-        public string ActivateRegistration(string memberId, string confirmCode);
+        public Task<string> ActivateRegistration(string memberId, string confirmCode);
 
         public Task<string> ValidateUser(LoginDTO dto);
     }

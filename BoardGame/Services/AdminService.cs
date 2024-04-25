@@ -1,6 +1,5 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
-using BoardGame.Repositories;
 using BoardGame.Repositories.Interfaces;
 using BoardGame.Services.Interfaces;
 using Utilities;
@@ -16,12 +15,11 @@ namespace BoardGame.Services
             _repository = adminRepository;
             _configuration = configuration;
         }
-        public string AddAdmin(AdminCreateDTO dto)
+        public async Task<string> AddAdmin(AdminCreateDTO dto)
         {
-            using var session = _repository.GetMongoClient().StartSession();
+            //using var transaction = await _repository.GetContext().Database.BeginTransactionAsync();
             try
             {
-                session.StartTransaction();
                 if (_repository.CheckAccountExist(dto.Account))
                 {
                     throw new AdminServiceException("Account already exists");
@@ -29,12 +27,12 @@ namespace BoardGame.Services
 
                 _repository.AddAdmin(dto);
 
-                session.CommitTransaction();
+                //transaction.Commit();
                 return "Admin created successfully";
             }
             catch (Exception)
             {
-                session.AbortTransaction(); // Roll back the transaction on error
+                //transaction.Rollback(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
             }
         }

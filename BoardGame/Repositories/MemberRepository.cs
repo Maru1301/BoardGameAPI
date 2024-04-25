@@ -10,17 +10,15 @@ namespace BoardGame.Repositories
     public class MemberRepository : IRepository, IMemberRepository
     {
         private readonly AppDbContext _db;
-        private readonly IMongoClient _mongoClient;
 
         public MemberRepository(IMongoClient client)
         {
             _db = AppDbContext.Create(client.GetDatabase("BoardGameDB"));
-            _mongoClient = client;
         }
 
-        public IMongoClient GetMongoClient()
+        public DbContext GetContext()
         {
-            return _mongoClient;
+            return _db;
         }
 
         public IEnumerable<MemberDTO> GetAll()
