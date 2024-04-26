@@ -5,14 +5,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BoardGame.Filters
 {
-    public class AuthorizeCheckOperationFilter : IOperationFilter
+    public class AuthorizeCheckOperationFilter(EndpointDataSource endpointDataSource) : IOperationFilter
     {
-        private readonly EndpointDataSource _endpointDataSource;
+        private readonly EndpointDataSource _endpointDataSource = endpointDataSource;
 
-        public AuthorizeCheckOperationFilter(EndpointDataSource endpointDataSource)
-        {
-            _endpointDataSource = endpointDataSource;
-        }
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             //取得所有controller內的action
@@ -27,7 +23,7 @@ namespace BoardGame.Filters
                 return;
             //需要鎖頭則在swagger-UI中定義出來
             operation.Security = new List<OpenApiSecurityRequirement>
-      {
+            {
                 new()
                 {
                     [

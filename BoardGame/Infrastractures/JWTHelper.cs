@@ -29,7 +29,7 @@ namespace BoardGame.Infrastractures
             var jwtBuilder = JwtBuilder.Create()
                 .WithAlgorithm(new HMACSHA256Algorithm())
                 .WithSecret(signKey)
-                .AddClaim("roles", role)
+                .AddClaim("Roles", role)
                 .AddClaim("jti", Guid.NewGuid().ToString())
                 .AddClaim("iss", issuer)
                 .AddClaim("sub", userName)

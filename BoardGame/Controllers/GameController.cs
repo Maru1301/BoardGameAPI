@@ -13,8 +13,8 @@ namespace BoardGame.Controllers
     {
         private readonly IGameService _gameService = gameService;
 
-        [HttpGet("[action]")]
-        public NewGameInfoVM BeginNewGame(CharacterSet player, CharacterSet? bot = null)
+        [HttpPost("[action]")]
+        public NewGameInfoVM BeginNewGame([FromQuery] CharacterSet player, [FromQuery] CharacterSet? bot = null)
         {
             //determine who goes first
             var random = new Random().Next(1);

@@ -37,7 +37,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]"), Authorize("RequireMember")]
+        [HttpGet("[action]")]
         public IActionResult GetMemberInfo()
         {
             try

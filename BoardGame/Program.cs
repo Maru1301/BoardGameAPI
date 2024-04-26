@@ -68,12 +68,6 @@ namespace BoardGame
                   };
               });
 
-            services.AddAuthorizationBuilder()
-                .AddPolicy("RequireAdmin", policy =>
-                    policy.RequireRole(Roles.Admin))
-                .AddPolicy("RequireMember", policy =>
-                    policy.RequireRole(Roles.Member));
-
             services.AddControllers();
             RegisterScopedServices(services);
 
