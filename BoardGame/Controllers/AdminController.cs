@@ -6,23 +6,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BoardGame.Services;
 using System.Net;
+using BoardGame.Authorizations;
 
 namespace BoardGame.Controllers
 {
-    [Authorize]
+    [AuthorizeRoles(Roles.Admin)]
     [ApiController]
     [Route("api/[controller]")]
-    public class AdminController : ControllerBase
+    public class AdminController(IAdminService adminService, JWTHelper jwt) : ControllerBase
     {
-        private readonly IAdminService _adminService;
+        private readonly IAdminService _adminService = adminService;
 
-        private readonly JWTHelper _jwt;
-
-        public AdminController(IAdminService adminService, JWTHelper jwt)
-        {
-            _adminService = adminService;
-            _jwt = jwt;
-        }
+        private readonly JWTHelper _jwt = jwt;
 
         [HttpPost("[action]")]
         public async Task<IActionResult> AddAdmin(AdminCreateVM createVM)

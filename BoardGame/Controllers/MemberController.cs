@@ -1,4 +1,5 @@
-﻿using BoardGame.Infrastractures;
+﻿using BoardGame.Authorizations;
+using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
 using BoardGame.Services;
 using BoardGame.Services.Interfaces;
@@ -9,22 +10,16 @@ using static BoardGame.Models.ViewModels.MemberVMs;
 
 namespace BoardGame.Controllers
 {
-    [Authorize]
+    [AuthorizeRoles(Roles.Member, Roles.Guest)]
     [ApiController]
     [Route("api/[controller]")]
-    public class MemberController : ControllerBase
+    public class MemberController(IMemberService memberService, JWTHelper jwt) : ControllerBase
     {
-        private readonly IMemberService _memberService;
+        private readonly IMemberService _memberService = memberService;
 
-        private readonly JWTHelper _jwt;
+        private readonly JWTHelper _jwt = jwt;
 
-        public MemberController(IMemberService memberService, JWTHelper jwt)
-        {
-            _memberService = memberService;
-            _jwt = jwt;
-        }
-
-        [HttpGet("[action]"), Authorize("RequireAdmin")]
+        [HttpGet("[action]"), AuthorizeRoles(Roles.Admin)]
         public IActionResult ListMembers()
         {
             try
