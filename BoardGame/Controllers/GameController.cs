@@ -2,6 +2,7 @@
 using BoardGame.Infrastractures;
 using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using static BoardGame.Models.DTOs.GameDTOs;
 using static BoardGame.Models.ViewModels.GameVMs;
 
 namespace BoardGame.Controllers
@@ -14,15 +15,28 @@ namespace BoardGame.Controllers
         private readonly IGameService _gameService = gameService;
 
         [HttpPost("[action]")]
-        public NewGameInfoVM BeginNewGame([FromQuery] CharacterSet player, [FromQuery] CharacterSet? bot = null)
+        public IActionResult BeginNewGame(GameInfoVM gameInfo)
         {
-            //determine who goes first
-            var random = new Random().Next(1);
-            var whoGoesFirst = (WhoGoesFirst)random;
-            return new NewGameInfoVM()
+            try
             {
-                WhoGoesFirst = whoGoesFirst,
-            };
+                var user = HttpContext.User;
+
+                // Extract the user ID (or other relevant claim) from the JWT claim
+                string userAccount = user.Identity?.Name ?? string.Empty;
+
+                if (string.IsNullOrEmpty(userAccount)) return BadRequest("Invalid Account!");
+                gameInfo.Account = userAccount;
+                gameInfo.CreatedTime = DateTime.UtcNow;
+
+                _gameService.BeginNewGame(gameInfo.ToDTO<GameInfoDTO>());
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
         }
 
         [HttpGet("[action]")]

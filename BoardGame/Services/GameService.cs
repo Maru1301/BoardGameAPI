@@ -1,11 +1,35 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Services.Interfaces;
+using static BoardGame.Models.DTOs.GameDTOs;
 using static BoardGame.Models.ViewModels.GameVMs;
 
 namespace BoardGame.Services
 {
     public class GameService : IService, IGameService
     {
+        public void BeginNewGame(GameInfoDTO dto)
+        {
+            ValidateGameInfo(dto);
+            //determine who goes first
+            var random = new Random().Next(1);
+            var whoGoesFirst = (WhoGoesFirst)random;
+        }
+
+        private bool ValidateGameInfo(GameInfoDTO dto)
+        {
+            var characterNames = new HashSet<Character>
+            {
+                dto.Player.Character1,
+                dto.Player.Character2,
+                dto.Player.Characetr3,
+                dto.Bot.Character1,
+                dto.Bot.Character2,
+                dto.Bot.Characetr3
+            };
+
+            return characterNames.Count == 6;
+        }
+
         public Func<PlayerInfoVM, PlayerInfoVM, Result> MapRule(Character character)
             => character switch
             {
