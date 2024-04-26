@@ -1,103 +1,49 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BoardGame.Authorizations;
+using BoardGame.Infrastractures;
+using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using static BoardGame.Models.ViewModels.GameVMs;
 
 namespace BoardGame.Controllers
 {
-    [Authorize]
+    [AuthorizeRoles(Roles.Member)]
     [ApiController]
     [Route("api/[controller]")]
-    public class GameController : ControllerBase
+    public class GameController(IGameService gameService) : ControllerBase
     {
+        private readonly IGameService _gameService = gameService;
+
         [HttpGet("[action]")]
-        public NewGameInfo BeginNewGame(CharacterSet player, CharacterSet? computer = null)
+        public NewGameInfoVM BeginNewGame(CharacterSet player, CharacterSet? bot = null)
         {
             //determine who goes first
             var random = new Random().Next(1);
             var whoGoesFirst = (WhoGoesFirst)random;
-            return new NewGameInfo()
+            return new NewGameInfoVM()
             {
                 WhoGoesFirst = whoGoesFirst,
             };
         }
 
-        private static Func<Card, Card, Result> MapRule(Character character) 
-            => character switch
-            {
-                Character.Assassin => Rule.AssassinRule,
-                Character.Deceiver => () => Result.BasicLose,
-                Character.Knight => () => Result.CharacterRuleWin,
-                Character.Lobbyist => () => Result.CharacterRuleLose,
-                Character.Lord => () => Result.Draw,
-                Character.Soldier => () => Result.Draw,
-                _ => () => Result.Draw,
-            };
-    }
-    public enum Result : short
-    {
-        BasicWin = 1,
-        BasicLose = -1,
-        CharacterRuleWin = 2,
-        CharacterRuleLose = -2,
-        Draw = 0
-    }
-
-    public enum WhoGoesFirst
-    {
-        Player,
-        Computer
-    }
-    public class NewGameInfo
-    {
-        public WhoGoesFirst WhoGoesFirst { get; set; }
-        public string Message { get; set; } = string.Empty;
-    }
-
-    public static class Rule
-    {
-        public static Result AssassinRule(Card player1Card, Card player2Card)
+        [HttpGet("[action]")]
+        public IActionResult BeginNewRound(Character playerChosenCharacter)
         {
-            switch ((player1Card, player2Card))
-            {
-                case (Card.Sheild, Card.Sheild):
-                    return Result.Draw;
-                case (Card.Sheild, Card.Crown):
-                    return Result.BasicWin;
-                case (Card.Sheild, Card.Dagger):
-                    return Result.BasicLose;
-                case (Card.Crown, Card.Sheild):
-                    return Result.BasicLose;
-                case (Card.Crown, Card.Crown):
-                    return Result.Draw;
-                case (Card.Crown, Card.Dagger):
-                    return Result.BasicWin;
-                case (Card.Dagger, Card.Sheild):
-                    return Result.BasicWin;
-                case (Card.Dagger, Card.Crown):
-                    return Result.BasicLose;
-                case (Card.Dagger, Card.Dagger):
-                    if (player1Info.Cards[2] > player2Info.Cards[2] && player1Info.Cards[2] > 2)
-                    {
-                        return Result.CharacterRuleWin;
-                    }
-                    else if (player1Info.Cards[2] < player2Info.Cards[2] && player2Info.Cards[2] > 2)
-                    {
-                        return Result.CharacterRuleLose;
-                    }
+            var rule = _gameService.MapRule(playerChosenCharacter);
 
-                    return Result.Draw;
-            }
-
-            return Result.Draw;
+            return Ok();
         }
-    }
-    public enum Character
-    {
-        Assassin,
-        Deceiver,
-        Knight,
-        Lobbyist,
-        Lord,
-        Soldier
+
+        [HttpGet("[action]")]
+        public IActionResult OpenNextCard()
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult EndRound(Character playerChosenCharacter)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class CharacterSet
@@ -107,21 +53,5 @@ namespace BoardGame.Controllers
         public Character Character2 { get; set; }
 
         public Character Characetr3 { get; set; }
-    }
-
-    public enum Card
-    {
-        Sheild,
-        Crown,
-        Dagger
-    }
-
-    public class CardSet
-    {
-        public Card Shield { get; set; }
-
-        public Card Crown { get; set; }
-
-        public Card Dagger { get; set; }
     }
 }
