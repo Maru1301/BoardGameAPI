@@ -23,13 +23,7 @@ namespace BoardGame.Repositories
 
         public async void AddAdmin(AdminCreateDTO dto)
         {
-            var admin = new Admin
-            {
-                Account = dto.Account,
-                EncryptedPassword = dto.EncryptedPassword,
-                Salt = dto.Salt,
-            };
-            _db.Admins.Add(admin);
+            _db.Admins.Add(dto.ToEntity<Admin>());
             await _db.SaveChangesAsync();
         }
 

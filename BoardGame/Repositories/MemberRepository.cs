@@ -51,17 +51,7 @@ namespace BoardGame.Repositories
 
         public void Register(RegisterDTO dto)
         {
-            var member = new Member
-            {
-                Account = dto.Account,
-                EncryptedPassword = dto.EncryptedPassword,
-                Name = dto.Name,
-                Email = dto.Email,
-                IsConfirmed = false, //default is Unconfirmed
-                Salt = dto.Salt, //default is Unactive
-                ConfirmCode = dto.ConfirmCode
-            };
-            _db.Members.Add(member);
+            _db.Members.Add(dto.ToEntity<Member>());
             _db.SaveChanges();
         }
 

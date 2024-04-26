@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BoardGame.Models.DTOs;
 
 namespace BoardGame.Infrastractures
 {
@@ -16,15 +15,26 @@ namespace BoardGame.Infrastractures
             return dto;
         }
 
-        public static T ToVM<T>(this object entity) where T : new()
+        public static T ToVM<T>(this object dto) where T : new()
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap(entity.GetType(), typeof(T));
+                cfg.CreateMap(dto.GetType(), typeof(T));
             });
             IMapper mapper = config.CreateMapper();
-            var dto = mapper.Map<T>(entity);
-            return dto;
+            var vm = mapper.Map<T>(dto);
+            return vm;
+        }
+
+        public static T ToEntity<T>(this object dto) where T : new()
+        {
+            var config = new MapperConfiguration(cfg =>
+            { 
+                cfg.CreateMap(dto.GetType(), typeof(T)); 
+            });
+            IMapper mapper = config.CreateMapper();
+            var entity = mapper.Map<T>(dto);
+            return entity;
         }
     }
 }
