@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 
 namespace BoardGame
@@ -55,10 +56,10 @@ namespace BoardGame
                   options.TokenValidationParameters = new TokenValidationParameters
                   {
                       // Allow [Authorize] to determine roles
-                      RoleClaimType = "roles",
+                      RoleClaimType = ClaimTypes.Role,
                       // Validate the issuer by default
-                      ValidateIssuer = true,
-                      ValidIssuer = configuration.GetValue<string>("JwtSettings:ValidIssuer"),
+                      ValidateIssuer = false,
+                      //ValidIssuer = configuration.GetValue<string>("JwtSettings:ValidIssuer"),
                       // Do not validate the audience
                       ValidateAudience = false,
                       // Validate only if the token contains a key, usually only the signature

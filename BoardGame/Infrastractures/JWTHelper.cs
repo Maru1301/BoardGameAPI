@@ -1,6 +1,8 @@
 ﻿using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace BoardGame.Infrastractures
@@ -24,21 +26,25 @@ namespace BoardGame.Infrastractures
             return token;
         }
 
-        private static string BuildToken(string account, string role, int expireMinutes, string issuer, string signKey)
+        private static string BuildToken(string account, string role, int expireMinutes, string issuer, string secret)
         {
-            var jwtBuilder = JwtBuilder.Create()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(signKey)
-                .AddClaim("Roles", role)
-                .AddClaim("jti", Guid.NewGuid().ToString())
-                .AddClaim("iss", issuer)
-                .AddClaim("sub", account)
-                .AddClaim("exp", GetExpirationTime(expireMinutes))
-                .AddClaim("nbf", GetCurrentTime())
-                .AddClaim("iat", GetCurrentTime())
-                .AddClaim(ClaimTypes.Name, account);
+            List<Claim> claims =
+            [
+                new Claim(ClaimTypes.Name, account),
+                new Claim(ClaimTypes.Role, role),
+            ];
 
-            return jwtBuilder.Encode();
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret));
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var token = new JwtSecurityToken
+            (
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: cred
+            );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwt;
         }
 
         private static long GetExpirationTime(int expireMinutes)
