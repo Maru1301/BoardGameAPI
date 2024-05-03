@@ -138,5 +138,135 @@ namespace BoardGameTest
                 Assert.Equal("Invalid card combination", exception.Message);
             }
         }
+
+        public class DeceiverRuleTests
+        {
+            public static IEnumerable<object[]> RuleData()
+            {
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 1} },
+                    new List<Card>() { Card.Crown, Card.Crown },
+                    Result.Player1CharacterRuleWin
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 1 } , new() { Sheild = 2} },
+                    new List<Card>() { Card.Crown, Card.Crown },
+                    Result.Player2CharacterRuleWin
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 2} },
+                    new List<Card>() { Card.Crown, Card.Crown },
+                    Result.Draw
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new(), new() },
+                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    Result.Draw
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() , new() },
+                    new List<Card>() { Card.Crown, Card.Sheild },
+                    Result.Player1Win
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() , new() },
+                    new List<Card>() { Card.Sheild, Card.Dagger },
+                    Result.Player1Win
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() , new() },
+                    new List<Card>() { Card.Dagger, Card.Crown },
+                    Result.Player1Win
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() , new() },
+                    new List<Card>() { Card.Crown, Card.Dagger },
+                    Result.Player2Win
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() , new() },
+                    new List<Card>() { Card.Sheild, Card.Crown },
+                    Result.Player2Win
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() , new() },
+                    new List<Card>() { Card.Dagger, Card.Sheild },
+                    Result.Player2Win
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 1 } , new() { Sheild = 2 } },
+                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    Result.Player1CharacterRuleWin
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 1 } },
+                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    Result.Player2CharacterRuleWin
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 2 } },
+                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    Result.Draw
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 1 } , new() { Sheild = 2 } },
+                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    Result.Player1CharacterRuleWin
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 1 } },
+                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    Result.Player2CharacterRuleWin
+                };
+                yield return new object[]
+                {
+                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 2 } },
+                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    Result.Draw
+                };
+            }
+
+            [Theory]
+            [MemberData(nameof(RuleData))]
+            public void TesRule(List<CardSet> cardSets, List<Card> currentChosen, Result expected)
+            {
+                // Arrange
+                var player1Info = new PlayerInfoVM(cardSets[0], currentChosen[0]);
+                var player2Info = new PlayerInfoVM(cardSets[1], currentChosen[1]);
+
+                // Act
+                var result = Rule.DeceiverRule(player1Info, player2Info);
+
+                // Assert
+                Assert.Equal(result, expected);
+            }
+
+            [Fact]
+            public void TestInvalidCardCombination()
+            {
+                // Arrange
+                var player1Info = new PlayerInfoVM(new CardSet(), (Card)100);
+                var player2Info = new PlayerInfoVM(new CardSet(), (Card)200);
+
+                // Act and Assert
+                var exception = Assert.Throws<Exception>(() => Rule.DeceiverRule(player1Info, player2Info));
+                Assert.Equal("Invalid card combination", exception.Message);
+            }
+        }
     }
 }
