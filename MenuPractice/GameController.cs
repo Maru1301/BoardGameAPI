@@ -9,8 +9,8 @@ namespace Menu_Practice
         private readonly Player _npc = new();
         private bool _playerGoFirst;
         private int _roundCount;
-        private int _endGame = 5;
-        private Func<PlayerInfoContainer, PlayerInfoContainer, Result> _useRule;
+        private readonly int _endGame = 5;
+        private Func<PlayerInfoContainer, PlayerInfoContainer, Result>? _useRule;
 
         public GameController(Character character, Character opponent)
         {
@@ -71,7 +71,7 @@ namespace Menu_Practice
 
         public Result JudgeRound(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
         {
-            Result result = _useRule(playerInfo, ncpInfo);
+            Result result = _useRule!(playerInfo, ncpInfo);
 
             return result;
         }
@@ -139,8 +139,8 @@ namespace Menu_Practice
 
         public string GetOutcome()
         {
-            int playerPoint = _player.Character.PointLogic();
-            int npcPoint = _npc.Character.PointLogic();
+            int playerPoint = /*_player.Character.PointLogic()*/0;
+            int npcPoint = /*_npc.Character.PointLogic()*/0;
 
             if(playerPoint == npcPoint)
             {

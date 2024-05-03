@@ -23,21 +23,22 @@ namespace Menu_Practice.Characters
         
         public string AdditionalPointCondition { get => _additionalPointCondition; set => _additionalPointCondition = value; }
 
-        public Func<PlayerInfoContainer, PlayerInfoContainer, Result> UseRuleLogic { get; set; }
+        public Func<PlayerInfoContainer, PlayerInfoContainer, Result>? UseRuleLogic { get; set; }
 
         public Character()
         {
+            
         }
 
         public Character(Character character)
         {
-            this._name = character.Name;
-            this._rule = character.Rule;
-            this._cards = new(character.Cards);
-            this._disqualificationCondition = character.DisqualificationCondition;
-            this._evolutionCondition = character.EvolutionCondition;
-            this.AdditionalPointCondition = character.AdditionalPointCondition;
-            this.UseRuleLogic = character.UseRuleLogic;
+            _name = character.Name;
+            _rule = character.Rule;
+            _cards = new(character.Cards);
+            _disqualificationCondition = character.DisqualificationCondition;
+            _evolutionCondition = character.EvolutionCondition;
+            AdditionalPointCondition = character.AdditionalPointCondition;
+            UseRuleLogic = character.UseRuleLogic;
         }
     }
 }
