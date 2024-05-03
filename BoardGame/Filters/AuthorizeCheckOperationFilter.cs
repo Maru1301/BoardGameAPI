@@ -22,8 +22,8 @@ namespace BoardGame.Filters
             if (!Authorize || AllowAnonymous)
                 return;
             //需要鎖頭則在swagger-UI中定義出來
-            operation.Security = new List<OpenApiSecurityRequirement>
-            {
+            operation.Security =
+            [
                 new()
                 {
                     [
@@ -32,9 +32,9 @@ namespace BoardGame.Filters
                                 Type = ReferenceType.SecurityScheme,
                                 Id = "Bearer"}
                         }
-                    ] = new List<string>()
+                    ] = []
                 }
-            };
+            ];
         }
     }
 }
