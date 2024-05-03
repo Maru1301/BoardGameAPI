@@ -20,17 +20,20 @@ namespace BoardGame.Services
 
         public async Task BeginTransactionAsync()
         {
+            // todo: MongoDb does not support Transaction yet
             //await _dbContext.Database.BeginTransactionAsync();
         }
 
         public async Task CommitTransactionAsync()
         {
             await _dbContext.SaveChangesAsync();
+            // todo: MongoDb does not support Transaction yet
             //await _dbContext.Database.CommitTransactionAsync();
         }
 
         public async Task RollbackTransactionAsync()
         {
+            // todo: MongoDb does not support Transaction yet
             //await _dbContext.Database.RollbackTransactionAsync();
         }
 
