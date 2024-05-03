@@ -11,9 +11,9 @@ namespace BoardGame.Repositories
     {
         private readonly AppDbContext _db = dbContext;
 
-        public IEnumerable<MemberDTO> GetAll()
+        public async Task<IEnumerable<MemberDTO>> GetAll()
         {
-            var members = _db.Members.ToList();
+            var members = await _db.Members.ToListAsync();
 
             return members.Select(m => m.ToDTO<MemberDTO>());
         }
