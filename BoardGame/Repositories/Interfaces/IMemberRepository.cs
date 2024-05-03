@@ -11,6 +11,5 @@ namespace BoardGame.Repositories.Interfaces
         public Task<MemberDTO?> SearchByEmail(string email);
         public Task Register(RegisterDTO dto);
         public Task ActivateRegistration(string memberId);
-        
     }
 }
