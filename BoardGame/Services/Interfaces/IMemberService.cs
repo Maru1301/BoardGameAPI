@@ -4,7 +4,7 @@ namespace BoardGame.Services.Interfaces
 {
     public interface IMemberService
     {
-        public IEnumerable<MemberDTO> ListMembers();
+        public Task<IEnumerable<MemberDTO>> ListMembers();
 
         public Task<MemberDTO> GetMemberInfo(string account);
 
