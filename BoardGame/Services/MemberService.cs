@@ -11,38 +11,31 @@ namespace BoardGame.Services
         private readonly IConfiguration _configuration = configuration;
 
         /// <summary>
-        /// Registers a new user based on the provided MemberRegisterDTO details.
+        /// Register a new user based on the provided information in the `RegisterDTO` object.
+        /// Throws specific exceptions for duplicate account, name, or email.
+        /// On successful registration, a confirmation email is sent with a generated confirmation URL
+        /// for account verification.
         /// </summary>
-        /// <param name="dto">The MemberRegisterDTO object containing user registration information.</param>
-        /// <param name="confirmationUrlTemplate">The template for generating the confirmation URL.</param>
-        /// <returns>A tuple indicating success (bool) and a message (string). 
-        ///  - True with "Registration successful! Confirmation email sent!" if successful. 
-        ///  - False with an error message if registration fails due to duplicate account, 
-        ///    name, or email.</returns>
+        /// <param name="dto">The `RegisterDTO` object containing user registration information.</param>
+        /// <param name="confirmationUrlTemplate">The template string used to generate the confirmation URL.</param>
+        /// <returns>A message indicating successful registration.</returns>
+        /// <exception cref="MemberServiceException">Thrown if error occured in MemberService.</exception>
+        /// <exception cref="Exception">Thrown for any other unexpected errors during registration.</exception>
         public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (CheckAccountExist(dto.Account))
-                {
-                    throw new Exception("Account already exists");
-                }
-                if (CheckNameExist(dto.Name))
-                {
-                    throw new Exception("Name already exists");
-                }
-                if (CheckEmailExist(dto.Email))
-                {
-                    throw new Exception("Email already exists");
-                }
+                if (CheckAccountExist(dto.Account)) throw new MemberServiceException("Account already exists");
+                if (CheckNameExist(dto.Name)) throw new MemberServiceException("Name already exists");
+                if (CheckEmailExist(dto.Email)) throw new MemberServiceException("Email already exists");
 
                 //create a new confirm code
                 dto.ConfirmCode = Guid.NewGuid().ToString("N");
 
-                _unitOfWork.Members.Register(dto);
+                await _unitOfWork.Members.Register(dto);
 
-                MemberDTO entity = await _unitOfWork.Members.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
+                MemberDTO entity = await _unitOfWork.Members.SearchByAccount(dto.Account) ?? throw new MemberServiceException("Member doesn't exist!");
 
                 // Generate confirmation URL
                 string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={dto.ConfirmCode}";
@@ -53,34 +46,47 @@ namespace BoardGame.Services
                 await _unitOfWork.CommitTransactionAsync();
                 return "Registration successful! Confirmation email sent!";
             }
+            catch (MemberAccessException)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
             catch (Exception)
             {
                 await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
             }
-}
+        }
 
         /// <summary>
         /// Activates a member's registration by verifying their ID and confirmation code.
-        /// Throws an exception if the member is not found or the code is wrong.
+        /// Throws specific exceptions for member not found, invalid confirmation code, or other unexpected errors.
         /// </summary>
         /// <param name="memberId">The ID of the member to activate.</param>
         /// <param name="confirmCode">The confirmation code provided by the user.</param>
-        /// <returns>"Activation Succeed" or "Wrong confirm code!" based on the verification.</returns>
-        /// <exception cref="Exception">Thrown if the member is not found.</exception>
+        /// <returns>A message indicating successful activation.</returns>
+        /// <exception cref="MemberServiceException">Thrown if error occured in MemberService.</exception>
+        /// <exception cref="Exception">Thrown for any other unexpected errors during activation.</exception>
         public async Task<string> ActivateRegistration(string memberId, string confirmCode)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                MemberDTO entity = await _unitOfWork.Members.SearchById(memberId) ?? throw new Exception("Member doesn't exist!");
+                // Find the member by ID, Throw an exception if member not found
+                MemberDTO entity = await _unitOfWork.Members.SearchById(memberId) ?? throw new MemberServiceException("Member doesn't exist!");
 
-                if (string.Compare(entity.ConfirmCode, confirmCode) != 0) return "Wrong confirm code!";
+                // Validate the confirmation code
+                if (string.Compare(entity.ConfirmCode, confirmCode) != 0) throw new MemberServiceException("Wrong confirm code!");
 
-                _unitOfWork.Members.ActivateRegistration(memberId);
+                await _unitOfWork.Members.ActivateRegistration(memberId);
 
                 await _unitOfWork.CommitTransactionAsync();
                 return "Activation successful";
+            }
+            catch (MemberAccessException)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
             }
             catch (Exception)
             {
@@ -97,7 +103,7 @@ namespace BoardGame.Services
                 return string.Empty;
             }
 
-            return member.IsConfirmed ? Roles.Member : Roles.Guest;
+            return member.IsConfirmed ? Role.Member : Role.Guest;
         }
 
         private static bool ValidatePassword(MemberDTO member, string password)
@@ -105,9 +111,9 @@ namespace BoardGame.Services
             return HashUtility.ToSHA256(password, member.Salt) == member.EncryptedPassword;
         }
 
-        public  IEnumerable<MemberDTO> ListMembers()
+        public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
-            return _unitOfWork.Members.GetAll();
+            return await _unitOfWork.Members.GetAll();
         }
         public async Task<MemberDTO> GetMemberInfo(string account) 
         {
