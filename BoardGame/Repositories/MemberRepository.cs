@@ -18,18 +18,15 @@ namespace BoardGame.Repositories
             return members.Select(m => m.ToDTO<MemberDTO>());
         }
 
-        public void Register(RegisterDTO dto)
+        public async Task Register(RegisterDTO dto)
         {
-            _db.Members.Add(dto.ToEntity<Member>());
-            _db.SaveChanges();
+            await _db.Members.AddAsync(dto.ToEntity<Member>());
         }
 
-        public void ActivateRegistration(string memberId)
+        public async Task ActivateRegistration(string memberId)
         {
-            var member = _db.Members.First(member => member.Id.ToString() == memberId);
+            var member = await _db.Members.FirstAsync(member => member.Id.ToString() == memberId);
             member.IsConfirmed = true;
-
-            _db.SaveChanges();
         }
 
         public async Task<MemberDTO?> SearchByAccount(string account)

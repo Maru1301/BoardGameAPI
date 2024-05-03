@@ -13,8 +13,7 @@ namespace BoardGame.Repositories
 
         public async Task AddAdminAsync(AdminCreateDTO dto)
         {
-            _db.Admins.Add(dto.ToEntity<Admin>());
-            await _db.SaveChangesAsync();
+            await _db.Admins.AddAsync(dto.ToEntity<Admin>());
         }
 
         public bool CheckAccountExist(string account)

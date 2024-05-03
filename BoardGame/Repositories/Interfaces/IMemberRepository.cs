@@ -9,8 +9,8 @@ namespace BoardGame.Repositories.Interfaces
         public Task<MemberDTO?> SearchById(string id);
         public Task<MemberDTO?> SearchByName(string name);
         public Task<MemberDTO?> SearchByEmail(string email);
-        public void Register(RegisterDTO dto);
-        public void ActivateRegistration(string memberId);
+        public Task Register(RegisterDTO dto);
+        public Task ActivateRegistration(string memberId);
         
     }
 }
