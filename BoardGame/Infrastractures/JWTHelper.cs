@@ -1,6 +1,4 @@
-﻿using JWT.Algorithms;
-using JWT.Builder;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -46,17 +44,6 @@ namespace BoardGame.Infrastractures
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;
         }
-
-        private static long GetExpirationTime(int expireMinutes)
-        {
-            return DateTimeOffset.UtcNow.AddMinutes(expireMinutes).ToUnixTimeSeconds();
-        }
-
-        private static long GetCurrentTime()
-        {
-            return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        }
-
     }
 
     public class JwtSettingsOptions
