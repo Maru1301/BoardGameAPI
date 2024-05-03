@@ -10,7 +10,7 @@ using static BoardGame.Models.ViewModels.MemberVMs;
 
 namespace BoardGame.Controllers
 {
-    [AuthorizeRoles(Roles.Member, Roles.Guest, Roles.Admin)]
+    [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
     [Route("api/[controller]")]
     public class MemberController(IMemberService memberService, JWTHelper jwt) : ControllerBase
@@ -19,12 +19,12 @@ namespace BoardGame.Controllers
 
         private readonly JWTHelper _jwt = jwt;
 
-        [HttpGet("[action]"), AuthorizeRoles(Roles.Admin)]
-        public IActionResult ListMembers()
+        [HttpGet("[action]"), AuthorizeRoles(Role.Admin)]
+        public async Task<IActionResult> ListMembers()
         {
             try
             {
-                var members = _memberService.ListMembers();
+                var members = await _memberService.ListMembers();
                 return Ok(members.Select(m => m.ToVM<MemberVM>()).ToList());
             }
             catch (MemberServiceException ex)
