@@ -17,6 +17,11 @@ namespace BoardGame.Models.ViewModels
             public DateTime CreatedTime { get; set; }
 
         }
+
+        public class RoundInfoVM
+        {
+
+        }
         public class NewGameInfoVM
         {
             public WhoGoesFirst WhoGoesFirst { get; set; }

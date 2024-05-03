@@ -6,23 +6,23 @@ using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace BoardGame.Models.EFModels
 {
-    public class AppDbContext : IdentityDbContext<IdentityUser>
+    public class AppDbContext(DbContextOptions options) : IdentityDbContext<IdentityUser>(options)
     {
         public DbSet<Member> Members { get; init; }
         public DbSet<Admin> Admins { get; init; }
+        public DbSet<Game> Games { get; init; }
+
         public static AppDbContext Create(IMongoDatabase database) =>
         new(new DbContextOptionsBuilder<AppDbContext>()
             .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
             .Options);
-        public AppDbContext(DbContextOptions options)
-            : base(options)
-        {
-        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Member>().ToCollection("members");
             modelBuilder.Entity<Admin>().ToCollection("admins");
+            modelBuilder.Entity<Game>().ToCollection("games");
         }
     }
 

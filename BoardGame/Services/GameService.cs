@@ -19,12 +19,12 @@ namespace BoardGame.Services
         {
             var characterNames = new HashSet<Character>
             {
-                dto.Player.Character1,
-                dto.Player.Character2,
-                dto.Player.Characetr3,
-                dto.Bot.Character1,
-                dto.Bot.Character2,
-                dto.Bot.Characetr3
+                dto.Player1Characters.Character1,
+                dto.Player1Characters.Character2,
+                dto.Player1Characters.Characetr3,
+                dto.Player2Characters.Character1,
+                dto.Player2Characters.Character2,
+                dto.Player2Characters.Characetr3
             };
 
             return characterNames.Count == 6;
@@ -49,10 +49,10 @@ namespace BoardGame.Services
                 return (player1Info.CurrentChosenCard, player2Info.CurrentChosenCard) switch
                 {
                     (Card.Crown, Card.Crown) or (Card.Sheild, Card.Sheild) => Result.Draw,
-                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.BasicWin,
-                    (Card.Crown, Card.Dagger) or (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.BasicLose,
-                    (Card.Dagger, Card.Dagger) => player1Info.CardSet.Dagger > player2Info.CardSet.Dagger && player1Info.CardSet.Dagger > 2 ? Result.CharacterRuleWin :
-                                            player1Info.CardSet.Dagger < player2Info.CardSet.Dagger && player2Info.CardSet.Dagger > 2 ? Result.CharacterRuleLose : Result.Draw,
+                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.Player1Win,
+                    (Card.Crown, Card.Dagger) or (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.Player2Win,
+                    (Card.Dagger, Card.Dagger) => player1Info.CardSet.Dagger > player2Info.CardSet.Dagger && player1Info.CardSet.Dagger > 2 ? Result.Player1CharacterRuleWin :
+                                            player1Info.CardSet.Dagger < player2Info.CardSet.Dagger && player2Info.CardSet.Dagger > 2 ? Result.Player2CharacterRuleWin : Result.Draw,
                     _ => throw new Exception("Invalid card combination"),
                 };
             }
@@ -61,12 +61,12 @@ namespace BoardGame.Services
             {
                 return (player1Info.CurrentChosenCard, player2Info.CurrentChosenCard) switch
                 {
-                    (Card.Crown, Card.Crown) => player1Info.CardSet.Sheild > player2Info.CardSet.Sheild ? Result.CharacterRuleWin :
-                                            player1Info.CardSet.Sheild < player2Info.CardSet.Sheild ? Result.CharacterRuleLose : Result.Draw,
-                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.BasicWin,
-                    (Card.Crown, Card.Dagger) or (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.BasicLose,
-                    (Card.Sheild, Card.Sheild) or (Card.Dagger, Card.Dagger) => player1Info.CardSet.Sheild < player2Info.CardSet.Sheild ? Result.CharacterRuleWin :
-                                            player1Info.CardSet.Sheild > player2Info.CardSet.Sheild ? Result.CharacterRuleLose : Result.Draw,
+                    (Card.Crown, Card.Crown) => player1Info.CardSet.Sheild > player2Info.CardSet.Sheild ? Result.Player1CharacterRuleWin :
+                                            player1Info.CardSet.Sheild < player2Info.CardSet.Sheild ? Result.Player2CharacterRuleWin : Result.Draw,
+                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.Player1Win,
+                    (Card.Crown, Card.Dagger) or (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.Player2Win,
+                    (Card.Sheild, Card.Sheild) or (Card.Dagger, Card.Dagger) => player1Info.CardSet.Sheild < player2Info.CardSet.Sheild ? Result.Player1CharacterRuleWin :
+                                            player1Info.CardSet.Sheild > player2Info.CardSet.Sheild ? Result.Player2CharacterRuleWin : Result.Draw,
                     _ => throw new Exception("Invalid card combination"),
                 };
             }
@@ -75,16 +75,16 @@ namespace BoardGame.Services
             {
                 return (player1Info.CurrentChosenCard, player2Info.CurrentChosenCard) switch
                 {
-                    (Card.Crown, Card.Crown) => player1Info.CardSet.Dagger < player2Info.CardSet.Dagger ? Result.CharacterRuleWin :
-                                            player1Info.CardSet.Dagger > player2Info.CardSet.Dagger ? Result.CharacterRuleLose : Result.Draw,
-                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) => Result.BasicWin,
-                    (Card.Crown, Card.Dagger) => player1Info.CardSet.Dagger > player2Info.CardSet.Dagger ? Result.Draw : Result.BasicLose,
-                    (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.BasicLose,
-                    (Card.Sheild, Card.Sheild) => player1Info.CardSet.Dagger < player2Info.CardSet.Dagger ? Result.CharacterRuleWin :
-                                            player1Info.CardSet.Dagger == player2Info.CardSet.Dagger ? Result.Draw : Result.CharacterRuleLose,
-                    (Card.Dagger, Card.Crown) => player1Info.CardSet.Dagger < player2Info.CardSet.Dagger ? Result.Draw : Result.BasicWin,
-                    (Card.Dagger, Card.Dagger) => player1Info.CardSet.Dagger > player2Info.CardSet.Dagger ? Result.CharacterRuleWin :
-                                            player1Info.CardSet.Dagger < player2Info.CardSet.Dagger ? Result.CharacterRuleLose : Result.Draw,
+                    (Card.Crown, Card.Crown) => player1Info.CardSet.Dagger < player2Info.CardSet.Dagger ? Result.Player1CharacterRuleWin :
+                                            player1Info.CardSet.Dagger > player2Info.CardSet.Dagger ? Result.Player2CharacterRuleWin : Result.Draw,
+                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) => Result.Player1Win,
+                    (Card.Crown, Card.Dagger) => player1Info.CardSet.Dagger > player2Info.CardSet.Dagger ? Result.Draw : Result.Player2Win,
+                    (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.Player2Win,
+                    (Card.Sheild, Card.Sheild) => player1Info.CardSet.Dagger < player2Info.CardSet.Dagger ? Result.Player1CharacterRuleWin :
+                                            player1Info.CardSet.Dagger == player2Info.CardSet.Dagger ? Result.Draw : Result.Player2CharacterRuleWin,
+                    (Card.Dagger, Card.Crown) => player1Info.CardSet.Dagger < player2Info.CardSet.Dagger ? Result.Draw : Result.Player1Win,
+                    (Card.Dagger, Card.Dagger) => player1Info.CardSet.Dagger > player2Info.CardSet.Dagger ? Result.Player1CharacterRuleWin :
+                                            player1Info.CardSet.Dagger < player2Info.CardSet.Dagger ? Result.Player2CharacterRuleWin : Result.Draw,
                     _ => throw new Exception("Invalid card combination"),
                 };
             }
@@ -93,12 +93,12 @@ namespace BoardGame.Services
             {
                 return (player1Info.CurrentChosenCard, player2Info.CurrentChosenCard) switch
                 {
-                    (Card.Crown, Card.Crown) => (player1Info.CardSet.Crown > 2 && player1Info.CardSet.Crown > player2Info.CardSet.Crown) ? Result.CharacterRuleWin :
-                                            (player2Info.CardSet.Crown > 2 && player2Info.CardSet.Crown > player1Info.CardSet.Crown) ? Result.CharacterRuleLose : Result.Draw,
-                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.BasicWin,
-                    (Card.Crown, Card.Dagger) or (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.BasicLose,
-                    (Card.Sheild, Card.Sheild) => (player1Info.CardSet.Crown > player2Info.CardSet.Crown) ? Result.CharacterRuleWin :
-                                        (player1Info.CardSet.Crown == player2Info.CardSet.Crown) ? Result.Draw : Result.CharacterRuleLose,
+                    (Card.Crown, Card.Crown) => (player1Info.CardSet.Crown > 2 && player1Info.CardSet.Crown > player2Info.CardSet.Crown) ? Result.Player1CharacterRuleWin :
+                                            (player2Info.CardSet.Crown > 2 && player2Info.CardSet.Crown > player1Info.CardSet.Crown) ? Result.Player2CharacterRuleWin : Result.Draw,
+                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.Player1Win,
+                    (Card.Crown, Card.Dagger) or (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.Player2Win,
+                    (Card.Sheild, Card.Sheild) => (player1Info.CardSet.Crown > player2Info.CardSet.Crown) ? Result.Player1CharacterRuleWin :
+                                        (player1Info.CardSet.Crown == player2Info.CardSet.Crown) ? Result.Draw : Result.Player2CharacterRuleWin,
                     (Card.Dagger, Card.Dagger) => Result.Draw,
                     _ => throw new Exception("Invalid card combination"),
                 };
@@ -108,15 +108,15 @@ namespace BoardGame.Services
             {
                 return (player1Info.CurrentChosenCard, player2Info.CurrentChosenCard) switch
                 {
-                    (Card.Crown, Card.Crown) => (player1Info.CardSet.Crown > player2Info.CardSet.Crown) ? Result.CharacterRuleWin :
-                                        (player1Info.CardSet.Crown == player2Info.CardSet.Crown) ? Result.Draw : Result.CharacterRuleLose,
-                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.BasicWin,
-                    (Card.Crown, Card.Dagger) or (Card.Dagger, Card.Sheild) => Result.BasicLose,
-                    (Card.Sheild, Card.Crown) => (player1Info.CardSet.Crown == 0 || player2Info.CardSet.Crown == 0) ? Result.Draw : Result.BasicLose,
-                    (Card.Sheild, Card.Sheild) => (player1Info.CardSet.Sheild > player2Info.CardSet.Sheild) ? Result.CharacterRuleWin :
-                                        (player1Info.CardSet.Sheild == player2Info.CardSet.Sheild) ? Result.Draw : Result.CharacterRuleLose,
-                    (Card.Dagger, Card.Dagger) => (player1Info.CardSet.Crown < player2Info.CardSet.Crown) ? Result.CharacterRuleWin :
-                                        (player1Info.CardSet.Crown == player2Info.CardSet.Crown) ? Result.Draw : Result.CharacterRuleLose,
+                    (Card.Crown, Card.Crown) => (player1Info.CardSet.Crown > player2Info.CardSet.Crown) ? Result.Player1CharacterRuleWin :
+                                        (player1Info.CardSet.Crown == player2Info.CardSet.Crown) ? Result.Draw : Result.Player2CharacterRuleWin,
+                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.Player1Win,
+                    (Card.Crown, Card.Dagger) or (Card.Dagger, Card.Sheild) => Result.Player2Win,
+                    (Card.Sheild, Card.Crown) => (player1Info.CardSet.Crown == 0 || player2Info.CardSet.Crown == 0) ? Result.Draw : Result.Player2Win,
+                    (Card.Sheild, Card.Sheild) => (player1Info.CardSet.Sheild > player2Info.CardSet.Sheild) ? Result.Player1CharacterRuleWin :
+                                        (player1Info.CardSet.Sheild == player2Info.CardSet.Sheild) ? Result.Draw : Result.Player2CharacterRuleWin,
+                    (Card.Dagger, Card.Dagger) => (player1Info.CardSet.Crown < player2Info.CardSet.Crown) ? Result.Player1CharacterRuleWin :
+                                        (player1Info.CardSet.Crown == player2Info.CardSet.Crown) ? Result.Draw : Result.Player2CharacterRuleWin,
                     _ => throw new Exception("Invalid card combination"),
                 };
             }
@@ -125,17 +125,21 @@ namespace BoardGame.Services
             {
                 return (player1Info.CurrentChosenCard, player2Info.CurrentChosenCard) switch
                 {
-                    (Card.Crown, Card.Crown) => (player1Info.CardSet.Sheild > player2Info.CardSet.Sheild) ? Result.CharacterRuleWin :
-                                        (player1Info.CardSet.Sheild < player2Info.CardSet.Sheild) ? Result.CharacterRuleLose : Result.Draw,
-                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.BasicWin,
-                    (Card.Crown, Card.Dagger) or (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.BasicLose,
-                    (Card.Sheild, Card.Sheild) => (player1Info.CardSet.Sheild > player2Info.CardSet.Sheild) ? Result.CharacterRuleWin :
-                                        (player1Info.CardSet.Sheild < player2Info.CardSet.Sheild) ? Result.CharacterRuleLose : Result.Draw,
-                    (Card.Dagger, Card.Dagger) => (player1Info.CardSet.Sheild < player2Info.CardSet.Sheild) ? Result.CharacterRuleWin :
-                                        (player1Info.CardSet.Sheild > player2Info.CardSet.Sheild) ? Result.CharacterRuleLose : Result.Draw,
+                    (Card.Crown, Card.Crown) => (player1Info.CardSet.Sheild > player2Info.CardSet.Sheild) ? Result.Player1CharacterRuleWin :
+                                        (player1Info.CardSet.Sheild < player2Info.CardSet.Sheild) ? Result.Player2CharacterRuleWin : Result.Draw,
+                    (Card.Crown, Card.Sheild) or (Card.Sheild, Card.Dagger) or (Card.Dagger, Card.Crown) => Result.Player1Win,
+                    (Card.Crown, Card.Dagger) or (Card.Sheild, Card.Crown) or (Card.Dagger, Card.Sheild) => Result.Player2Win,
+                    (Card.Sheild, Card.Sheild) => (player1Info.CardSet.Sheild > player2Info.CardSet.Sheild) ? Result.Player1CharacterRuleWin :
+                                        (player1Info.CardSet.Sheild < player2Info.CardSet.Sheild) ? Result.Player2CharacterRuleWin : Result.Draw,
+                    (Card.Dagger, Card.Dagger) => (player1Info.CardSet.Sheild < player2Info.CardSet.Sheild) ? Result.Player1CharacterRuleWin :
+                                        (player1Info.CardSet.Sheild > player2Info.CardSet.Sheild) ? Result.Player2CharacterRuleWin : Result.Draw,
                     _ => throw new Exception("Invalid card combination"),
                 };
             }
         }
+    }
+
+    public class GameServiceException(string message) : Exception(message)
+    {
     }
 }

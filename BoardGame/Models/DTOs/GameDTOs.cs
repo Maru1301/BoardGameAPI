@@ -6,11 +6,11 @@ namespace BoardGame.Models.DTOs
     {
         public class GameInfoDTO
         {
-            public string Account { get; set; } = string.Empty;
+            public string MemberAccount { get; set; } = string.Empty;
 
-            public CharacterSet Player { get; set; } = new();
+            public CharacterSet Player1Characters { get; set; } = new();
 
-            public CharacterSet Bot { get; set; } = new();
+            public CharacterSet Player2Characters { get; set; } = new();
         }
     }
 }

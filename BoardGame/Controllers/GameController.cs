@@ -2,12 +2,13 @@
 using BoardGame.Infrastractures;
 using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using static BoardGame.Models.DTOs.GameDTOs;
 using static BoardGame.Models.ViewModels.GameVMs;
 
 namespace BoardGame.Controllers
 {
-    [AuthorizeRoles(Roles.Member)]
+    [AuthorizeRoles(Role.Member, Role.Guest)]
     [ApiController]
     [Route("api/[controller]")]
     public class GameController(IGameService gameService) : ControllerBase
@@ -15,41 +16,52 @@ namespace BoardGame.Controllers
         private readonly IGameService _gameService = gameService;
 
         [HttpPost("[action]")]
-        public IActionResult BeginNewGame(GameInfoVM gameInfo)
+        public IActionResult BeginNewGame()
         {
             try
             {
                 var user = HttpContext.User;
 
-                // Extract the user ID (or other relevant claim) from the JWT claim
+                // Extract the user Account from the JWT claim
                 string userAccount = user.Identity?.Name ?? string.Empty;
 
                 if (string.IsNullOrEmpty(userAccount)) return BadRequest("Invalid Account!");
-                gameInfo.Account = userAccount;
-                gameInfo.CreatedTime = DateTime.UtcNow;
+                GameInfoVM gameInfo = new()
+                {
+                    Account = userAccount,
+                    CreatedTime = DateTime.UtcNow
+                };
 
                 _gameService.BeginNewGame(gameInfo.ToDTO<GameInfoDTO>());
 
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
-            
         }
 
         [HttpGet("[action]")]
-        public IActionResult BeginNewRound(Character playerChosenCharacter)
+        public IActionResult BeginNewRound(Character ruleCharacter)
         {
-            var rule = _gameService.MapRule(playerChosenCharacter);
+            try
+            {
+                //_gameService.SetRuleCharacter(ruleCharacter);
 
-            return Ok();
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
 
         [HttpGet("[action]")]
         public IActionResult OpenNextCard()
         {
+            //var rule = _gameService.MapRule(ruleCharacter);
+
             throw new NotImplementedException();
         }
 
