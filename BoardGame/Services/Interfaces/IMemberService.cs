@@ -13,5 +13,11 @@ namespace BoardGame.Services.Interfaces
         public Task<string> ActivateRegistration(string memberId, string confirmCode);
 
         public Task<string> ValidateUser(LoginDTO dto);
+
+        public bool CheckAccountExist(string account);
+
+        public bool CheckNameExist(string nickName);
+
+        public bool CheckEmailExist(string email);
     }
 }

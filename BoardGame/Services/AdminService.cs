@@ -24,6 +24,11 @@ namespace BoardGame.Services
                 await _unitOfWork.CommitTransactionAsync();
                 return "Admin created successfully";
             }
+            catch(AdminServiceException)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw;
+            }
             catch (Exception)
             {
                 await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
