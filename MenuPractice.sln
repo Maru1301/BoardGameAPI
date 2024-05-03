@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MenuPractice", "MenuPractic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGame", "BoardGame\BoardGame.csproj", "{C7CCE951-88D6-4CAF-8F54-46E2516E26E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoardGrmeTest", "BoardGrmeTest\BoardGrmeTest.csproj", "{CCB23E3B-EFD4-4DFF-AB5C-975FE20ED92B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGameTest", "BoardGameTest\BoardGameTest.csproj", "{972C03F2-556C-4071-81FC-D64D9909479C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{C7CCE951-88D6-4CAF-8F54-46E2516E26E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7CCE951-88D6-4CAF-8F54-46E2516E26E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7CCE951-88D6-4CAF-8F54-46E2516E26E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CCB23E3B-EFD4-4DFF-AB5C-975FE20ED92B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CCB23E3B-EFD4-4DFF-AB5C-975FE20ED92B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CCB23E3B-EFD4-4DFF-AB5C-975FE20ED92B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CCB23E3B-EFD4-4DFF-AB5C-975FE20ED92B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{972C03F2-556C-4071-81FC-D64D9909479C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{972C03F2-556C-4071-81FC-D64D9909479C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{972C03F2-556C-4071-81FC-D64D9909479C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{972C03F2-556C-4071-81FC-D64D9909479C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
