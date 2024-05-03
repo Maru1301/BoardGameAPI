@@ -20,18 +20,18 @@ namespace BoardGame.Services
 
         public async Task BeginTransactionAsync()
         {
-            await _dbContext.Database.BeginTransactionAsync();
+            //await _dbContext.Database.BeginTransactionAsync();
         }
 
         public async Task CommitTransactionAsync()
         {
             await _dbContext.SaveChangesAsync();
-            await _dbContext.Database.CommitTransactionAsync();
+            //await _dbContext.Database.CommitTransactionAsync();
         }
 
         public async Task RollbackTransactionAsync()
         {
-            await _dbContext.Database.RollbackTransactionAsync();
+            //await _dbContext.Database.RollbackTransactionAsync();
         }
 
         public async Task DisposeAsync()
