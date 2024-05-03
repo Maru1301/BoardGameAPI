@@ -10,7 +10,7 @@ using static BoardGame.Models.ViewModels.MemberVMs;
 
 namespace BoardGame.Controllers
 {
-    [AuthorizeRoles(Roles.Member, Roles.Guest)]
+    [AuthorizeRoles(Roles.Member, Roles.Guest, Roles.Admin)]
     [ApiController]
     [Route("api/[controller]")]
     public class MemberController(IMemberService memberService, JWTHelper jwt) : ControllerBase
@@ -67,20 +67,20 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Login([FromQuery] LoginVM login)
+        [HttpPost("[action]"), AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginVM login)
         {
             try
             {
                  var role = await _memberService.ValidateUser(login.ToDTO<LoginDTO>());
                 if (string.IsNullOrEmpty(role))
                 {
-                    return BadRequest("Invalid username or password.");
+                    return BadRequest("Invalid Account or Password.");
                 }
 
                 // Authorize the user and generate a JWT token.
                 var token = _jwt.GenerateToken(login.Account, role);
-                return Ok(token);
+                return new JsonResult(token);
             }
             catch(MemberServiceException ex)
             {

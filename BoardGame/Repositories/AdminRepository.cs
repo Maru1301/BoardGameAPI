@@ -7,21 +7,11 @@ using MongoDB.Driver;
 
 namespace BoardGame.Repositories
 {
-    public class AdminRepository : IRepository, IAdminRepository
+    public class AdminRepository(AppDbContext dbContext) : IRepository, IAdminRepository
     {
-        private readonly AppDbContext _db;
+        private readonly AppDbContext _db = dbContext;
 
-        public AdminRepository(IMongoClient client)
-        {
-            _db = AppDbContext.Create(client.GetDatabase("BoardGameDB"));
-        }
-
-        public DbContext GetMongoClient()
-        {
-            return _db;
-        }
-
-        public async void AddAdmin(AdminCreateDTO dto)
+        public async Task AddAdminAsync(AdminCreateDTO dto)
         {
             _db.Admins.Add(dto.ToEntity<Admin>());
             await _db.SaveChangesAsync();
@@ -34,12 +24,7 @@ namespace BoardGame.Repositories
             return entity != null;
         }
 
-        public DbContext GetContext()
-        {
-            return _db;
-        }
-
-        public async Task<AdminDTO?> SearchByAccount(string account)
+        public async Task<AdminDTO?> SearchByAccountAsync(string account)
         {
             var admin = await _db.Admins.FirstOrDefaultAsync(admin => admin.Account == account);
 

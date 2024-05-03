@@ -20,11 +20,11 @@ namespace BoardGame.Controllers
         private readonly JWTHelper _jwt = jwt;
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddAdmin(AdminCreateVM createVM)
+        public async Task<IActionResult> AddAdmin(AdminCreateVM vm)
         {
             try
             {
-                string result = await _adminService.AddAdmin(createVM.ToDTO<AdminCreateDTO>());
+                string result = await _adminService.AddAdmin(vm.ToDTO<AdminCreateDTO>());
 
                 return Ok(result);
             }
@@ -39,18 +39,15 @@ namespace BoardGame.Controllers
         }
 
         [HttpGet("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Login([FromQuery] LoginVM login)
+        public async Task<IActionResult> Login([FromQuery] LoginVM vm)
         {
             try
             {
-                var role = await _adminService.ValidateUser(login.ToDTO<LoginDTO>());
-                if (string.IsNullOrEmpty(role))
-                {
-                    return BadRequest("Invalid username or password.");
-                }
-
+                var role = await _adminService.ValidateUser(vm.ToDTO<LoginDTO>());
+                
                 // Authorize the user and generate a JWT token.
-                var token = _jwt.GenerateToken(login.Account, role);
+                var token = _jwt.GenerateToken(vm.Account, role);
+
                 return Ok(token);
             }
             catch (AdminServiceException ex)

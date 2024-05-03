@@ -5,10 +5,8 @@ namespace BoardGame.Repositories.Interfaces
 {
     public interface IAdminRepository : IRepository
     {
-        public DbContext GetMongoClient();
-        public DbContext GetContext();
         public bool CheckAccountExist(string account);
-        public Task<AdminDTO?> SearchByAccount(string account);
-        public void AddAdmin(AdminCreateDTO dto);
+        public Task<AdminDTO?> SearchByAccountAsync(string account);
+        public Task AddAdminAsync(AdminCreateDTO dto);
     }
 }

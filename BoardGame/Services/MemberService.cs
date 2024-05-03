@@ -2,21 +2,13 @@
 using BoardGame.Infrastractures;
 using Utilities;
 using BoardGame.Services.Interfaces;
-using BoardGame.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BoardGame.Services
 {
-    public class MemberService : IService, IMemberService
+    public class MemberService(IUnitOfWork unitOfWork, IConfiguration configuration) : IService, IMemberService
     {
-        private readonly IMemberRepository _repository;
-        private readonly IConfiguration _configuration;
-
-        public MemberService(IMemberRepository repo, IConfiguration configuration)
-        {
-            _repository = repo;
-            _configuration = configuration;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IConfiguration _configuration = configuration;
 
         /// <summary>
         /// Registers a new user based on the provided MemberRegisterDTO details.
@@ -29,19 +21,18 @@ namespace BoardGame.Services
         ///    name, or email.</returns>
         public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
         {
-            //var databaseFacade = _repository.GetContext().Database;
-            //using IDbContextTransaction transaction = await databaseFacade.BeginTransactionAsync();
+            await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (_repository.CheckAccountExist(dto.Account))
+                if (CheckAccountExist(dto.Account))
                 {
                     throw new Exception("Account already exists");
                 }
-                if (_repository.CheckNameExist(dto.Name))
+                if (CheckNameExist(dto.Name))
                 {
                     throw new Exception("Name already exists");
                 }
-                if (_repository.CheckEmailExist(dto.Email))
+                if (CheckEmailExist(dto.Email))
                 {
                     throw new Exception("Email already exists");
                 }
@@ -49,9 +40,9 @@ namespace BoardGame.Services
                 //create a new confirm code
                 dto.ConfirmCode = Guid.NewGuid().ToString("N");
 
-                _repository.Register(dto);
+                _unitOfWork.Members.Register(dto);
 
-                MemberDTO entity = await _repository.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
+                MemberDTO entity = await _unitOfWork.Members.SearchByAccount(dto.Account) ?? throw new Exception("Member doesn't exist!");
 
                 // Generate confirmation URL
                 string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={dto.ConfirmCode}";
@@ -59,12 +50,12 @@ namespace BoardGame.Services
                 // Send confirmation email
                 new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
 
-                //transaction.Commit();
+                await _unitOfWork.CommitTransactionAsync();
                 return "Registration successful! Confirmation email sent!";
             }
             catch (Exception)
             {
-                //transaction.Rollback(); // Roll back the transaction on error
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
             }
 }
@@ -79,28 +70,28 @@ namespace BoardGame.Services
         /// <exception cref="Exception">Thrown if the member is not found.</exception>
         public async Task<string> ActivateRegistration(string memberId, string confirmCode)
         {
-            //using var transaction = await _repository.GetContext().Database.BeginTransactionAsync();
+            await _unitOfWork.BeginTransactionAsync();
             try
             {
-                MemberDTO entity = _repository.SearchById(memberId) ?? throw new Exception("Member doesn't exist!");
+                MemberDTO entity = await _unitOfWork.Members.SearchById(memberId) ?? throw new Exception("Member doesn't exist!");
 
                 if (string.Compare(entity.ConfirmCode, confirmCode) != 0) return "Wrong confirm code!";
 
-                _repository.ActivateRegistration(memberId);
+                _unitOfWork.Members.ActivateRegistration(memberId);
 
-                //transaction.Commit();
+                await _unitOfWork.CommitTransactionAsync();
                 return "Activation successful";
             }
             catch (Exception)
             {
-                //transaction.Rollback(); // Roll back the transaction on error
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
             }
         }
 
         public async Task<string> ValidateUser(LoginDTO dto)
         {
-            var member = await _repository.SearchByAccount(dto.Account);
+            var member = await _unitOfWork.Members.SearchByAccount(dto.Account);
             if (member == null || !ValidatePassword(member, dto.Password))
             {
                 return string.Empty;
@@ -116,17 +107,37 @@ namespace BoardGame.Services
 
         public  IEnumerable<MemberDTO> ListMembers()
         {
-            return _repository.GetAll();
+            return _unitOfWork.Members.GetAll();
         }
         public async Task<MemberDTO> GetMemberInfo(string account) 
         {
-            var dto = await _repository.SearchByAccount(account);
+            var dto = await _unitOfWork.Members.SearchByAccount(account);
             return dto ?? throw new MemberServiceException("Member doesn't exist!");
+        }
+
+        public bool CheckAccountExist(string account)
+        {
+            var member = _unitOfWork.Members.SearchByAccount(account);
+
+            return member != null;
+        }
+
+        public bool CheckNameExist(string name)
+        {
+            var member = _unitOfWork.Members.SearchByName(name);
+
+            return member != null;
+        }
+
+        public bool CheckEmailExist(string email)
+        {
+            var member = _unitOfWork.Members.SearchByEmail(email);
+
+            return member != null;
         }
     }
 
-    public class MemberServiceException : Exception
+    public class MemberServiceException(string message) : Exception(message)
     {
-        public MemberServiceException(string message) : base(message){}
     }
 }

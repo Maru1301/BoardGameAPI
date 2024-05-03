@@ -1,48 +1,42 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
-using BoardGame.Repositories.Interfaces;
 using BoardGame.Services.Interfaces;
 using Utilities;
 
 namespace BoardGame.Services
 {
-    public class AdminService : IService, IAdminService
+    public class AdminService(IUnitOfWork unitOfWork) : IService, IAdminService
     {
-        private IAdminRepository _repository;
-        private readonly IConfiguration _configuration;
-        public AdminService(IAdminRepository adminRepository, IConfiguration configuration)
-        {
-            _repository = adminRepository;
-            _configuration = configuration;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
         public async Task<string> AddAdmin(AdminCreateDTO dto)
         {
-            //using var transaction = await _repository.GetContext().Database.BeginTransactionAsync();
+            await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (_repository.CheckAccountExist(dto.Account))
+                if (_unitOfWork.Admins.CheckAccountExist(dto.Account))
                 {
                     throw new AdminServiceException("Account already exists");
                 }
 
-                _repository.AddAdmin(dto);
+                await _unitOfWork.Admins.AddAdminAsync(dto);
 
-                //transaction.Commit();
+                await _unitOfWork.CommitTransactionAsync();
                 return "Admin created successfully";
             }
             catch (Exception)
             {
-                //transaction.Rollback(); // Roll back the transaction on error
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
             }
         }
 
         public async Task<string> ValidateUser(LoginDTO dto)
         {
-            var admin = await _repository.SearchByAccount(dto.Account);
+            var admin = await _unitOfWork.Admins.SearchByAccountAsync(dto.Account);
             if (admin == null || !ValidatePassword(admin, dto.Password))
             {
-                return string.Empty;
+                throw new AdminServiceException("Invalid Account or Password!");
             }
 
             return Roles.Admin;
@@ -53,11 +47,7 @@ namespace BoardGame.Services
             return HashUtility.ToSHA256(password, admin.Salt) == admin.EncryptedPassword;
         }
     }
-    public class AdminServiceException : Exception
+    public class AdminServiceException(string ex) : Exception(ex)
     {
-        public AdminServiceException(string ex) : base(ex)
-        {
-            
-        }
     }
 }

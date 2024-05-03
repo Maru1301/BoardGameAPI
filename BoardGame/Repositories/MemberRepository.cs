@@ -7,46 +7,15 @@ using MongoDB.Driver;
 
 namespace BoardGame.Repositories
 {
-    public class MemberRepository : IRepository, IMemberRepository
+    public class MemberRepository(AppDbContext dbContext) : IRepository, IMemberRepository
     {
-        private readonly AppDbContext _db;
-
-        public MemberRepository(IMongoClient client)
-        {
-            _db = AppDbContext.Create(client.GetDatabase("BoardGameDB"));
-        }
-
-        public DbContext GetContext()
-        {
-            return _db;
-        }
+        private readonly AppDbContext _db = dbContext;
 
         public IEnumerable<MemberDTO> GetAll()
         {
             var members = _db.Members.ToList();
 
             return members.Select(m => m.ToDTO<MemberDTO>());
-        }
-
-        public bool CheckAccountExist(string account)
-        {
-            var entity = _db.Members.FirstOrDefault(m => m.Account == account);
-
-            return entity != null;
-        }
-
-        public bool CheckNameExist(string nickName)
-        {
-            var entity = _db.Members.FirstOrDefault(m => m.Name == nickName);
-
-            return entity != null;
-        }
-
-        public bool CheckEmailExist(string email)
-        {
-            var entity = _db.Members.FirstOrDefault(m => m.Email == email);
-
-            return entity != null;
         }
 
         public void Register(RegisterDTO dto)
@@ -70,9 +39,23 @@ namespace BoardGame.Repositories
             return member?.ToDTO<MemberDTO>();
         }
 
-        public MemberDTO? SearchById(string id)
+        public async Task<MemberDTO?> SearchById(string id)
         {
-            var member = _db.Members.FirstOrDefault(member => member.Id.ToString() == id);
+            var member = await _db.Members.FirstOrDefaultAsync(member => member.Id.ToString() == id);
+
+            return member?.ToDTO<MemberDTO>();
+        }
+
+        public async Task<MemberDTO?> SearchByName(string name)
+        {
+            var member = await _db.Members.FirstOrDefaultAsync(x => x.Name == name);
+
+            return member?.ToDTO<MemberDTO>();
+        }
+
+        public async Task<MemberDTO?> SearchByEmail(string email)
+        {
+            var member = await _db.Members.FirstOrDefaultAsync(x => x.Email == email);
 
             return member?.ToDTO<MemberDTO>();
         }
