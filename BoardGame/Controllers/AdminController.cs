@@ -10,14 +10,13 @@ using BoardGame.Authorizations;
 
 namespace BoardGame.Controllers
 {
-    [AuthorizeRoles(Roles.Admin)]
+    [AuthorizeRoles(Role.Admin)]
     [ApiController]
     [Route("api/[controller]")]
-    public class AdminController(IAdminService adminService, JWTHelper jwt) : ControllerBase
+    public class AdminController(IAdminService adminService) : ControllerBase
     {
         private readonly IAdminService _adminService = adminService;
 
-        private readonly JWTHelper _jwt = jwt;
 
         [HttpPost("[action]")]
         public async Task<IActionResult> AddAdmin(AdminCreateVM vm)
@@ -43,10 +42,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                var role = await _adminService.ValidateUser(vm.ToDTO<LoginDTO>());
-                
-                // Authorize the user and generate a JWT token.
-                var token = _jwt.GenerateToken(vm.Account, role);
+                var token = await _adminService.ValidateUser(vm.ToDTO<LoginDTO>());
 
                 return Ok(token);
             }

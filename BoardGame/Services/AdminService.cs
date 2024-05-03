@@ -5,9 +5,10 @@ using Utilities;
 
 namespace BoardGame.Services
 {
-    public class AdminService(IUnitOfWork unitOfWork) : IService, IAdminService
+    public class AdminService(IUnitOfWork unitOfWork, JWTHelper jwt) : IService, IAdminService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly JWTHelper _jwt = jwt;
 
         public async Task<string> AddAdmin(AdminCreateDTO dto)
         {
@@ -44,7 +45,10 @@ namespace BoardGame.Services
                 throw new AdminServiceException("Invalid Account or Password!");
             }
 
-            return Roles.Admin;
+            // Authorize the user and generate a JWT token.
+            var token = _jwt.GenerateToken(dto.Account, Role.Admin);
+
+            return token;
         }
 
         private static bool ValidatePassword(AdminDTO admin, string password)
