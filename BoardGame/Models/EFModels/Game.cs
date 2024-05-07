@@ -1,7 +1,7 @@
 ﻿using BoardGame.Controllers;
 using BoardGame.Infrastractures;
 using MongoDB.Bson;
-using MongoDB.Driver.Core.Operations;
+
 
 namespace BoardGame.Models.EFModels
 {
@@ -18,7 +18,7 @@ namespace BoardGame.Models.EFModels
         public Round Round4 { get; set; } = new();
         public Round Round5 { get; set; } = new();
         public Round Round6 { get; set; } = new();
-        public DateTime CreatedTime { get; set; } = DateTime.Now;
+        public long CreatedTime { get; set; }
     }
 
     public class Round
@@ -29,23 +29,22 @@ namespace BoardGame.Models.EFModels
         //0: player first, 1: bot first
         public WhoGoesFirst WhoGoesFirst { get; set; }
 
-        public Character Player1Character { get; set; }
+        public PlayerInfo Player1 { get; set; } = new();
 
-        public CardSet Player1Hand { get; set; } = new();
+        public PlayerInfo Player2 { get; set; } = new();
 
-        public RoundCards Player1ChosenCard { get; set; }
+        public long RoundStart { get; set; }
 
-        public Character Player2Character { get; set; }
+        public long RoundEnd { get; set; }
+    }
 
-        public CardSet Player2Hand { get; set; } = new();
+    public class PlayerInfo
+    {
+        public Character Character { get; set; }
 
-        public RoundCards Player2ChosenCard { get; set; }
+        public CardSet Hand { get; set; } = new();
 
-        public Character RuleCharacter { get => WhoGoesFirst == WhoGoesFirst.Player1 ? Player1Character : Player2Character; }
-
-        public DateTime RoundStart { get; set; } = DateTime.Now;
-
-        public DateTime RoundEnd { get; set; }
+        public RoundCards ChosenCards { get; set; }
     }
 
     public enum RoundCards

@@ -11,11 +11,13 @@ namespace BoardGame.Services
 
         public IMemberRepository Members { get; private set; }
         public IAdminRepository Admins { get; private set; }
+        public IGameRepository Games { get; private set; }
         public UnitOfWork(AppDbContext dbContext)
         {
             _dbContext = dbContext;
             Members = new Lazy<MemberRepository>(() => new MemberRepository(_dbContext)).Value;
             Admins = new Lazy<AdminRepository>(() => new AdminRepository(_dbContext)).Value;
+            Games = new Lazy<GameRepository>(() => new GameRepository(_dbContext)).Value;
         }
 
         public async Task BeginTransactionAsync()
@@ -66,6 +68,7 @@ namespace BoardGame.Services
     {
         IMemberRepository Members { get; }
         IAdminRepository Admins { get; }
+        IGameRepository Games { get; }
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();
         Task RollbackTransactionAsync();

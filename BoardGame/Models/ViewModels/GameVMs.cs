@@ -8,14 +8,12 @@ namespace BoardGame.Models.ViewModels
     {
         public class GameInfoVM
         {
-            public string Account { get; set; } = string.Empty;
+            public string Player1Account { get; set; } = string.Empty;
+            public string Player2Account { get; set; } = string.Empty;
 
-            public CharacterSet Player { get; set; } = new();
+            public CharacterSet Player1Characters { get; set; } = new();
 
-            public CharacterSet Bot { get; set; } = new();
-
-            public DateTime CreatedTime { get; set; }
-
+            public CharacterSet Player2Characters { get; set; } = new();
         }
 
         public class RoundInfoVM

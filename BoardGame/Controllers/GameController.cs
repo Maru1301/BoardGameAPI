@@ -16,7 +16,7 @@ namespace BoardGame.Controllers
         private readonly IGameService _gameService = gameService;
 
         [HttpPost("[action]")]
-        public IActionResult BeginNewGame()
+        public IActionResult BeginNewGame(GameInfoVM vm)
         {
             try
             {
@@ -26,13 +26,9 @@ namespace BoardGame.Controllers
                 string userAccount = user.Identity?.Name ?? string.Empty;
 
                 if (string.IsNullOrEmpty(userAccount)) return BadRequest("Invalid Account!");
-                GameInfoVM gameInfo = new()
-                {
-                    Account = userAccount,
-                    CreatedTime = DateTime.UtcNow
-                };
 
-                _gameService.BeginNewGame(gameInfo.ToDTO<GameInfoDTO>());
+                //測試
+                _gameService.BeginNewGame(vm.ToDTO<GameInfoDTO>());
 
                 return Ok();
             }

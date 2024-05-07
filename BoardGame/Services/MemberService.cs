@@ -26,14 +26,15 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (CheckAccountExist(dto.Account)) throw new MemberServiceException("Account already exists");
-                if (CheckNameExist(dto.Name)) throw new MemberServiceException("Name already exists");
-                if (CheckEmailExist(dto.Email)) throw new MemberServiceException("Email already exists");
+                if (!CheckAccountExist(dto.Account)) throw new MemberServiceException("Account already exists");
+                if (!CheckNameExist(dto.Name)) throw new MemberServiceException("Name already exists");
+                if (!CheckEmailExist(dto.Email)) throw new MemberServiceException("Email already exists");
 
                 //create a new confirm code
                 dto.ConfirmCode = Guid.NewGuid().ToString("N");
 
                 await _unitOfWork.Members.Register(dto);
+                await _unitOfWork.CommitTransactionAsync();
 
                 MemberDTO entity = await _unitOfWork.Members.SearchByAccount(dto.Account) ?? throw new MemberServiceException("Member doesn't exist!");
 

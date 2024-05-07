@@ -5,14 +5,19 @@ using static BoardGame.Models.ViewModels.GameVMs;
 
 namespace BoardGame.Services
 {
-    public class GameService : IService, IGameService
+    public class GameService(IUnitOfWork unitOfWork) : IService, IGameService
     {
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
         public void BeginNewGame(GameInfoDTO dto)
         {
             ValidateGameInfo(dto);
-            //determine who goes first
+            _unitOfWork.Games.AddNewGame(dto);
+        }
+
+        public WhoGoesFirst DetermineWhoGoesFirst()
+        {
             var random = new Random().Next(1);
-            var whoGoesFirst = (WhoGoesFirst)random;
+            return (WhoGoesFirst)random;
         }
 
         private bool ValidateGameInfo(GameInfoDTO dto)
