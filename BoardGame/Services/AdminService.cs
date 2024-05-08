@@ -1,5 +1,6 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
+using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
 using Utilities;
 
@@ -15,12 +16,9 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (_unitOfWork.Admins.CheckAccountExist(dto.Account))
-                {
-                    throw new AdminServiceException("Account already exists");
-                }
+                if (await CheckAccountExistAsync(dto.Account) == false) throw new AdminServiceException("Account already exists");
 
-                await _unitOfWork.Admins.AddAdminAsync(dto);
+                await _unitOfWork.Admins.AddAsync(dto.ToEntity<Admin>());
 
                 await _unitOfWork.CommitTransactionAsync();
                 return "Admin created successfully";
@@ -39,8 +37,8 @@ namespace BoardGame.Services
 
         public async Task<string> ValidateUser(LoginDTO dto)
         {
-            var admin = await _unitOfWork.Admins.SearchByAccountAsync(dto.Account);
-            if (admin == null || !ValidatePassword(admin, dto.Password))
+            var admin = await _unitOfWork.Admins.GetByAccountAsync(dto.Account);
+            if (admin == null || !ValidatePassword(admin.ToDTO<AdminDTO>(), dto.Password))
             {
                 throw new AdminServiceException("Invalid Account or Password!");
             }
@@ -54,6 +52,13 @@ namespace BoardGame.Services
         private static bool ValidatePassword(AdminDTO admin, string password)
         {
             return HashUtility.ToSHA256(password, admin.Salt) == admin.EncryptedPassword;
+        }
+
+        private async Task<bool> CheckAccountExistAsync(string account)
+        {
+            var entity = await _unitOfWork.Admins.GetByAccountAsync(account);
+
+            return entity != null;
         }
     }
     public class AdminServiceException(string ex) : Exception(ex)

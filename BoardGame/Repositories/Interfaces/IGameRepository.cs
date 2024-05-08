@@ -1,9 +1,8 @@
-﻿using static BoardGame.Models.DTOs.GameDTOs;
+﻿using BoardGame.Models.EFModels;
 
 namespace BoardGame.Repositories.Interfaces
 {
-    public interface IGameRepository
+    public interface IGameRepository : IRepository<Game>
     {
-        public Task AddNewGame(GameInfoDTO dto);
     }
 }

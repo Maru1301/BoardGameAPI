@@ -7,54 +7,55 @@ using MongoDB.Driver;
 
 namespace BoardGame.Repositories
 {
-    public class MemberRepository(AppDbContext dbContext) : IRepository, IMemberRepository
+    public class MemberRepository(AppDbContext dbContext) : IMemberRepository
     {
         private readonly AppDbContext _db = dbContext;
 
-        public async Task<IEnumerable<MemberDTO>> GetAll()
+        public async Task<Member?> GetByIdAsync(string id)
         {
-            var members = await _db.Members.ToListAsync();
-
-            return members.Select(m => m.ToDTO<MemberDTO>());
+            return await _db.Members.FindAsync(id);
         }
 
-        public async Task Register(RegisterDTO dto)
+        public async Task<IEnumerable<Member>> GetAllAsync()
         {
-            await _db.Members.AddAsync(dto.ToEntity<Member>());
+            return await _db.Members.ToListAsync();
         }
 
-        public async Task ActivateRegistration(string memberId)
+        public async Task AddAsync(Member entity)
         {
-            var member = await _db.Members.FirstAsync(member => member.Id.ToString() == memberId);
-            member.IsConfirmed = true;
+            await _db.Members.AddAsync(entity);
+            await _db.SaveChangesAsync();
         }
 
-        public async Task<MemberDTO?> SearchByAccount(string account)
+        public async Task UpdateAsync(Member entity)
         {
-            var member = await _db.Members.FirstOrDefaultAsync(member => member.Account == account);
-
-            return member?.ToDTO<MemberDTO>();
+            _db.Members.Update(entity);
+            await _db.SaveChangesAsync();
         }
 
-        public async Task<MemberDTO?> SearchById(string id)
+        public async Task DeleteAsync(string id)
         {
-            var member = await _db.Members.FirstOrDefaultAsync(member => member.Id.ToString() == id);
-
-            return member?.ToDTO<MemberDTO>();
+            var user = await _db.Members.FindAsync(id);
+            if (user != null)
+            {
+                _db.Members.Remove(user);
+                await _db.SaveChangesAsync();
+            }
         }
 
-        public async Task<MemberDTO?> SearchByName(string name)
+        public async Task<Member?> GetByAccountAsync(string account)
         {
-            var member = await _db.Members.FirstOrDefaultAsync(x => x.Name == name);
-
-            return member?.ToDTO<MemberDTO>();
+            return await _db.Members.FirstOrDefaultAsync(member => member.Account == account);
         }
 
-        public async Task<MemberDTO?> SearchByEmail(string email)
+        public async Task<Member?> GetByNameAsync(string name)
         {
-            var member = await _db.Members.FirstOrDefaultAsync(x => x.Email == email);
+            return await _db.Members.FirstOrDefaultAsync(x => x.Name == name);
+        }
 
-            return member?.ToDTO<MemberDTO>();
+        public async Task<Member?> GetByEmailAsync(string email)
+        {
+            return await _db.Members.FirstOrDefaultAsync(x => x.Email == email);
         }
     }
 }

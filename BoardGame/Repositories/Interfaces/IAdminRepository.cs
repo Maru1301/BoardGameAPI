@@ -1,12 +1,9 @@
-﻿using BoardGame.Models.DTOs;
-using Microsoft.EntityFrameworkCore;
+﻿using BoardGame.Models.EFModels;
 
 namespace BoardGame.Repositories.Interfaces
 {
-    public interface IAdminRepository : IRepository
+    public interface IAdminRepository : IRepository<Admin>
     {
-        public bool CheckAccountExist(string account);
-        public Task<AdminDTO?> SearchByAccountAsync(string account);
-        public Task AddAdminAsync(AdminCreateDTO dto);
+        public Task<Admin?> GetByAccountAsync(string account);
     }
 }

@@ -1,18 +1,42 @@
-﻿using BoardGame.Infrastractures;
-using BoardGame.Models.DTOs;
-using BoardGame.Models.EFModels;
+﻿using BoardGame.Models.EFModels;
 using BoardGame.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BoardGame.Repositories
 {
-    public class GameRepository(AppDbContext dbContext) : IRepository, IGameRepository
+    public class GameRepository(AppDbContext dbContext) : IGameRepository
     {
-        private readonly AppDbContext _db = dbContext;
-        public async Task AddNewGame(GameDTOs.GameInfoDTO dto)
+        public async Task<Game?> GetByIdAsync(string id)
         {
-            var newGame = dto.ToEntity<Game>();
-            await _db.AddAsync(newGame);
-            _db.SaveChanges();
+            return await _db.Games.FindAsync(id);
+        }
+
+        public async Task<IEnumerable<Game>> GetAllAsync()
+        {
+            return await _db.Games.ToListAsync();
+        }
+
+        private readonly AppDbContext _db = dbContext;
+        public async Task AddAsync(Game dto)
+        {
+            await _db.Games.AddAsync(dto);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Game entity)
+        {
+            _db.Games.Update(entity);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(string id)
+        {
+            var entity = await _db.Games.FindAsync(id);
+            if (entity != null)
+            {
+                _db.Games.Remove(entity);
+                await _db.SaveChangesAsync();
+            }
         }
     }
 }

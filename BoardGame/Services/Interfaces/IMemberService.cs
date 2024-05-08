@@ -14,10 +14,10 @@ namespace BoardGame.Services.Interfaces
 
         public Task<string> ValidateUser(LoginDTO dto);
 
-        public bool CheckAccountExist(string account);
+        public Task<bool> CheckAccountExist(string account);
 
-        public bool CheckNameExist(string nickName);
+        public Task<bool> CheckNameExist(string nickName);
 
-        public bool CheckEmailExist(string email);
+        public Task<bool> CheckEmailExist(string email);
     }
 }

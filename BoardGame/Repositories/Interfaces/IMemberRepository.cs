@@ -1,15 +1,11 @@
-﻿using BoardGame.Models.DTOs;
+﻿using BoardGame.Models.EFModels;
 
 namespace BoardGame.Repositories.Interfaces
 {
-    public interface IMemberRepository
+    public interface IMemberRepository : IRepository<Member>
     {
-        public Task<IEnumerable<MemberDTO>> GetAll();
-        public Task<MemberDTO?> SearchByAccount(string account);
-        public Task<MemberDTO?> SearchById(string id);
-        public Task<MemberDTO?> SearchByName(string name);
-        public Task<MemberDTO?> SearchByEmail(string email);
-        public Task Register(RegisterDTO dto);
-        public Task ActivateRegistration(string memberId);
+        public Task<Member?> GetByAccountAsync(string account);
+        public Task<Member?> GetByNameAsync(string name);
+        public Task<Member?> GetByEmailAsync(string email);
     }
 }
