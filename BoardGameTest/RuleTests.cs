@@ -1,6 +1,6 @@
 ﻿using BoardGame.Infrastractures;
-using static BoardGame.Models.ViewModels.GameVMs;
-using static BoardGame.Services.GameService;
+using BoardGame.Models.EFModels;
+using BoardGame.Services;
 
 namespace BoardGameTest
 {
@@ -8,119 +8,380 @@ namespace BoardGameTest
     {
         public class AssassinRuleTests
         {
-            public static IEnumerable<object[]> NormalRuleData()
+            public static IEnumerable<object[]> RuleData()
             {
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Crown, Card.Crown },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new(), new() },
-                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Crown, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Sheild, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Dagger, Card.Crown },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Crown, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Dagger, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Sheild, Card.Crown },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2Win
                 };
-            }
-
-            public static IEnumerable<object[]> CharacterRuleData()
-            {
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Dagger = 3} , new() { Dagger = 2 } },
-                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 3},
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1CharacterRuleWin
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Dagger = 2} , new() { Dagger = 3 } },
-                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 2},
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 3 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2CharacterRuleWin
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Dagger = 2} , new() { Dagger = 2 } },
-                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 2},
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Dagger = 2} , new() { Dagger = 1 } },
-                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 2},
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 1 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Dagger = 1} , new() { Dagger = 2 } },
-                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 1},
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Assassin,
+                        Hand = new() { Dagger = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
             }
 
-
             [Theory]
-            [MemberData(nameof(NormalRuleData))]
-            public void TestAssassinRule_NormalRule(List<CardSet> cardSets, List<Card> currentChosen, Result expected)
+            [MemberData(nameof(RuleData))]
+            public void TestAssassinRule_NormalRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
             {
-                // Arrange
-                var player1Info = new PlayerInfoVM(cardSets[0], currentChosen[0]);
-                var player2Info = new PlayerInfoVM(cardSets[1], currentChosen[1]);
-
                 // Act
-                var result = Rule.AssassinRule(player1Info, player2Info);
-
-                // Assert
-                Assert.Equal(result, expected);
-            }
-
-            [Theory]
-            [MemberData(nameof(CharacterRuleData))]
-            public void TestAssassinRule_CharacterRule(List<CardSet> cardSets, List<Card> currentChosen, Result expected)
-            {
-                // Arrange
-                var player1Info = new PlayerInfoVM(cardSets[0], currentChosen[0]);
-                var player2Info = new PlayerInfoVM(cardSets[1], currentChosen[1]);
-                Console.WriteLine(player1Info.CardSet.Dagger);
-                Console.WriteLine(player2Info.CardSet.Dagger);
-                // Act
-                var result = Rule.AssassinRule(player1Info, player2Info);
+                var result = GameService.MapRule(player1.Character)(player1, player2);
 
                 // Assert
                 Assert.Equal(result, expected);
@@ -130,11 +391,33 @@ namespace BoardGameTest
             public void TestAssassinRule_InvalidCardCombination()
             {
                 // Arrange
-                var player1Info = new PlayerInfoVM(new CardSet(), (Card)100);
-                var player2Info = new PlayerInfoVM(new CardSet(), (Card)200);
+                var player1 = new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = (Card)100,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                };
+                var player2 = new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = (Card)200,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                };
 
                 // Act and Assert
-                var exception = Assert.Throws<Exception>(() => Rule.AssassinRule(player1Info, player2Info));
+                var exception = Assert.Throws<Exception>(() => GameService.MapRule(player1.Character)(player1, player2));
                 Assert.Equal("Invalid card combination", exception.Message);
             }
         }
@@ -145,112 +428,460 @@ namespace BoardGameTest
             {
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 1} },
-                    new List<Card>() { Card.Crown, Card.Crown },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 1},
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1CharacterRuleWin
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 1 } , new() { Sheild = 2} },
-                    new List<Card>() { Card.Crown, Card.Crown },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 1 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2},
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2CharacterRuleWin
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 2} },
-                    new List<Card>() { Card.Crown, Card.Crown },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2},
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new(), new() },
-                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Crown, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Sheild, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Dagger, Card.Crown },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Crown, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Sheild, Card.Crown },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Crown,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() , new() },
-                    new List<Card>() { Card.Dagger, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new(),
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2Win
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 1 } , new() { Sheild = 2 } },
-                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 1 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1CharacterRuleWin
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 1 } },
-                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 1 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2CharacterRuleWin
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 2 } },
-                    new List<Card>() { Card.Sheild, Card.Sheild },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Sheild,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 1 } , new() { Sheild = 2 } },
-                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 1 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player1CharacterRuleWin
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 1 } },
-                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 1 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Player2CharacterRuleWin
                 };
                 yield return new object[]
                 {
-                    new List<CardSet>() { new() { Sheild = 2 } , new() { Sheild = 2 } },
-                    new List<Card>() { Card.Dagger, Card.Dagger },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
+                    new PlayerRoundInfo
+                    {
+                        Character = Character.Deceiver,
+                        Hand = new() { Sheild = 2 },
+                        ChosenCards = new RoundCards
+                        {
+                            Card1 = Card.Dagger,
+                            Card2 = Card.Crown,
+                            Card3 = Card.Crown,
+                            LastOpened = 1,
+                        }
+                    },
                     Result.Draw
                 };
             }
 
             [Theory]
             [MemberData(nameof(RuleData))]
-            public void TesRule(List<CardSet> cardSets, List<Card> currentChosen, Result expected)
+            public void TesRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
             {
-                // Arrange
-                var player1Info = new PlayerInfoVM(cardSets[0], currentChosen[0]);
-                var player2Info = new PlayerInfoVM(cardSets[1], currentChosen[1]);
-
                 // Act
-                var result = Rule.DeceiverRule(player1Info, player2Info);
+                var result = GameService.MapRule(player1.Character)(player1, player2);
 
                 // Assert
                 Assert.Equal(result, expected);
@@ -260,11 +891,33 @@ namespace BoardGameTest
             public void TestInvalidCardCombination()
             {
                 // Arrange
-                var player1Info = new PlayerInfoVM(new CardSet(), (Card)100);
-                var player2Info = new PlayerInfoVM(new CardSet(), (Card)200);
+                var player1 = new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = (Card)100,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                };
+                var player2 = new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = (Card)200,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                };
 
                 // Act and Assert
-                var exception = Assert.Throws<Exception>(() => Rule.DeceiverRule(player1Info, player2Info));
+                var exception = Assert.Throws<Exception>(() => GameService.MapRule(player1.Character)(player1, player2));
                 Assert.Equal("Invalid card combination", exception.Message);
             }
         }
