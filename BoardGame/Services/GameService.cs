@@ -37,6 +37,20 @@ namespace BoardGame.Services
             return (WhoGoesFirst)random;
         }
 
+        public Func<PlayerRoundInfo, PlayerRoundInfo, Result> MapRule(Character character)
+        {
+            return character switch
+            {
+                Character.Assassin => Assassin.Rule,
+                Character.Deceiver => Deceiver.Rule,
+                Character.Knight => Knight.Rule,
+                Character.Lobbyist => Lobbyist.Rule,
+                Character.Lord => Lord.Rule,
+                Character.Soldier => Soldier.Rule,
+                _ => throw new NotImplementedException()
+            };
+        }
+
         private async Task ValidateGameInfo(GameInfoDTO dto)
         {
             _ = await _unitOfWork.Members.GetByAccountAsync(dto.Player1Account) ?? throw new GameServiceException("player1 account does not exist!");
