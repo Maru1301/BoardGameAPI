@@ -1,12 +1,13 @@
 ﻿using BoardGame.Models.EFModels;
 using BoardGame.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
 
 namespace BoardGame.Repositories
 {
     public class GameRepository(AppDbContext dbContext) : IGameRepository
     {
-        public async Task<Game?> GetByIdAsync(string id)
+        public async Task<Game?> GetByIdAsync(ObjectId id)
         {
             return await _db.Games.FindAsync(id);
         }
@@ -29,7 +30,7 @@ namespace BoardGame.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(ObjectId id)
         {
             var entity = await _db.Games.FindAsync(id);
             if (entity != null)

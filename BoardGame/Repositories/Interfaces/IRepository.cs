@@ -1,11 +1,13 @@
-﻿namespace BoardGame.Repositories.Interfaces
+﻿using MongoDB.Bson;
+
+namespace BoardGame.Repositories.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        Task<T?> GetByIdAsync(string id);
+        Task<T?> GetByIdAsync(ObjectId id);
         Task<IEnumerable<T>> GetAllAsync();
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
-        Task DeleteAsync(string id);
+        Task DeleteAsync(ObjectId id);
     }
 }
