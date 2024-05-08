@@ -1,12 +1,32 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
 using BoardGame.Services;
+using BoardGame.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BoardGameTest
 {
     public class RuleTests
     {
-        public class AssassinRuleTests
+        private static readonly IServiceProvider ServiceProvider;
+
+        static RuleTests()
+        {
+            var services = new ServiceCollection();
+
+            // Register the AssassinRule service
+            services.AddTransient<IGameService, GameService>();
+
+            // Register mocks for dependencies (if any)
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseMongoDB("Mock", "Mock"), ServiceLifetime.Scoped);
+
+            ServiceProvider = services.BuildServiceProvider();
+        }
+
+        public class AssassinRuleTests()
         {
             public static IEnumerable<object[]> RuleData()
             {
@@ -380,8 +400,11 @@ namespace BoardGameTest
             [MemberData(nameof(RuleData))]
             public void TestAssassinRule_NormalRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
             {
+                // Get the service instance from the static field
+                var service = ServiceProvider.GetService<IGameService>();
+
                 // Act
-                var result = GameService.MapRule(player1.Character)(player1, player2);
+                var result = service!.MapRule(player1.Character)(player1, player2);
 
                 // Assert
                 Assert.Equal(result, expected);
@@ -390,6 +413,9 @@ namespace BoardGameTest
             [Fact]
             public void TestAssassinRule_InvalidCardCombination()
             {
+                // Get the service instance from the static field
+                var service = ServiceProvider.GetService<IGameService>();
+
                 // Arrange
                 var player1 = new PlayerRoundInfo
                 {
@@ -417,12 +443,12 @@ namespace BoardGameTest
                 };
 
                 // Act and Assert
-                var exception = Assert.Throws<Exception>(() => GameService.MapRule(player1.Character)(player1, player2));
+                var exception = Assert.Throws<Exception>(() => service!.MapRule(player1.Character)(player1, player2));
                 Assert.Equal("Invalid card combination", exception.Message);
             }
         }
 
-        public class DeceiverRuleTests
+        public class DeceiverRuleTests()
         {
             public static IEnumerable<object[]> RuleData()
             {
@@ -880,8 +906,11 @@ namespace BoardGameTest
             [MemberData(nameof(RuleData))]
             public void TesRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
             {
+                // Get the service instance from the static field
+                var service = ServiceProvider.GetService<IGameService>();
+
                 // Act
-                var result = GameService.MapRule(player1.Character)(player1, player2);
+                var result = service!.MapRule(player1.Character)(player1, player2);
 
                 // Assert
                 Assert.Equal(result, expected);
@@ -890,6 +919,9 @@ namespace BoardGameTest
             [Fact]
             public void TestInvalidCardCombination()
             {
+                // Get the service instance from the static field
+                var service = ServiceProvider.GetService<IGameService>();
+
                 // Arrange
                 var player1 = new PlayerRoundInfo
                 {
@@ -917,7 +949,7 @@ namespace BoardGameTest
                 };
 
                 // Act and Assert
-                var exception = Assert.Throws<Exception>(() => GameService.MapRule(player1.Character)(player1, player2));
+                var exception = Assert.Throws<Exception>(() => service!.MapRule(player1.Character)(player1, player2));
                 Assert.Equal("Invalid card combination", exception.Message);
             }
         }
