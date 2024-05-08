@@ -1,4 +1,5 @@
 ﻿using BoardGame.Models.DTOs;
+using MongoDB.Bson;
 
 namespace BoardGame.Services.Interfaces
 {
@@ -6,13 +7,13 @@ namespace BoardGame.Services.Interfaces
     {
         public Task<IEnumerable<MemberDTO>> ListMembers();
 
-        public Task<MemberDTO> GetMemberInfo(string account);
+        public Task<MemberDTO> GetMemberInfo(ObjectId memberId);
 
         public Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate);
 
-        public Task<string> ActivateRegistration(string memberId, string confirmCode);
+        public Task<string> ActivateRegistration(ObjectId memberId, string confirmCode);
 
-        public Task<string> ValidateUser(LoginDTO dto);
+        public Task<(ObjectId Id, string Account)> ValidateUser(LoginDTO dto);
 
         public Task<bool> CheckAccountExist(string account);
 

@@ -44,7 +44,7 @@ namespace BoardGame.Services
             }
 
             // Authorize the user and generate a JWT token.
-            var token = _jwt.GenerateToken(dto.Account, Role.Admin);
+            var token = _jwt.GenerateToken(admin.Id, dto.Account, Role.Admin);
 
             return token;
         }

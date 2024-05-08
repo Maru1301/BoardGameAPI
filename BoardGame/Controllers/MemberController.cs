@@ -5,7 +5,9 @@ using BoardGame.Services;
 using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using System.Net;
+using System.Security.Claims;
 using static BoardGame.Models.ViewModels.MemberVMs;
 
 namespace BoardGame.Controllers
@@ -46,12 +48,13 @@ namespace BoardGame.Controllers
                 var user = HttpContext.User;
 
                 // Extract the user ID (or other relevant claim) from the JWT claim
-                string userAccount = user.Identity?.Name ?? string.Empty;
+                var idClaim = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Error occured while parsing JWT");
+                var id = idClaim.Value;
 
-                if(string.IsNullOrEmpty(userAccount)) return NotFound();
+                if(string.IsNullOrEmpty(id)) return NotFound();
 
                 // Use the user ID to retrieve member information from your database
-                var member = _memberService.GetMemberInfo(userAccount);
+                var member = _memberService.GetMemberInfo(new ObjectId(id));
 
                 // Return the member information 
                 return Ok(member);
@@ -72,14 +75,14 @@ namespace BoardGame.Controllers
         {
             try
             {
-                 var role = await _memberService.ValidateUser(login.ToDTO<LoginDTO>());
-                if (string.IsNullOrEmpty(role))
+                 var (Id, role) = await _memberService.ValidateUser(login.ToDTO<LoginDTO>());
+                if (Id == ObjectId.Empty || string.IsNullOrEmpty(role))
                 {
                     return BadRequest("Invalid Account or Password.");
                 }
 
                 // Authorize the user and generate a JWT token.
-                var token = _jwt.GenerateToken(login.Account, role);
+                var token = _jwt.GenerateToken(Id, login.Account, role);
                 return new JsonResult(token);
             }
             catch(MemberServiceException ex)
@@ -119,7 +122,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                string Message = await _memberService.ActivateRegistration(memberId, confirmationCode);
+                string Message = await _memberService.ActivateRegistration(new ObjectId(memberId), confirmationCode);
 
                 return Ok(Message);
             }

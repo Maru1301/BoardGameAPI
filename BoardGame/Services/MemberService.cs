@@ -3,6 +3,7 @@ using BoardGame.Infrastractures;
 using Utilities;
 using BoardGame.Services.Interfaces;
 using BoardGame.Models.EFModels;
+using MongoDB.Bson;
 
 namespace BoardGame.Services
 {
@@ -69,7 +70,7 @@ namespace BoardGame.Services
         /// <returns>A message indicating successful activation.</returns>
         /// <exception cref="MemberServiceException">Thrown if error occured in MemberService.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during activation.</exception>
-        public async Task<string> ActivateRegistration(string memberId, string confirmCode)
+        public async Task<string> ActivateRegistration(ObjectId memberId, string confirmCode)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -97,15 +98,15 @@ namespace BoardGame.Services
             }
         }
 
-        public async Task<string> ValidateUser(LoginDTO dto)
+        public async Task<(ObjectId Id, string Account)> ValidateUser(LoginDTO dto)
         {
             var member = await _unitOfWork.Members.GetByAccountAsync(dto.Account);
             if (member == null || !ValidatePassword(member.ToDTO<MemberDTO>(), dto.Password))
             {
-                return string.Empty;
+                return (ObjectId.Empty, string.Empty);
             }
 
-            return member.IsConfirmed ? Role.Member : Role.Guest;
+            return (member.Id, member.IsConfirmed ? Role.Member : Role.Guest);
         }
 
         private static bool ValidatePassword(MemberDTO member, string password)
@@ -117,9 +118,10 @@ namespace BoardGame.Services
         {
             return (await _unitOfWork.Members.GetAllAsync()).Select(x => x.ToDTO<MemberDTO>());
         }
-        public async Task<MemberDTO> GetMemberInfo(string account) 
+
+        public async Task<MemberDTO> GetMemberInfo(ObjectId id) 
         {
-            var entity = await _unitOfWork.Members.GetByAccountAsync(account) ?? throw new MemberServiceException("Member doesn't exist!");
+            var entity = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException("Member doesn't exist!");
             return entity.ToDTO<MemberDTO>();
         }
 

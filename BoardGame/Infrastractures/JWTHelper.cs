@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -14,20 +15,21 @@ namespace BoardGame.Infrastractures
             _settings = settings.CurrentValue;
         }
 
-        public string GenerateToken(string account, string role, int expireMinutes = 120)
+        public string GenerateToken(ObjectId Id, string account, string role, int expireHours = 1)
         {
             var issuer = _settings.ValidIssuer;
             var signKey = _settings.Secret;
 
-            var token = BuildToken(account, role, expireMinutes, issuer, signKey);
+            var token = BuildToken(Id, account, role, expireHours, issuer, signKey);
 
             return token;
         }
 
-        private static string BuildToken(string account, string role, int expireMinutes, string issuer, string secret)
+        private static string BuildToken(ObjectId Id, string account, string role, int expireHours, string issuer, string secret)
         {
             List<Claim> claims =
             [
+                new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
                 new Claim(ClaimTypes.Name, account),
                 new Claim(ClaimTypes.Role, role),
             ];
@@ -37,7 +39,7 @@ namespace BoardGame.Infrastractures
             var token = new JwtSecurityToken
             (
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(expireHours),
                 signingCredentials: cred
             );
 
