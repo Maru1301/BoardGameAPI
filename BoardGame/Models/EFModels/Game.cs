@@ -63,4 +63,11 @@ namespace BoardGame.Models.EFModels
         public Card Card3 { get; set; }
         public int LastOpened { get; set; }
     }
+
+    public class EndGameInfo
+    {
+        public string Winner { get; set; } = string.Empty;
+        public int Player1Point { get; set; }
+        public int Player2Point { get; set; }
+    }
 }
