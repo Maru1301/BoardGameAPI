@@ -21,7 +21,7 @@ namespace BoardGameTest
             // Register mocks for dependencies (if any)
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<AppDbContext>(options =>
-                options.UseMongoDB("Mock", "Mock"), ServiceLifetime.Scoped);
+                options.UseMongoDB("mongodb+srv://Maru:13011821@cluster0.r3hywvh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", "BoardGameDB"), ServiceLifetime.Scoped);
 
             ServiceProvider = services.BuildServiceProvider();
         }
