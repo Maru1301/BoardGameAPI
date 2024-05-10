@@ -16,7 +16,7 @@ namespace BoardGame.Controllers
         private readonly IGameService _gameService = gameService;
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> BeginNewGame(GameInfoVM vm)
+        public IActionResult BeginNewGame(GameInfoVM vm)
         {
             try
             {
@@ -27,7 +27,8 @@ namespace BoardGame.Controllers
 
                 if (string.IsNullOrEmpty(userAccount)) return BadRequest("Invalid Account!");
 
-                await _gameService.BeginNewGame(vm.ToDTO<GameInfoDTO>(), userAccount);
+                //測試
+                _gameService.BeginNewGame(vm.ToDTO<GameInfoDTO>());
 
                 return Ok();
             }
@@ -37,8 +38,8 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]")]
-        public IActionResult BeginNewRound(RoundInfoVM vm)
+        [HttpGet("[action]")]
+        public IActionResult BeginNewRound(Character ruleCharacter)
         {
             try
             {
@@ -65,5 +66,14 @@ namespace BoardGame.Controllers
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class CharacterSet
+    {
+        public Character Character1 { get; set; }
+
+        public Character Character2 { get; set; }
+
+        public Character Characetr3 { get; set; }
     }
 }

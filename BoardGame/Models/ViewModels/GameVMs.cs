@@ -1,5 +1,6 @@
-﻿using BoardGame.Infrastractures;
-using BoardGame.Models.EFModels;
+﻿
+using BoardGame.Controllers;
+using BoardGame.Infrastractures;
 
 namespace BoardGame.Models.ViewModels
 {
@@ -17,9 +18,12 @@ namespace BoardGame.Models.ViewModels
 
         public class RoundInfoVM
         {
-            public PlayerRoundInfo Player1 { get; set; } = new();
 
-            public PlayerRoundInfo Player2 { get; set; } = new();
+        }
+        public class NewGameInfoVM
+        {
+            public WhoGoesFirst WhoGoesFirst { get; set; }
+            public string Message { get; set; } = string.Empty;
         }
 
         public class PlayerInfoVM(CardSet cardSet, Card currentChosen)

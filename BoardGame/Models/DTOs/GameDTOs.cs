@@ -1,4 +1,5 @@
-﻿using BoardGame.Infrastractures;
+﻿using BoardGame.Controllers;
+using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
 
 namespace BoardGame.Models.DTOs
@@ -21,9 +22,9 @@ namespace BoardGame.Models.DTOs
             //0: player first, 1: bot first
             public WhoGoesFirst WhoGoesFirst { get; set; }
 
-            public PlayerRoundInfo Player1 { get; set; } = new();
+            public PlayerInfo Player1 { get; set; } = new();
 
-            public PlayerRoundInfo Player2 { get; set; } = new();
+            public PlayerInfo Player2 { get; set; } = new();
 
             public long RoundStart { get; set; }
 
