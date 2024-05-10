@@ -6,14 +6,9 @@ using System.Security.Claims;
 
 namespace BoardGame.Infrastractures
 {
-    public class JWTHelper
+    public class JWTHelper(IOptionsMonitor<JwtSettingsOptions> settings)
     {
-        private readonly JwtSettingsOptions _settings;
-
-        public JWTHelper(IOptionsMonitor<JwtSettingsOptions> settings)
-        {
-            _settings = settings.CurrentValue;
-        }
+        private readonly JwtSettingsOptions _settings = settings.CurrentValue;
 
         public string GenerateToken(ObjectId Id, string account, string role, int expireHours = 1)
         {
