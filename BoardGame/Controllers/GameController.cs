@@ -27,7 +27,19 @@ namespace BoardGame.Controllers
 
                 if (string.IsNullOrEmpty(userAccount)) return BadRequest("Invalid Account!");
 
-                await _gameService.BeginNewGame(vm.ToDTO<GameInfoDTO>(), userAccount);
+                var Id = await _gameService.BeginNewGame(vm.To<GameInfoDTO>(), userAccount);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+            }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> EndGame()
+        {
+            try
+            {
 
                 return Ok();
             }
@@ -38,11 +50,11 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult BeginNewRound(RoundInfoVM vm)
+        public async Task<IActionResult> BeginNewRound(RoundInfoVM vm)
         {
             try
             {
-                //_gameService.SetRuleCharacter(ruleCharacter);
+                await _gameService.BeginNewRound(vm.To<RoundInfoDTO>());
 
                 return Ok();
             }
@@ -53,7 +65,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpGet("[action]")]
-        public IActionResult OpenNextCard()
+        public async Task<IActionResult> OpenNextCard()
         {
             //var rule = _gameService.MapRule(ruleCharacter);
 
@@ -61,7 +73,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpGet("[action]")]
-        public IActionResult EndRound(Character playerChosenCharacter)
+        public async Task<IActionResult> EndRound(Character playerChosenCharacter)
         {
             throw new NotImplementedException();
         }

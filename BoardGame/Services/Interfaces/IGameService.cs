@@ -7,6 +7,7 @@ namespace BoardGame.Services.Interfaces
     public interface IGameService
     {
         public Task BeginNewGame(GameInfoDTO dto, string userAccount);
+        public Task BeginNewRound(RoundInfoDTO dto);
 
         public Func<PlayerRoundInfo, PlayerRoundInfo, Result> MapRule(Character character);
     }

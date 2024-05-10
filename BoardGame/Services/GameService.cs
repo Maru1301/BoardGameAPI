@@ -31,6 +31,15 @@ namespace BoardGame.Services
             }
         }
 
+        public async Task BeginNewRound(RoundInfoDTO dto)
+        {
+            //todo: check gameId in redis
+
+            dto.WhoGoesFirst = DetermineWhoGoesFirst();
+
+            //todo: store round information in redis
+        }
+
         public WhoGoesFirst DetermineWhoGoesFirst()
         {
             var random = new Random().Next(1);
