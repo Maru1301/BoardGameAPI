@@ -23,7 +23,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                string result = await _adminService.AddAdmin(vm.ToDTO<AdminCreateDTO>());
+                string result = await _adminService.AddAdmin(vm.To<AdminCreateDTO>());
 
                 return Ok(result);
             }
@@ -42,7 +42,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                var token = await _adminService.ValidateUser(vm.ToDTO<LoginDTO>());
+                var token = await _adminService.ValidateUser(vm.To<LoginDTO>());
 
                 return Ok(token);
             }

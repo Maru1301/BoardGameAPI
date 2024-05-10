@@ -18,7 +18,7 @@ namespace BoardGame.Services
             {
                 if (await CheckAccountExistAsync(dto.Account) == false) throw new AdminServiceException("Account already exists");
 
-                await _unitOfWork.Admins.AddAsync(dto.ToEntity<Admin>());
+                await _unitOfWork.Admins.AddAsync(dto.To<Admin>());
 
                 await _unitOfWork.CommitTransactionAsync();
                 return "Admin created successfully";
@@ -38,7 +38,7 @@ namespace BoardGame.Services
         public async Task<string> ValidateUser(LoginDTO dto)
         {
             var admin = await _unitOfWork.Admins.GetByAccountAsync(dto.Account);
-            if (admin == null || !ValidatePassword(admin.ToDTO<AdminDTO>(), dto.Password))
+            if (admin == null || !ValidatePassword(admin.To<AdminDTO>(), dto.Password))
             {
                 throw new AdminServiceException("Invalid Account or Password!");
             }

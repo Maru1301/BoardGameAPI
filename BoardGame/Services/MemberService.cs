@@ -35,10 +35,10 @@ namespace BoardGame.Services
                 //create a new confirm code
                 registerDto.ConfirmCode = Guid.NewGuid().ToString("N");
 
-                await _unitOfWork.Members.AddAsync(registerDto.ToEntity<Member>());
+                await _unitOfWork.Members.AddAsync(registerDto.To<Member>());
                 await _unitOfWork.CommitTransactionAsync();
 
-                var dto = (await _unitOfWork.Members.GetByAccountAsync(registerDto.Account) ?? throw new MemberServiceException("Member doesn't exist!")).ToDTO<MemberDTO>();
+                var dto = (await _unitOfWork.Members.GetByAccountAsync(registerDto.Account) ?? throw new MemberServiceException("Member doesn't exist!")).To<MemberDTO>();
                 
                 // Generate confirmation URL
                 string url = $"{confirmationUrlTemplate}?memberId={dto.Id}&confirmCode={dto.ConfirmCode}";
@@ -76,12 +76,12 @@ namespace BoardGame.Services
             try
             {
                 // Find the member by ID, Throw an exception if member not found
-                MemberDTO dto = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException("Member doesn't exist!")).ToDTO<MemberDTO>();
+                MemberDTO dto = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException("Member doesn't exist!")).To<MemberDTO>();
 
                 // Validate the confirmation code
                 if (string.Compare(dto.ConfirmCode, confirmCode) != 0) throw new MemberServiceException("Wrong confirm code!");
 
-                await _unitOfWork.Members.UpdateAsync(dto.ToEntity<Member>());
+                await _unitOfWork.Members.UpdateAsync(dto.To<Member>());
 
                 await _unitOfWork.CommitTransactionAsync();
                 return "Activation successful";
@@ -101,7 +101,7 @@ namespace BoardGame.Services
         public async Task<(ObjectId Id, string Account)> ValidateUser(LoginDTO dto)
         {
             var member = await _unitOfWork.Members.GetByAccountAsync(dto.Account);
-            if (member == null || !ValidatePassword(member.ToDTO<MemberDTO>(), dto.Password))
+            if (member == null || !ValidatePassword(member.To<MemberDTO>(), dto.Password))
             {
                 return (ObjectId.Empty, string.Empty);
             }
@@ -116,13 +116,13 @@ namespace BoardGame.Services
 
         public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
-            return (await _unitOfWork.Members.GetAllAsync()).Select(x => x.ToDTO<MemberDTO>());
+            return (await _unitOfWork.Members.GetAllAsync()).Select(x => x.To<MemberDTO>());
         }
 
         public async Task<MemberDTO> GetMemberInfo(ObjectId id) 
         {
             var entity = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException("Member doesn't exist!");
-            return entity.ToDTO<MemberDTO>();
+            return entity.To<MemberDTO>();
         }
 
         public async Task<bool> CheckAccountExist(string account)

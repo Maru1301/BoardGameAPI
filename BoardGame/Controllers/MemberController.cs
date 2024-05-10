@@ -27,7 +27,7 @@ namespace BoardGame.Controllers
             try
             {
                 var members = await _memberService.ListMembers();
-                return Ok(members.Select(m => m.ToVM<MemberVM>()).ToList());
+                return Ok(members.Select(m => m.To<MemberVM>()).ToList());
             }
             catch (MemberServiceException ex)
             {
@@ -40,7 +40,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpGet("[action]")]
-        public IActionResult GetMemberInfo()
+        public async Task<IActionResult> GetMemberInfo()
         {
             try
             {
@@ -54,10 +54,10 @@ namespace BoardGame.Controllers
                 if(string.IsNullOrEmpty(id)) return NotFound();
 
                 // Use the user ID to retrieve member information from your database
-                var member = _memberService.GetMemberInfo(new ObjectId(id));
+                var member = await _memberService.GetMemberInfo(new ObjectId(id));
 
                 // Return the member information 
-                return Ok(member);
+                return Ok(member.To<MemberVM>());
             }
             catch (MemberServiceException)
             {
@@ -70,12 +70,12 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginVM login)
+        [HttpGet("[action]"), AllowAnonymous]
+        public async Task<IActionResult> Login([FromQuery] LoginVM login)
         {
             try
             {
-                 var (Id, role) = await _memberService.ValidateUser(login.ToDTO<LoginDTO>());
+                 var (Id, role) = await _memberService.ValidateUser(login.To<LoginDTO>());
                 if (Id == ObjectId.Empty || string.IsNullOrEmpty(role))
                 {
                     return BadRequest("Invalid Account or Password.");
@@ -83,7 +83,7 @@ namespace BoardGame.Controllers
 
                 // Authorize the user and generate a JWT token.
                 var token = _jwt.GenerateToken(Id, login.Account, role);
-                return new JsonResult(token);
+                return Ok(token);
             }
             catch(MemberServiceException ex)
             {
@@ -103,7 +103,7 @@ namespace BoardGame.Controllers
                 // Define a template for the confirmation email URL.
                 string confirmationUrlTemplate = "https://localhost:44318/Member/ActivateRegistration";
 
-                string Message = await _memberService.Register(register.ToDTO<RegisterDTO>(), confirmationUrlTemplate);
+                string Message = await _memberService.Register(register.To<RegisterDTO>(), confirmationUrlTemplate);
 
                 return Ok(Message);
             }
