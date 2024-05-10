@@ -1,6 +1,7 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
+using MongoDB.Bson;
 using static BoardGame.Models.DTOs.GameDTOs;
 
 namespace BoardGame.Services
@@ -8,7 +9,7 @@ namespace BoardGame.Services
     public class GameService(IUnitOfWork unitOfWork) : IService, IGameService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        public async Task BeginNewGame(GameInfoDTO dto, string userAccount)
+        public async Task<ObjectId> BeginNewGame(GameInfoDTO dto, string userAccount)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -16,8 +17,12 @@ namespace BoardGame.Services
                 if (dto.Player1Account != userAccount) throw new GameServiceException("GameInfo account does not match the login account!");
                 await ValidateGameInfo(dto);
                 
-                await _unitOfWork.Games.AddAsync(dto.ToEntity<Game>());
+                var Id = await _unitOfWork.Games.AddAsync(dto.To<Game>());
                 await _unitOfWork.CommitTransactionAsync();
+
+                //todo: store gameId in redis
+
+                return Id;
             }
             catch (GameServiceException)
             {

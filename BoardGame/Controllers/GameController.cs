@@ -28,6 +28,8 @@ namespace BoardGame.Controllers
                 if (string.IsNullOrEmpty(userAccount)) return BadRequest("Invalid Account!");
 
                 var Id = await _gameService.BeginNewGame(vm.To<GameInfoDTO>(), userAccount);
+
+                return Ok(Id);
             }
             catch (Exception ex)
             {
