@@ -9,6 +9,7 @@ namespace BoardGame.Models.ViewModels
             public string Name { get; set; } = string.Empty;
             public string Account { get; set; } = string.Empty;
             public string Email { get; set; } = string.Empty;
+            public bool IsConfirmed { get; set; }
         }
 
         public class LoginVM

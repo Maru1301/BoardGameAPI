@@ -14,7 +14,7 @@ namespace BoardGame.Models.DTOs
             public long CreatedTime { get; set; } = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000;
         }
 
-        public class RoundDTO
+        public class RoundInfoDTO
         {
             public string Winner { get; set; } = string.Empty;
 
