@@ -46,7 +46,7 @@ namespace BoardGame
             // Clear the default mapping
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             // Register JwtHelper
-            services.AddSingleton<JWTHelper>();
+            services.AddScoped<JWTHelper>();
             // Register using option mode
             services.Configure<JwtSettingsOptions>(configuration.GetSection("JwtSettings"));
             // Set authentication method
@@ -72,8 +72,6 @@ namespace BoardGame
 
             services.AddControllers();
             RegisterScopedServices(services);
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             var mongoDBSettings = configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>();
             services.AddDbContext<AppDbContext>(options =>
@@ -118,6 +116,8 @@ namespace BoardGame
 
         private static void RegisterScopedServices(IServiceCollection services)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => i.Name == "IService" || i.Name == "IRepository"));
 
