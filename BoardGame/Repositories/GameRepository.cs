@@ -18,10 +18,12 @@ namespace BoardGame.Repositories
         }
 
         private readonly AppDbContext _db = dbContext;
-        public async Task AddAsync(Game dto)
+        public async Task<ObjectId> AddAsync(Game entity)
         {
-            await _db.Games.AddAsync(dto);
+            var entry = await _db.Games.AddAsync(entity);
             await _db.SaveChangesAsync();
+
+            return entry.Entity.Id;
         }
 
         public async Task UpdateAsync(Game entity)

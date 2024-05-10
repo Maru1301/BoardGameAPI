@@ -6,7 +6,7 @@ namespace BoardGame.Repositories.Interfaces
     {
         Task<T?> GetByIdAsync(ObjectId id);
         Task<IEnumerable<T>> GetAllAsync();
-        Task AddAsync(T entity);
+        Task<ObjectId> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(ObjectId id);
     }

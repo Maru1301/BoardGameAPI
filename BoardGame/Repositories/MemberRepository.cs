@@ -20,10 +20,12 @@ namespace BoardGame.Repositories
             return await _db.Members.ToListAsync();
         }
 
-        public async Task AddAsync(Member entity)
+        public async Task<ObjectId> AddAsync(Member entity)
         {
-            await _db.Members.AddAsync(entity);
+            var entry = await _db.Members.AddAsync(entity);
             await _db.SaveChangesAsync();
+
+            return entry.Entity.Id;
         }
 
         public async Task UpdateAsync(Member entity)
