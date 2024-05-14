@@ -116,13 +116,47 @@ namespace BoardGame.Services
 
         public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
-            return (await _unitOfWork.Members.GetAllAsync()).Select(x => x.To<MemberDTO>());
+            // Cache key for member list
+            const string cacheKey = "members";
+
+            // Try to get members from cache
+            var cachedMembers = await _cacheService.HashGetAllAsync(cacheKey);
+
+            if (cachedMembers != null && cachedMembers.Length > 0)
+            {
+                return cachedMembers.Select(cachedMember => JsonConvert.DeserializeObject<MemberDTO>(cachedMember.Value.ToString()))!;
+            }
+
+            // If not cached, fetch from database
+            var members = (await _unitOfWork.Members.GetAllAsync());
+
+            // Add members to cache with expiration (optional)
+            var entries = members.Select(member => new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member))).ToArray();
+            await _cacheService.HashSetAsync(cacheKey, entries, TimeSpan.FromSeconds(10));
+
+            return members.Select(x => x.To<MemberDTO>());
         }
 
         public async Task<MemberDTO> GetMemberInfo(ObjectId id) 
         {
-            var entity = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException("Member doesn't exist!");
-            return entity.To<MemberDTO>();
+            // Cache key for member list
+            const string cacheKey = "members";
+
+            // Try to get members from cache
+            var cachedMember = await _cacheService.HashGetAsync(cacheKey, id.ToString());
+
+            if (cachedMember.HasValue)
+            {
+                return JsonConvert.DeserializeObject<MemberDTO>(cachedMember.ToString())!;
+            }
+
+            var member = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException("Member doesn't exist!");
+
+            // Add members to cache with expiration (optional)
+            var entries = new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member));
+            await _cacheService.HashSetAsync(cacheKey, [entries]);
+
+            return member.To<MemberDTO>();
         }
 
         public async Task<bool> CheckAccountExist(string account)

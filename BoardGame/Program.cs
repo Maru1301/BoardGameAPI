@@ -2,6 +2,7 @@ using BoardGame.Filters;
 using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
 using BoardGame.Services;
+using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -116,7 +117,10 @@ namespace BoardGame
 
         private static void RegisterScopedServices(IServiceCollection services)
         {
+            //register UoW
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            //register redis service
+            services.AddScoped<ICacheService, CacheService>();
 
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => i.Name == "IService" || i.Name == "IRepository"));
