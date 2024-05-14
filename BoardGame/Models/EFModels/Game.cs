@@ -16,7 +16,7 @@ namespace BoardGame.Models.EFModels
         public Round? Round4 { get; set; }
         public Round? Round5 { get; set; }
         public Round? Round6 { get; set; }
-        public EndGameInfo EndGameInfo { get; set; } = new();
+        public EndGameInfo? EndGameInfo { get; set; }
         public long CreatedTime { get; set; }
     }
 
