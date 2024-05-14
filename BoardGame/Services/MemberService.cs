@@ -4,6 +4,8 @@ using Utilities;
 using BoardGame.Services.Interfaces;
 using BoardGame.Models.EFModels;
 using MongoDB.Bson;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace BoardGame.Services
 {
@@ -11,6 +13,7 @@ namespace BoardGame.Services
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IConfiguration _configuration = configuration;
+        private readonly ICacheService _cacheService = cacheService;
 
         /// <summary>
         /// Register a new user based on the provided information in the `RegisterDTO` object.
@@ -38,7 +41,7 @@ namespace BoardGame.Services
                 await _unitOfWork.Members.AddAsync(registerDto.To<Member>());
                 await _unitOfWork.CommitTransactionAsync();
 
-                var dto = (await _unitOfWork.Members.GetByAccountAsync(registerDto.Account) ?? throw new MemberServiceException("Member doesn't exist!")).To<MemberDTO>();
+                var dto = (await _unitOfWork.Members.GetByAccountAsync(registerDto.Account) ?? throw new MemberServiceException("Member doesn't exist!"));
                 
                 // Generate confirmation URL
                 string url = $"{confirmationUrlTemplate}?memberId={dto.Id}&confirmCode={dto.ConfirmCode}";
@@ -106,7 +109,7 @@ namespace BoardGame.Services
                 return (ObjectId.Empty, string.Empty);
             }
 
-            return (member.Id, member.IsConfirmed ? Role.Member : Role.Guest);
+            return (member.Id, member.IsConfirmed ? Infrastractures.Role.Member : Infrastractures.Role.Guest);
         }
 
         private static bool ValidatePassword(MemberDTO member, string password)
