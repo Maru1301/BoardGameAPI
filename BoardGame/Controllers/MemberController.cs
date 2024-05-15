@@ -117,6 +117,60 @@ namespace BoardGame.Controllers
             }
         }
 
+        [HttpPost("[action]")]
+        public async Task<string> EditMemberInfo(EditVM vm)
+        {
+            try
+            {
+                var user = HttpContext.User;
+
+                string Id = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+                var dto = vm.To<EditDTO>();
+
+                dto.Id = new ObjectId(Id);
+
+                string Message = await _memberService.EditMemberInfo(dto);
+
+                return Message;
+            }
+            catch (MemberServiceException ex) // Catch specific member service exceptions
+            {
+                return $"Registration failed. Please check the provided information. {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [HttpPost("[action]")]
+        public async Task<string> ResetPassword(ResetPasswordVM vm)
+        {
+            try
+            {
+                var user = HttpContext.User;
+
+                string Id = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+                var dto = vm.To<ResetPasswordDTO>();
+
+                dto.Id = new ObjectId(Id);
+
+                string Message = await _memberService.ResetPassword(dto);
+
+                return Message;
+            }
+            catch (MemberServiceException ex) // Catch specific member service exceptions
+            {
+                return $"Registration failed. Please check the provided information. {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
         [HttpGet("[action]"), AllowAnonymous]
         public async Task<IActionResult> ActivateRegistration(string memberId, string confirmationCode)
         {

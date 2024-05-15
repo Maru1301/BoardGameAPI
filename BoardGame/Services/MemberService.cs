@@ -9,7 +9,7 @@ using StackExchange.Redis;
 
 namespace BoardGame.Services
 {
-    public class MemberService(IUnitOfWork unitOfWork, IConfiguration configuration) : IService, IMemberService
+    public class MemberService(IUnitOfWork unitOfWork, IConfiguration configuration, ICacheService cacheService) : IService, IMemberService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IConfiguration _configuration = configuration;
@@ -26,31 +26,100 @@ namespace BoardGame.Services
         /// <returns>A message indicating successful registration.</returns>
         /// <exception cref="MemberServiceException">Thrown if error occured in MemberService.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during registration.</exception>
-        public async Task<string> Register(RegisterDTO registerDto, string confirmationUrlTemplate)
+        public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (!await CheckAccountExist(registerDto.Account)) throw new MemberServiceException("Account already exists");
-                if (!await CheckNameExist(registerDto.Name)) throw new MemberServiceException("Name already exists");
-                if (!await CheckEmailExist(registerDto.Email)) throw new MemberServiceException("Email already exists");
+                if (!await CheckAccountExist(dto.Account)) throw new MemberServiceException("Account already exists");
+                if (!await CheckNameExist(dto.Name)) throw new MemberServiceException("Name already exists");
+                if (!await CheckEmailExist(dto.Email)) throw new MemberServiceException("Email already exists");
 
                 //create a new confirm code
-                registerDto.ConfirmCode = Guid.NewGuid().ToString("N");
+                dto.ConfirmCode = Guid.NewGuid().ToString("N");
 
-                await _unitOfWork.Members.AddAsync(registerDto.To<Member>());
+                await _unitOfWork.Members.AddAsync(dto.To<Member>());
                 await _unitOfWork.CommitTransactionAsync();
 
-                var dto = (await _unitOfWork.Members.GetByAccountAsync(registerDto.Account) ?? throw new MemberServiceException("Member doesn't exist!"));
+                var entity = (await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException("Member doesn't exist!"));
                 
                 // Generate confirmation URL
-                string url = $"{confirmationUrlTemplate}?memberId={dto.Id}&confirmCode={dto.ConfirmCode}";
+                string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={dto.ConfirmCode}";
 
                 // Send confirmation email
                 new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
 
                 await _unitOfWork.CommitTransactionAsync();
                 return "Registration successful! Confirmation email sent!";
+            }
+            catch (MemberAccessException)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
+        }
+
+        public async Task<string> EditMemberInfo(EditDTO dto)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                if (!await CheckEmailExist(dto.Email)) throw new MemberServiceException("Email already exists");
+
+                // Find the member by ID, Throw an exception if member not found
+                var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!"));
+
+                entity.Name = dto.Name;
+                if(!entity.Email.Equals(dto.Email))
+                {
+                    entity.IsConfirmed = false;
+                }
+                entity.Email = dto.Email;
+
+                await _unitOfWork.Members.UpdateAsync(entity);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return "Edition successful";
+            }
+            catch (MemberAccessException)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
+        }
+
+        public async Task<string> ResetPassword(ResetPasswordDTO dto)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                // Find the member by ID, Throw an exception if member not found
+                var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!"));
+
+                var oldEncryptedPassword = HashUtility.ToSHA256(dto.OldPassword, entity.Salt);
+                
+                if (!entity.EncryptedPassword.Equals(oldEncryptedPassword))
+                {
+                    throw new MemberServiceException("Old password confirmation failed");
+                }
+
+                entity.Salt = dto.Salt;
+                entity.EncryptedPassword = dto.EncryptedPassword;
+
+                await _unitOfWork.Members.UpdateAsync(entity);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return "Edition successful";
             }
             catch (MemberAccessException)
             {
