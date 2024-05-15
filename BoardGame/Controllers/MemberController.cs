@@ -136,7 +136,7 @@ namespace BoardGame.Controllers
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
-                return $"Registration failed. Please check the provided information. {ex.Message}";
+                return $"Edition failed. Please check the provided information. {ex.Message}";
             }
             catch (Exception ex)
             {
@@ -163,7 +163,7 @@ namespace BoardGame.Controllers
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
-                return $"Registration failed. Please check the provided information. {ex.Message}";
+                return $"Reset failed. Please check the provided information. {ex.Message}";
             }
             catch (Exception ex)
             {

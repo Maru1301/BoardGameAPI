@@ -119,7 +119,7 @@ namespace BoardGame.Services
                 await _unitOfWork.Members.UpdateAsync(entity);
 
                 await _unitOfWork.CommitTransactionAsync();
-                return "Edition successful";
+                return "Reset successful";
             }
             catch (MemberAccessException)
             {
