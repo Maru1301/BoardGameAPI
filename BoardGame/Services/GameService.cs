@@ -3,12 +3,21 @@ using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
 using MongoDB.Bson;
 using static BoardGame.Models.DTOs.GameDTOs;
+using static BoardGame.Models.ViewModels.GameVMs;
 
 namespace BoardGame.Services
 {
     public class GameService(IUnitOfWork unitOfWork) : IService, IGameService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+        public async Task<IEnumerable<GameVM>> GetGameList()
+        {
+            var games = await _unitOfWork.Games.GetAllAsync();
+
+            return games.Select(x => x.To<GameVM>());
+        }
+
         public async Task<ObjectId> BeginNewGame(GameInfoDTO dto, string userAccount)
         {
             await _unitOfWork.BeginTransactionAsync();

@@ -8,12 +8,28 @@ using static BoardGame.Models.ViewModels.GameVMs;
 
 namespace BoardGame.Controllers
 {
-    [AuthorizeRoles(Role.Member, Role.Guest)]
+    [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
     [Route("api/[controller]")]
     public class GameController(IGameService gameService) : ControllerBase
     {
         private readonly IGameService _gameService = gameService;
+        
+        [HttpGet("[action]")]
+        [AuthorizeRoles(Role.Admin)]
+        public async Task<IActionResult> GetGameList()
+        {
+            try
+            {
+                var games = await _gameService.GetGameList();
+
+                return Ok(games);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> BeginNewGame(GameInfoVM vm)
@@ -35,7 +51,7 @@ namespace BoardGame.Controllers
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
-            }
+        }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> EndGame()
