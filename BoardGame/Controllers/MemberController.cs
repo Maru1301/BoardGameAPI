@@ -96,14 +96,14 @@ namespace BoardGame.Controllers
         }
         
         [HttpPost("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Register(RegisterVM register)
+        public async Task<IActionResult> Register(RegisterVM vm)
         {
             try
             {
                 // Define a template for the confirmation email URL.
                 string confirmationUrlTemplate = "https://localhost:44318/Member/ActivateRegistration";
 
-                string Message = await _memberService.Register(register.To<RegisterDTO>(), confirmationUrlTemplate);
+                string Message = await _memberService.Register(vm.To<RegisterDTO>(), confirmationUrlTemplate);
 
                 return Ok(Message);
             }
@@ -122,6 +122,7 @@ namespace BoardGame.Controllers
         {
             try
             {
+
                 string Message = await _memberService.ActivateRegistration(new ObjectId(memberId), confirmationCode);
 
                 return Ok(Message);
