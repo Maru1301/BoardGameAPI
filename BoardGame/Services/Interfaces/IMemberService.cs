@@ -11,6 +11,8 @@ namespace BoardGame.Services.Interfaces
 
         public Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate);
 
+        public Task<string> ResendConfirmationCode(ObjectId memberId);
+
         public Task<string> EditMemberInfo(EditDTO dto);
 
         public Task<string> ResetPassword(ResetPasswordDTO dto);

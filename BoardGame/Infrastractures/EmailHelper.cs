@@ -21,13 +21,13 @@ namespace BoardGame.Infrastractures
         /// <param name="confirmationUrl">The URL for the user to click to confirm their registration.</param>
         /// <param name="name">The name of the registered user.</param>
         /// <param name="emailAddress">The email address of the registered user.</param>
-        public void SendConfirmRegisterEmail(string confirmationUrl, string name, string email)
+        public void SendConfirmationEmail(string confirmationUrl, string name, string email)
         {
             string subject = "[New Member Confirmation Email]";
             string body = $@"Hi {name},
 
 						<br />
-                        Please click on this link [<a href='{confirmationUrl}' target='_blank'>Verify Email</a>] to complete your registration.
+                        Please click on this link [<a href='{confirmationUrl}' target='_blank'>Verify Email</a>] to activate your account.
                         <br />
                         If you did not request this email, please ignore it. Thank you!
 

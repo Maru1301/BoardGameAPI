@@ -69,8 +69,21 @@ namespace BoardGame.Services
             new EmailHelper(_configuration).SendConfirmationEmail(url, entity.Name!, entity.Email!);
         }
 
-                await _unitOfWork.CommitTransactionAsync();
-                return "Registration successful! Confirmation email sent!";
+        public async Task<string> ResendConfirmationCode(ObjectId memberId)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                // Find the member by ID, Throw an exception if member not found
+                var entity = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException("Member doesn't exist!"));
+
+                // Define a template for the confirmation email URL.
+                string confirmationUrlTemplate = "https://localhost:44318/Member/ValidateEmail";
+
+                //todo: implement resending confirmation code
+                SendConfirmationCode(entity, confirmationUrlTemplate);
+
+                return "success";
             }
             catch (MemberAccessException)
             {

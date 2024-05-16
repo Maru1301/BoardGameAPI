@@ -117,6 +117,29 @@ namespace BoardGame.Controllers
             }
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ResendConfirmationCode()
+        {
+            try
+            {
+                var user = HttpContext.User;
+
+                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+                string message = await _memberService.ResendConfirmationCode(new ObjectId(memberId));
+                
+                return Ok(message);
+            }
+            catch (MemberServiceException ex) // Catch specific member service exceptions
+            {
+                return BadRequest($"Activation failed. Please check the provided information. {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPost("[action]")]
         public async Task<string> EditMemberInfo(EditVM vm)
         {
