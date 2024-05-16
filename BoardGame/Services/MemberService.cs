@@ -42,7 +42,7 @@ namespace BoardGame.Services
                 await _unitOfWork.CommitTransactionAsync();
 
                 var entity = (await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException("Member doesn't exist!"));
-                
+
                 SendConfirmationCode(entity, confirmationUrlTemplate);
 
                 await _unitOfWork.CommitTransactionAsync();
@@ -62,10 +62,10 @@ namespace BoardGame.Services
 
         public void SendConfirmationCode(Member entity, string confirmationUrlTemplate)
         {
-                // Generate confirmation URL
+            // Generate confirmation URL
             string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={entity.ConfirmCode}";
 
-                // Send confirmation email
+            // Send confirmation email
             new EmailHelper(_configuration).SendConfirmationEmail(url, entity.Name!, entity.Email!);
         }
 
@@ -97,17 +97,27 @@ namespace BoardGame.Services
             }
         }
 
+        /// <summary>
+        /// Edits member information.
+        /// Throws specific exceptions for duplicate email.
+        /// If email is modified, set IsConfirmed to false to let member verified again.
+        /// </summary>
+        /// <param name="dto">The EditDTO containing member ID, name, and new email address.</param>
+        /// <returns>A string indicating successful edit ("Edition successful")</returns>
+        /// /// <exception cref="MemberServiceException">Thrown if member not found or old password doesn't matched the password in the database.</exception>
+        /// <exception cref="Exception">Thrown for any other unexpected errors during update.</exception>
         public async Task<string> EditMemberInfo(EditDTO dto)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (!await CheckEmailExist(dto.Email)) throw new MemberServiceException("Email already exists");
+                // Check if email already exists before update (excluding current member)
                 if (await IsEmailAvailableAsync(dto.Email, dto.Id)) throw new MemberServiceException("Email already exists");
 
                 // Find the member by ID, Throw an exception if member not found
                 var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!"));
 
+                // Update member information
                 entity.Name = dto.Name;
                 if(!entity.Email.Equals(dto.Email))
                 {
@@ -120,7 +130,7 @@ namespace BoardGame.Services
                 await _unitOfWork.CommitTransactionAsync();
                 return "Edition successful";
             }
-            catch (MemberAccessException)
+            catch (MemberServiceException)
             {
                 await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
@@ -132,21 +142,29 @@ namespace BoardGame.Services
             }
         }
 
+        /// <summary>
+        /// Resets a member's password.
+        /// </summary>
+        /// <param name="dto">A ResetPasswordDTO object containing the member's ID, old password, new password, and salt.</param>
+        /// <returns>A string indicating success ("Reset successful").</returns>
+        /// <exception cref="MemberServiceException">Thrown if member not found or old password doesn't matched the password in the database.</exception>
+        /// <exception cref="Exception">Thrown for any other unexpected errors during update.</exception>
         public async Task<string> ResetPassword(ResetPasswordDTO dto)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
                 // Find the member by ID, Throw an exception if member not found
-                var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!"));
+                var entity = await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!");
 
+                // Validate old password matches the hashed and salted password in the database
                 var oldEncryptedPassword = HashUtility.ToSHA256(dto.OldPassword, entity.Salt);
-                
                 if (!entity.EncryptedPassword.Equals(oldEncryptedPassword))
                 {
                     throw new MemberServiceException("Old password confirmation failed");
                 }
 
+                // Update member entity with new password and salt
                 entity.Salt = dto.Salt;
                 entity.EncryptedPassword = dto.EncryptedPassword;
 
@@ -155,7 +173,7 @@ namespace BoardGame.Services
                 await _unitOfWork.CommitTransactionAsync();
                 return "Reset successful";
             }
-            catch (MemberAccessException)
+            catch (MemberServiceException)
             {
                 await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller
@@ -306,6 +324,9 @@ namespace BoardGame.Services
         }
     }
 
+    /// <summary>
+    /// The MemberServiceException is thrown when errors occurred in the service 
+    /// </summary>
     public class MemberServiceException(string message) : Exception(message)
     {
     }
