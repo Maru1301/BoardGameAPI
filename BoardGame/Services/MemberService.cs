@@ -16,7 +16,7 @@ namespace BoardGame.Services
         private readonly ICacheService _cacheService = cacheService;
 
         /// <summary>
-        /// Register a new user based on the provided information in the `RegisterDTO` object.
+        /// Register a new user based on the provided information.
         /// Throws specific exceptions for duplicate account, name, or email.
         /// On successful registration, a confirmation email is sent with a generated confirmation URL
         /// for account verification.
@@ -43,11 +43,31 @@ namespace BoardGame.Services
 
                 var entity = (await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException("Member doesn't exist!"));
                 
+                SendConfirmationCode(entity, confirmationUrlTemplate);
+
+                await _unitOfWork.CommitTransactionAsync();
+                return "Registration successful! Confirmation email sent!";
+            }
+            catch (MemberAccessException)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                throw; // Re-throw the exception for handling in the controller
+            }
+        }
+
+        public void SendConfirmationCode(Member entity, string confirmationUrlTemplate)
+        {
                 // Generate confirmation URL
-                string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={dto.ConfirmCode}";
+            string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={entity.ConfirmCode}";
 
                 // Send confirmation email
-                new EmailHelper(_configuration).SendConfirmRegisterEmail(url, dto.Name!, dto.Email!);
+            new EmailHelper(_configuration).SendConfirmationEmail(url, entity.Name!, entity.Email!);
+        }
 
                 await _unitOfWork.CommitTransactionAsync();
                 return "Registration successful! Confirmation email sent!";
