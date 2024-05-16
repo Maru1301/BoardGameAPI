@@ -134,15 +134,15 @@ namespace BoardGame.Services
         }
 
         /// <summary>
-        /// Activates a member's registration by verifying their ID and confirmation code.
+        /// Validates a member's email address by verifying their ID and confirmation code.
         /// Throws specific exceptions for member not found, invalid confirmation code, or other unexpected errors.
         /// </summary>
         /// <param name="memberId">The ID of the member to activate.</param>
         /// <param name="confirmCode">The confirmation code provided by the user.</param>
-        /// <returns>A message indicating successful activation.</returns>
-        /// <exception cref="MemberServiceException">Thrown if error occured in MemberService.</exception>
-        /// <exception cref="Exception">Thrown for any other unexpected errors during activation.</exception>
-        public async Task<string> ActivateRegistration(ObjectId memberId, string confirmCode)
+        /// <returns>A message indicating successful email validation ("Validation successful").</returns>
+        /// <exception cref="MemberServiceException">Thrown if the member is not found or there's an error within the MemberService logic.</exception>
+        /// <exception cref="Exception">Thrown for any other unexpected errors during validation.</exception>
+        public async Task<string> ValidateEmail(ObjectId memberId, string confirmCode)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -156,9 +156,9 @@ namespace BoardGame.Services
                 await _unitOfWork.Members.UpdateAsync(dto.To<Member>());
 
                 await _unitOfWork.CommitTransactionAsync();
-                return "Activation successful";
+                return "Validation successful";
             }
-            catch (MemberAccessException)
+            catch (MemberServiceException)
             {
                 await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
                 throw; // Re-throw the exception for handling in the controller

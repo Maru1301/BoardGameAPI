@@ -172,18 +172,17 @@ namespace BoardGame.Controllers
         }
 
         [HttpGet("[action]"), AllowAnonymous]
-        public async Task<IActionResult> ActivateRegistration(string memberId, string confirmationCode)
+        public async Task<IActionResult> ValidateEmail(string memberId, string confirmationCode)
         {
             try
             {
-
-                string Message = await _memberService.ActivateRegistration(new ObjectId(memberId), confirmationCode);
+                string Message = await _memberService.ValidateEmail(new ObjectId(memberId), confirmationCode);
 
                 return Ok(Message);
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
-                return BadRequest($"Activation failed. Please check the provided information. {ex.Message}");
+                return BadRequest($"Validation failed. Please check the provided information. {ex.Message}");
             }
             catch (Exception ex)
             {
