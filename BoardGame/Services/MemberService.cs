@@ -103,6 +103,7 @@ namespace BoardGame.Services
             try
             {
                 if (!await CheckEmailExist(dto.Email)) throw new MemberServiceException("Email already exists");
+                if (await IsEmailAvailableAsync(dto.Email, dto.Id)) throw new MemberServiceException("Email already exists");
 
                 // Find the member by ID, Throw an exception if member not found
                 var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!"));
@@ -290,11 +291,18 @@ namespace BoardGame.Services
             return member == null;
         }
 
-        public async Task<bool> CheckEmailExist(string email)
+        /// <summary>
+        /// Checks if the provided email address is available for use by a member.
+        /// This method excludes the member identified by the memberId parameter from the check.
+        /// </summary>
+        /// <param name="email">The email address to check for availability.</param>
+        /// <param name="memberId">The ID of the member to exclude from the check.</param>
+        /// <returns>True if the email address is not in use by any other member, false otherwise.</returns>
+        public async Task<bool> IsEmailAvailableAsync(string email, ObjectId memberId)
         {
             var member = await _unitOfWork.Members.GetByEmailAsync(email);
 
-            return member != null;
+            return member == null || (member != null && member.Id == memberId);
         }
     }
 

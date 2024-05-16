@@ -27,6 +27,6 @@ namespace BoardGame.Services.Interfaces
 
         public Task<bool> IsEmailAvailableAsync(string email);
 
-        public Task<bool> CheckEmailExist(string email);
+        Task<bool> IsEmailAvailableAsync(string email, ObjectId memberId);
     }
 }
