@@ -124,11 +124,11 @@ namespace BoardGame.Controllers
             {
                 var user = HttpContext.User;
 
-                string Id = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
                 var dto = vm.To<EditDTO>();
 
-                dto.Id = new ObjectId(Id);
+                dto.Id = new ObjectId(memberId);
 
                 string Message = await _memberService.EditMemberInfo(dto);
 
@@ -151,11 +151,11 @@ namespace BoardGame.Controllers
             {
                 var user = HttpContext.User;
 
-                string Id = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
                 var dto = vm.To<ResetPasswordDTO>();
 
-                dto.Id = new ObjectId(Id);
+                dto.Id = new ObjectId(memberId);
 
                 string Message = await _memberService.ResetPassword(dto);
 

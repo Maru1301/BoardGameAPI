@@ -31,9 +31,9 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (!await CheckAccountExist(dto.Account)) throw new MemberServiceException("Account already exists");
-                if (!await CheckNameExist(dto.Name)) throw new MemberServiceException("Name already exists");
-                if (!await CheckEmailExist(dto.Email)) throw new MemberServiceException("Email already exists");
+                if (!await IsAccountAvailableAsync(dto.Account)) throw new MemberServiceException("Account already exists");
+                if (!await IsNameAvailableAsync(dto.Name)) throw new MemberServiceException("Name already exists");
+                if (!await IsEmailAvailableAsync(dto.Email)) throw new MemberServiceException("Email already exists");
 
                 //create a new confirm code
                 dto.ConfirmCode = Guid.NewGuid().ToString("N");
@@ -231,18 +231,30 @@ namespace BoardGame.Services
             return member.To<MemberDTO>();
         }
 
-        public async Task<bool> CheckAccountExist(string account)
+        public async Task<bool> IsAccountAvailableAsync(string account)
         {
             var member = await _unitOfWork.Members.GetByAccountAsync(account);
 
-            return member != null;
+            return member == null;
         }
 
-        public async Task<bool> CheckNameExist(string name)
+        public async Task<bool> IsNameAvailableAsync(string name)
         {
             var member = await _unitOfWork.Members.GetByNameAsync(name);
 
-            return member != null;
+            return member == null;
+        }
+
+        /// <summary>
+        /// Checks if the provided email address is available for use by a member.
+        /// </summary>
+        /// <param name="email">The email address to check for availability.</param>
+        /// <returns>True if the email address is not in use by any other member, false otherwise.</returns>
+        public async Task<bool> IsEmailAvailableAsync(string email)
+        {
+            var member = await _unitOfWork.Members.GetByEmailAsync(email);
+
+            return member == null;
         }
 
         public async Task<bool> CheckEmailExist(string email)

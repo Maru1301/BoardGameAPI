@@ -19,9 +19,11 @@ namespace BoardGame.Services.Interfaces
 
         public Task<(ObjectId Id, string Account)> ValidateUser(LoginDTO dto);
 
-        public Task<bool> CheckAccountExist(string account);
+        public Task<bool> IsAccountAvailableAsync(string account);
 
-        public Task<bool> CheckNameExist(string nickName);
+        public Task<bool> IsNameAvailableAsync(string nickName);
+
+        public Task<bool> IsEmailAvailableAsync(string email);
 
         public Task<bool> CheckEmailExist(string email);
     }
