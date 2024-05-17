@@ -32,7 +32,7 @@ namespace BoardGame
             app.Run();
         }
 
-        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        private static void ConfigureServices(IServiceCollection services, Microsoft.Extensions.Configuration.ConfigurationManager configuration)
         {
             services.AddCors(options =>
             {
