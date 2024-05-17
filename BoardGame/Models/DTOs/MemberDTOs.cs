@@ -1,5 +1,4 @@
 ﻿using MongoDB.Bson;
-using System.ComponentModel.DataAnnotations;
 using Utilities;
 
 namespace BoardGame.Models.DTOs
@@ -65,14 +64,7 @@ namespace BoardGame.Models.DTOs
 
         public string Salt { get; set; } = HashUtility.GenerateSalt();
 
-        public string EncryptedPassword
-        {
-            get
-            {
-                string result = HashUtility.ToSHA256(this.NewPassword!, Salt);
-                return result;
-            }
-        }
+        public string EncryptedPassword => HashUtility.ToSHA256(this.NewPassword!, Salt);
     }
 }
 

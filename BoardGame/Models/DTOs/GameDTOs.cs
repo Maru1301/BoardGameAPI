@@ -29,7 +29,7 @@ namespace BoardGame.Models.DTOs
 
             public long RoundEnd { get; set; }
 
-            public Character RuleCharacter { get => WhoGoesFirst == WhoGoesFirst.Player1 ? Player1.Character : Player2.Character; }
+            public Character RuleCharacter  => WhoGoesFirst == WhoGoesFirst.Player1 ? Player1.Character : Player2.Character;
         }
     }
 }
