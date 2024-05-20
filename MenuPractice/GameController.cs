@@ -1,13 +1,5 @@
 ﻿using Menu_Practice.Characters;
-using Menu_Practice.Characters.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Menu_Practice.GameController;
 using static Menu_Practice.Program;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Menu_Practice
 {
@@ -17,8 +9,8 @@ namespace Menu_Practice
         private readonly Player _npc = new();
         private bool _playerGoFirst;
         private int _roundCount;
-        private int _endGame = 5;
-        private Func<PlayerInfoContainer, PlayerInfoContainer, Result> _useRule;
+        private readonly int _endGame = 5;
+        private Func<PlayerInfoContainer, PlayerInfoContainer, Result>? _useRule;
 
         public GameController(Character character, Character opponent)
         {
@@ -79,7 +71,7 @@ namespace Menu_Practice
 
         public Result JudgeRound(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
         {
-            Result result = _useRule(playerInfo, ncpInfo);
+            Result result = _useRule!(playerInfo, ncpInfo);
 
             return result;
         }
@@ -147,8 +139,8 @@ namespace Menu_Practice
 
         public string GetOutcome()
         {
-            int playerPoint = _player.Character.PointLogic();
-            int npcPoint = _npc.Character.PointLogic();
+            int playerPoint = /*_player.Character.PointLogic()*/0;
+            int npcPoint = /*_npc.Character.PointLogic()*/0;
 
             if(playerPoint == npcPoint)
             {

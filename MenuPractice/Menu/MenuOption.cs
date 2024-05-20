@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Menu_Practice
+﻿namespace Menu_Practice
 {
     internal class MenuOption
     {
@@ -23,14 +16,14 @@ namespace Menu_Practice
 
         public MenuOption()
         {
-            
+            _optionName = string.Empty;
         }
 
         public MenuOption(string optionName, MenuList? prevMenuList = null, MenuList? nextMenuList = null)
         {
-            this._optionName = optionName;
-            this._prevMenuList = prevMenuList;
-            this._nextMenuList = nextMenuList;
+            _optionName = optionName;
+            _prevMenuList = prevMenuList;
+            _nextMenuList = nextMenuList;
         }
     }
 }

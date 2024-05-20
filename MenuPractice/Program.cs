@@ -1,10 +1,5 @@
 ﻿using Menu_Practice.Characters;
-using Menu_Practice.Characters.Builders;
 using Menu_Practice.Menu;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using static Menu_Practice.GameController;
-using static Menu_Practice.Program;
 
 namespace Menu_Practice
 {
