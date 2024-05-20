@@ -11,11 +11,11 @@ namespace BoardGame.Services
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<IEnumerable<GameVM>> GetGameList()
+        public async Task<IEnumerable<GameDTO>> GetGameList()
         {
             var games = await _unitOfWork.Games.GetAllAsync();
 
-            return games.Select(x => x.To<GameVM>());
+            return games.Select(x => x.To<GameDTO>());
         }
 
         public async Task<ObjectId> BeginNewGame(GameInfoDTO dto, string userAccount)
