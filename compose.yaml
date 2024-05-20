@@ -1,0 +1,30 @@
+services:
+  server:
+    container_name: BoardGame
+    build:
+      context: .
+      target: development
+    ports:
+      - 8080:80
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80'
+  redis:
+    container_name: redis-service
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/var/lib/redis/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+volumes:
+  redis-data:
