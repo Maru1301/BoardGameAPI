@@ -80,7 +80,6 @@ namespace BoardGame.Services
                 // Define a template for the confirmation email URL.
                 string confirmationUrlTemplate = "https://localhost:44318/Member/ValidateEmail";
 
-                //todo: implement resending confirmation code
                 SendConfirmationCode(entity, confirmationUrlTemplate);
 
                 return "success";
