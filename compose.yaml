@@ -1,11 +1,15 @@
 services:
-  server:
+  api:
     container_name: BoardGame
+    depends_on:
+      redis-service:
+          condition: service_healthy
     build:
       context: .
+      dockerfile: Dockerfile
       target: development
     ports:
-      - 8080:80
+      - "8080:80"
     develop:
       watch:
         - action: rebuild
@@ -13,18 +17,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80'
-  redis:
+  redis-service:
     container_name: redis-service
     image: redis:latest
-    restart: always
     ports:
-      - '6379:6379'
-    volumes:
-      - redis-data:/var/lib/redis/data
+      - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 30s
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
       retries: 5
-volumes:
-  redis-data:
+    command: [ "redis-server" ]
