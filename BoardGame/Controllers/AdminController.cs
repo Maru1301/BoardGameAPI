@@ -1,6 +1,5 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.DTOs;
-using static BoardGame.Models.ViewModels.AdminVMs;
 using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ namespace BoardGame.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddAdmin(AdminCreateVM vm)
+        public async Task<IActionResult> AddAdmin(AdminCreateRequestDTO vm)
         {
             try
             {
@@ -38,7 +37,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpGet("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Login([FromQuery] LoginVM vm)
+        public async Task<IActionResult> Login([FromQuery] AdminLoginRequestDTO vm)
         {
             try
             {

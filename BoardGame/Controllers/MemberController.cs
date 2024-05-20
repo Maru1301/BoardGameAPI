@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Net;
 using System.Security.Claims;
-using static BoardGame.Models.ViewModels.MemberVMs;
 
 namespace BoardGame.Controllers
 {
@@ -27,7 +26,7 @@ namespace BoardGame.Controllers
             try
             {
                 var members = await _memberService.ListMembers();
-                return Ok(members.Select(m => m.To<MemberVM>()).ToList());
+                return Ok(members.Select(m => m.To<MemberResponseDTO>()).ToList());
             }
             catch (MemberServiceException ex)
             {
@@ -57,7 +56,7 @@ namespace BoardGame.Controllers
                 var member = await _memberService.GetMemberInfo(new ObjectId(id));
 
                 // Return the member information 
-                return Ok(member.To<MemberVM>());
+                return Ok(member.To<MemberResponseDTO>());
             }
             catch (MemberServiceException)
             {
@@ -71,7 +70,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpGet("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Login([FromQuery] LoginVM login)
+        public async Task<IActionResult> Login([FromQuery] MemberLoginRequestDTO login)
         {
             try
             {
@@ -96,7 +95,7 @@ namespace BoardGame.Controllers
         }
         
         [HttpPost("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Register(RegisterVM vm)
+        public async Task<IActionResult> Register(RegisterRequestDTO vm)
         {
             try
             {
@@ -141,7 +140,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<string> EditMemberInfo(EditVM vm)
+        public async Task<string> EditMemberInfo(EditRequestDTO vm)
         {
             try
             {
@@ -168,7 +167,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<string> ResetPassword(ResetPasswordVM vm)
+        public async Task<string> ResetPassword(ResetPasswordRequestDTO vm)
         {
             try
             {

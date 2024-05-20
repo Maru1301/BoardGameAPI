@@ -4,7 +4,6 @@ using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using static BoardGame.Models.DTOs.GameDTOs;
-using static BoardGame.Models.ViewModels.GameVMs;
 
 namespace BoardGame.Controllers
 {
@@ -32,7 +31,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> BeginNewGame(GameInfoVM vm)
+        public async Task<IActionResult> BeginNewGame(GameInfoRequestDTO vm)
         {
             try
             {
@@ -68,7 +67,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> BeginNewRound(RoundInfoVM vm)
+        public async Task<IActionResult> BeginNewRound(RoundInfoRequestDTO vm)
         {
             try
             {
