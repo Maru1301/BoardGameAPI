@@ -13,14 +13,14 @@ namespace BoardGame.Controllers
 {
     [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class MemberController(IMemberService memberService, JWTHelper jwt) : ControllerBase
     {
         private readonly IMemberService _memberService = memberService;
 
         private readonly JWTHelper _jwt = jwt;
 
-        [HttpGet("[action]"), AuthorizeRoles(Role.Admin)]
+        [HttpGet, AuthorizeRoles(Role.Admin)]
         public async Task<IActionResult> ListMembers()
         {
             try
@@ -38,7 +38,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> GetMemberInfo()
         {
             try
@@ -69,7 +69,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]"), AllowAnonymous]
+        [HttpGet, AllowAnonymous]
         public async Task<IActionResult> Login([FromQuery] MemberLoginRequestDTO login)
         {
             try
@@ -94,7 +94,7 @@ namespace BoardGame.Controllers
             }
         }
         
-        [HttpPost("[action]"), AllowAnonymous]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Register(RegisterRequestDTO vm)
         {
             try
@@ -116,7 +116,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> ResendConfirmationCode()
         {
             try
@@ -139,7 +139,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         public async Task<string> EditMemberInfo(EditRequestDTO vm)
         {
             try
@@ -166,7 +166,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         public async Task<string> ResetPassword(ResetPasswordRequestDTO vm)
         {
             try
@@ -193,7 +193,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]"), AllowAnonymous]
+        [HttpGet, AllowAnonymous]
         public async Task<IActionResult> ValidateEmail(string memberId, string confirmationCode)
         {
             try

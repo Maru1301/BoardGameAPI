@@ -9,13 +9,12 @@ namespace BoardGame.Controllers
 {
     [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class GameController(IGameService gameService) : ControllerBase
     {
         private readonly IGameService _gameService = gameService;
         
-        [HttpGet("[action]")]
-        [AuthorizeRoles(Role.Admin)]
+        [HttpGet, AuthorizeRoles(Role.Admin)]
         public async Task<IActionResult> GetGameList()
         {
             try
@@ -30,7 +29,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         public async Task<IActionResult> BeginNewGame(GameInfoRequestDTO vm)
         {
             try
@@ -52,7 +51,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> EndGame()
         {
             try
@@ -66,7 +65,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         public async Task<IActionResult> BeginNewRound(RoundInfoRequestDTO vm)
         {
             try
@@ -81,7 +80,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> OpenNextCard()
         {
             //var rule = _gameService.MapRule(ruleCharacter);
@@ -89,7 +88,7 @@ namespace BoardGame.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> EndRound(Character playerChosenCharacter)
         {
             throw new NotImplementedException();
