@@ -49,7 +49,8 @@ namespace BoardGame
             // Register JwtHelper
             services.AddScoped<JWTHelper>();
             // Register using option mode
-            services.Configure<JwtSettingsOptions>(configuration.GetSection("JwtSettings"));
+            var jwtSettings = configuration.GetSection("JwtSettings");
+            services.Configure<JWTSettingsOptions>(jwtSettings);
             // Set authentication method
             services
               // Authenticate using bearer token and jwt format for token
@@ -59,15 +60,16 @@ namespace BoardGame
                   {
                       // Allow [Authorize] to determine roles
                       RoleClaimType = ClaimTypes.Role,
-                      // Validate the issuer by default
-                      ValidateIssuer = false,
-                      //ValidIssuer = configuration.GetValue<string>("JwtSettings:ValidIssuer"),
-                      // Do not validate the audience
-                      ValidateAudience = false,
-                      // Validate only if the token contains a key, usually only the signature
+                      // Validate the issuer
+                      ValidateIssuer = true,
+                      ValidIssuer = jwtSettings.GetValue<string>("ValidIssuer"),
+                      // Validate the audience
+                      ValidateAudience = true,
+                      ValidAudience = jwtSettings.GetValue<string>("ValidAudience"),
+                      //Validate only if the token contains a key, usually only the signature
                       ValidateIssuerSigningKey = true,
                       // Key used for the signature
-                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtSettings:Secret") ?? string.Empty))
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.GetValue<string>("IssuerSigningKey") ?? string.Empty))
                   };
               });
 
