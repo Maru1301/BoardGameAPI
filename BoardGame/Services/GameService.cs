@@ -22,7 +22,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (dto.Player1Account != userAccount) throw new GameServiceException("GameInfo account does not match the login account!");
+                if (dto.Player1Account != userAccount) throw new GameServiceException(ErrorCode.AccountNotMatch);
                 await ValidateGameInfo(dto);
                 
                 var Id = await _unitOfWork.Games.AddAsync(dto.To<Game>());

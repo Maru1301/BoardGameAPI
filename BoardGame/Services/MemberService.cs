@@ -31,9 +31,9 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (!await IsAccountAvailableAsync(dto.Account)) throw new MemberServiceException("Account already exists");
-                if (!await IsNameAvailableAsync(dto.Name)) throw new MemberServiceException("Name already exists");
-                if (!await IsEmailAvailableAsync(dto.Email)) throw new MemberServiceException("Email already exists");
+                if (!await IsAccountAvailableAsync(dto.Account)) throw new MemberServiceException(ErrorCode.AccountExist);
+                if (!await IsNameAvailableAsync(dto.Name)) throw new MemberServiceException(ErrorCode.NameExist);
+                if (!await IsEmailAvailableAsync(dto.Email)) throw new MemberServiceException(ErrorCode.EmailExist);
 
                 //create a new confirm code
                 dto.ConfirmCode = Guid.NewGuid().ToString("N");
@@ -41,7 +41,7 @@ namespace BoardGame.Services
                 await _unitOfWork.Members.AddAsync(dto.To<Member>());
                 await _unitOfWork.CommitTransactionAsync();
 
-                var entity = (await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException("Member doesn't exist!"));
+                var entity = (await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
 
                 SendConfirmationCode(entity, confirmationUrlTemplate);
 
@@ -110,10 +110,9 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Check if email already exists before update (excluding current member)
-                if (await IsEmailAvailableAsync(dto.Email, dto.Id)) throw new MemberServiceException("Email already exists");
+                if (await IsEmailAvailableAsync(dto.Email, dto.Id)) throw new MemberServiceException(ErrorCode.EmailExist);
 
-                // Find the member by ID, Throw an exception if member not found
+                var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
                 var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!"));
 
                 // Update member information
@@ -153,8 +152,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Find the member by ID, Throw an exception if member not found
-                var entity = await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!");
+                var entity = await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
                 // Validate old password matches the hashed and salted password in the database
                 var oldEncryptedPassword = HashUtility.ToSHA256(dto.OldPassword, entity.Salt);
@@ -198,11 +196,10 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Find the member by ID, Throw an exception if member not found
-                MemberDTO dto = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException("Member doesn't exist!")).To<MemberDTO>();
+                MemberDTO dto = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException(ErrorCode.MemberNotExist)).To<MemberDTO>();
 
                 // Validate the confirmation code
-                if (string.Compare(dto.ConfirmCode, confirmCode) != 0) throw new MemberServiceException("Wrong confirm code!");
+                if (string.Compare(dto.ConfirmCode, confirmCode) != 0) throw new MemberServiceException(ErrorCode.WrongConfirmationCode);
 
                 await _unitOfWork.Members.UpdateAsync(dto.To<Member>());
 
@@ -273,7 +270,7 @@ namespace BoardGame.Services
                 return JsonConvert.DeserializeObject<MemberDTO>(cachedMember.ToString())!;
             }
 
-            var member = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException("Member doesn't exist!");
+            var member = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
             // Add members to cache with expiration (optional)
             var entries = new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member));

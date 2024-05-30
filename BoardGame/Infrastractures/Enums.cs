@@ -7,6 +7,18 @@
         public const string Guest = "Guest";
     }
 
+    public static class ErrorCode
+    {
+        public const string InvalidAccountOrPassword = "Invalid Account or Password";
+        public const string MemberNotExist = "Member doesn't exist!";
+        public const string WrongConfirmationCode = "Wrong confirmation code!";
+        public const string ErrorParsingJwt = "Error occured while parsing JWT";
+        public const string AccountExist = "Account already exists";
+        public const string NameExist = "Name already exists";
+        public const string EmailExist = "Email already exists";
+        public const string AccountNotMatch = "GameInfo account does not match the login account!";
+    }
+
     public enum Result : short
     {
         Player1Win = 1,

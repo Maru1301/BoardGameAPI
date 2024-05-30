@@ -16,7 +16,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (await CheckAccountExistAsync(dto.Account) == false) throw new AdminServiceException("Account already exists");
+                if (await CheckAccountExistAsync(dto.Account) == false) throw new AdminServiceException(ErrorCode.AccountExist);
 
                 await _unitOfWork.Admins.AddAsync(dto.To<Admin>());
 
@@ -40,7 +40,7 @@ namespace BoardGame.Services
             var admin = await _unitOfWork.Admins.GetByAccountAsync(dto.Account);
             if (admin == null || !ValidatePassword(admin.To<AdminDTO>(), dto.Password))
             {
-                throw new AdminServiceException("Invalid Account or Password!");
+                throw new AdminServiceException(ErrorCode.InvalidAccountOrPassword);
             }
 
             // Authorize the user and generate a JWT token.
