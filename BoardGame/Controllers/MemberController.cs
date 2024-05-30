@@ -41,18 +41,13 @@ namespace BoardGame.Controllers
         {
             try
             {
-                // Get the current user from the HttpContext
-                var user = HttpContext.User;
-
                 // Extract the user ID (or other relevant claim) from the JWT claim
                 var id = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
                 if(string.IsNullOrEmpty(id)) return NotFound();
 
-                // Use the user ID to retrieve member information from your database
                 var member = await _memberService.GetMemberInfo(new ObjectId(id));
 
-                // Return the member information 
                 return Ok(member.To<MemberResponseDTO>());
             }
             catch (MemberServiceException)
@@ -73,8 +68,6 @@ namespace BoardGame.Controllers
             {
                 var token = await _memberService.ValidateUser(login.To<LoginDTO>());
 
-                // Authorize the user and generate a JWT token.
-                var token = _jwt.GenerateToken(Id, login.Account, role);
                 return Ok(token);
             }
             catch(MemberServiceException ex)

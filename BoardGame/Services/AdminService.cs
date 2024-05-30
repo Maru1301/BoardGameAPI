@@ -25,13 +25,13 @@ namespace BoardGame.Services
             }
             catch(AdminServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                await _unitOfWork.RollbackTransactionAsync();
                 throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw; 
             }
         }
 

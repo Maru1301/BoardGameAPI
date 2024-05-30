@@ -6,14 +6,16 @@ using BoardGame.Models.EFModels;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Data;
 
 namespace BoardGame.Services
 {
-    public class MemberService(IUnitOfWork unitOfWork, IConfiguration configuration, ICacheService cacheService) : IService, IMemberService
+    public class MemberService(IUnitOfWork unitOfWork, IConfiguration configuration, ICacheService cacheService, JWTHelper jwt) : IService, IMemberService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IConfiguration _configuration = configuration;
         private readonly ICacheService _cacheService = cacheService;
+        private readonly JWTHelper _jwt = jwt;
 
         /// <summary>
         /// Register a new user based on the provided information.
@@ -50,13 +52,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -74,8 +76,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Find the member by ID, Throw an exception if member not found
-                var entity = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException("Member doesn't exist!"));
+                var entity = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
 
                 // Define a template for the confirmation email URL.
                 string confirmationUrlTemplate = "https://localhost:44318/Member/ValidateEmail";
@@ -86,13 +87,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -113,7 +114,6 @@ namespace BoardGame.Services
                 if (await IsEmailAvailableAsync(dto.Email, dto.Id)) throw new MemberServiceException(ErrorCode.EmailExist);
 
                 var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
-                var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!"));
 
                 // Update member information
                 entity.Name = dto.Name;
@@ -130,13 +130,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -172,13 +172,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -208,13 +208,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -272,7 +272,7 @@ namespace BoardGame.Services
 
             var member = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
-            // Add members to cache with expiration (optional)
+            // Add members to cache with expiration
             var entries = new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member));
             await _cacheService.HashSetAsync(cacheKey, [entries]);
 
