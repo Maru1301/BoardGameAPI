@@ -96,10 +96,9 @@ namespace BoardGame.Controllers
         {
             try
             {
-                // Define a template for the confirmation email URL.
-                string confirmationUrlTemplate = "https://localhost:44318/Member/ActivateRegistration";
+                var domainName = GetDomainName();
 
-                string Message = await _memberService.Register(vm.To<RegisterDTO>(), confirmationUrlTemplate);
+                string Message = await _memberService.Register(vm.To<RegisterDTO>(), domainName);
 
                 return Ok(Message);
             }
@@ -113,16 +112,20 @@ namespace BoardGame.Controllers
             }
         }
 
+        private string GetDomainName()
+        {
+            return $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
+        }
+
         [HttpGet]
         public async Task<IActionResult> ResendConfirmationCode()
         {
             try
             {
                 string memberId = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
+                var domainName = GetDomainName();
 
-                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-
-                string message = await _memberService.ResendConfirmationCode(new ObjectId(memberId));
+                string message = await _memberService.ResendConfirmationCode(new ObjectId(memberId), domainName);
                 
                 return Ok(message);
             }
