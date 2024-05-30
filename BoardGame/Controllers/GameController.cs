@@ -3,6 +3,7 @@ using BoardGame.Infrastractures;
 using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 using static BoardGame.Models.DTOs.GameDTOs;
 
 namespace BoardGame.Controllers
@@ -34,7 +35,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                var user = HttpContext.User;
+                string userAccount = GetUserAccount();
 
                 // Extract the user Account from the JWT claim
                 string userAccount = user.Identity?.Name ?? string.Empty;
@@ -83,9 +84,27 @@ namespace BoardGame.Controllers
         [HttpGet]
         public async Task<IActionResult> OpenNextCard()
         {
-            //var rule = _gameService.MapRule(ruleCharacter);
+            try
+            {
+                //todo: make sure that the request is sent by the correct player
+                string userAccount = GetUserAccount();
 
-            throw new NotImplementedException();
+            //var rule = _gameService.MapRule(ruleCharacter);
+                return Ok(userAccount);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        private string GetUserAccount()
+        {
+            string userAccount = HttpContext.GetJwtClaim(ClaimTypes.Name).Value;
+
+            if (string.IsNullOrEmpty(userAccount)) throw new Exception("Invalid Account!");
+
+            return userAccount;
         }
 
         [HttpGet]

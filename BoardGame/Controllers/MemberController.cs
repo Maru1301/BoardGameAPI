@@ -14,11 +14,9 @@ namespace BoardGame.Controllers
     [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class MemberController(IMemberService memberService, JWTHelper jwt) : ControllerBase
+    public class MemberController(IMemberService memberService) : ControllerBase
     {
         private readonly IMemberService _memberService = memberService;
-
-        private readonly JWTHelper _jwt = jwt;
 
         [HttpGet, AuthorizeRoles(Role.Admin)]
         public async Task<IActionResult> ListMembers()
@@ -47,8 +45,7 @@ namespace BoardGame.Controllers
                 var user = HttpContext.User;
 
                 // Extract the user ID (or other relevant claim) from the JWT claim
-                var idClaim = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Error occured while parsing JWT");
-                var id = idClaim.Value;
+                var id = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
                 if(string.IsNullOrEmpty(id)) return NotFound();
 
@@ -121,7 +118,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                var user = HttpContext.User;
+                string memberId = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
                 string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
@@ -144,9 +141,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                var user = HttpContext.User;
-
-                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                string memberId = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
                 var dto = vm.To<EditDTO>();
 
@@ -171,9 +166,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                var user = HttpContext.User;
-
-                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                string memberId = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
                 var dto = vm.To<ResetPasswordDTO>();
 
