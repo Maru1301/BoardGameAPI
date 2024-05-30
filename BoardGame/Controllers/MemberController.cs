@@ -71,11 +71,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                 var (Id, role) = await _memberService.ValidateUser(login.To<LoginDTO>());
-                if (Id == ObjectId.Empty || string.IsNullOrEmpty(role))
-                {
-                    return BadRequest("Invalid Account or Password.");
-                }
+                var token = await _memberService.ValidateUser(login.To<LoginDTO>());
 
                 // Authorize the user and generate a JWT token.
                 var token = _jwt.GenerateToken(Id, login.Account, role);

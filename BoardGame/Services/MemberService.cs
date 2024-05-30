@@ -218,15 +218,15 @@ namespace BoardGame.Services
             }
         }
 
-        public async Task<(ObjectId Id, string Account)> ValidateUser(LoginDTO dto)
-        {
-            var member = await _unitOfWork.Members.GetByAccountAsync(dto.Account);
-            if (member == null || !ValidatePassword(member.To<MemberDTO>(), dto.Password))
+        public async Task<string> ValidateUser(LoginDTO dto)
             {
-                return (ObjectId.Empty, string.Empty);
-            }
+            var member = await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
+            
+            if(!ValidatePassword(member.To<MemberDTO>(), dto.Password)) throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
 
-            return (member.Id, member.IsConfirmed ? Infrastractures.Role.Member : Infrastractures.Role.Guest);
+            var token = _jwt.GenerateToken(member.Id, member.Account, member.IsConfirmed ? Infrastractures.Role.Member : Infrastractures.Role.Guest);
+
+            return token;
         }
 
         private static bool ValidatePassword(MemberDTO member, string password)
