@@ -28,7 +28,7 @@ namespace BoardGame.Services
         /// <returns>A message indicating successful registration.</returns>
         /// <exception cref="MemberServiceException">Thrown if error occured in MemberService.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during registration.</exception>
-        public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
+        public async Task<string> Register(RegisterDTO dto, string domainName)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -44,6 +44,9 @@ namespace BoardGame.Services
                 await _unitOfWork.CommitTransactionAsync();
 
                 var entity = (await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
+
+                // Define a template for the confirmation email URL.
+                string confirmationUrlTemplate = $"{domainName}/Member/ActivateRegistration";
 
                 SendConfirmationCode(entity, confirmationUrlTemplate);
 
@@ -67,11 +70,10 @@ namespace BoardGame.Services
             // Generate confirmation URL
             string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={entity.ConfirmCode}";
 
-            // Send confirmation email
             new EmailHelper(_configuration).SendConfirmationEmail(url, entity.Name!, entity.Email!);
         }
 
-        public async Task<string> ResendConfirmationCode(ObjectId memberId)
+        public async Task<string> ResendConfirmationCode(ObjectId memberId, string domainName)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -79,7 +81,7 @@ namespace BoardGame.Services
                 var entity = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
 
                 // Define a template for the confirmation email URL.
-                string confirmationUrlTemplate = "https://localhost:44318/Member/ValidateEmail";
+                string confirmationUrlTemplate = $"{domainName}/Member/ValidateEmail";
 
                 SendConfirmationCode(entity, confirmationUrlTemplate);
 
@@ -236,7 +238,6 @@ namespace BoardGame.Services
 
         public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
-            // Cache key for member list
             const string cacheKey = "members";
 
             // Try to get members from cache
@@ -259,7 +260,6 @@ namespace BoardGame.Services
 
         public async Task<MemberDTO> GetMemberInfo(ObjectId id) 
         {
-            // Cache key for member list
             const string cacheKey = "members";
 
             // Try to get members from cache
