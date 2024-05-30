@@ -31,18 +31,13 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> BeginNewGame(GameInfoRequestDTO vm)
+        public async Task<IActionResult> BeginNewGame(GameInfoRequestDTO request)
         {
             try
             {
                 string userAccount = GetUserAccount();
 
-                // Extract the user Account from the JWT claim
-                string userAccount = user.Identity?.Name ?? string.Empty;
-
-                if (string.IsNullOrEmpty(userAccount)) return BadRequest("Invalid Account!");
-
-                var Id = await _gameService.BeginNewGame(vm.To<GameInfoDTO>(), userAccount);
+                var Id = await _gameService.BeginNewGame(request.To<GameInfoDTO>(), userAccount);
 
                 return Ok(Id);
             }
@@ -67,11 +62,11 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> BeginNewRound(RoundInfoRequestDTO vm)
+        public async Task<IActionResult> BeginNewRound(RoundInfoRequestDTO request)
         {
             try
             {
-                await _gameService.BeginNewRound(vm.To<RoundInfoDTO>());
+                await _gameService.BeginNewRound(request.To<RoundInfoDTO>());
 
                 return Ok();
             }
@@ -89,7 +84,7 @@ namespace BoardGame.Controllers
                 //todo: make sure that the request is sent by the correct player
                 string userAccount = GetUserAccount();
 
-            //var rule = _gameService.MapRule(ruleCharacter);
+                //var rule = _gameService.MapRule(ruleCharacter);
                 return Ok(userAccount);
             }
             catch (Exception e)
@@ -110,6 +105,7 @@ namespace BoardGame.Controllers
         [HttpGet]
         public async Task<IActionResult> EndRound(Character playerChosenCharacter)
         {
+            //todo: make sure that the request is sent by the correct player
             throw new NotImplementedException();
         }
     }

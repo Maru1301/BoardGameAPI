@@ -6,9 +6,10 @@ using static BoardGame.Models.DTOs.GameDTOs;
 
 namespace BoardGame.Services
 {
-    public class GameService(IUnitOfWork unitOfWork) : IService, IGameService
+    public class GameService(IUnitOfWork unitOfWork, ICacheService cacheService) : IService, IGameService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ICacheService _cacheService = cacheService;
 
         public async Task<IEnumerable<GameDTO>> GetGameList()
         {
@@ -47,13 +48,16 @@ namespace BoardGame.Services
         public async Task BeginNewRound(RoundInfoDTO dto)
         {
             //todo: check gameId in redis
-
+            var game = await _cacheService.GetDataAsync<string>(dto.GameId.ToString()) ??  throw new GameServiceException("Game does not existed");
+            
             dto.WhoGoesFirst = DetermineWhoGoesFirst();
+
+            //if(game.Player2 == "Bot")
 
             //todo: store round information in redis
         }
 
-        public WhoGoesFirst DetermineWhoGoesFirst()
+        private static WhoGoesFirst DetermineWhoGoesFirst()
         {
             var random = new Random().Next(1);
             return (WhoGoesFirst)random;

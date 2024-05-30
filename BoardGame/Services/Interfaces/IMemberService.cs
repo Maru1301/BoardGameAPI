@@ -9,9 +9,9 @@ namespace BoardGame.Services.Interfaces
 
         public Task<MemberDTO> GetMemberInfo(ObjectId memberId);
 
-        public Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate);
+        public Task<string> Register(RegisterDTO dto, string domainName);
 
-        public Task<string> ResendConfirmationCode(ObjectId memberId);
+        public Task<string> ResendConfirmationCode(ObjectId memberId, string domainName);
 
         public Task<string> EditMemberInfo(EditDTO dto);
 
@@ -19,7 +19,7 @@ namespace BoardGame.Services.Interfaces
 
         public Task<string> ValidateEmail(ObjectId memberId, string confirmCode);
 
-        public Task<(ObjectId Id, string Account)> ValidateUser(LoginDTO dto);
+        public Task<string> ValidateUser(LoginDTO dto);
 
         public Task<bool> IsAccountAvailableAsync(string account);
 

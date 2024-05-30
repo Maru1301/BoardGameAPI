@@ -221,7 +221,7 @@ namespace BoardGame.Services
         }
 
         public async Task<string> ValidateUser(LoginDTO dto)
-            {
+        {
             var member = await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
             
             if(!ValidatePassword(member.To<MemberDTO>(), dto.Password)) throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
