@@ -17,7 +17,7 @@ namespace BoardGame.Services.Interfaces
 
         public Task<string> ResetPassword(ResetPasswordDTO dto);
 
-        public Task<string> ValidateEmail(ObjectId memberId, string confirmCode);
+        public Task<string> ValidateEmail(string memberId, string confirmCode);
 
         public Task<string> ValidateUser(LoginDTO dto);
 

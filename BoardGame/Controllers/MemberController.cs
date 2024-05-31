@@ -183,7 +183,7 @@ namespace BoardGame.Controllers
         {
             try
             {
-                string Message = await _memberService.ValidateEmail(new ObjectId(memberId), confirmationCode);
+                string Message = await _memberService.ValidateEmail(memberId, confirmationCode);
 
                 return Ok(Message);
             }

@@ -193,12 +193,12 @@ namespace BoardGame.Services
         /// <returns>A message indicating successful email validation ("Validation successful").</returns>
         /// <exception cref="MemberServiceException">Thrown if the member is not found or there's an error within the MemberService logic.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during validation.</exception>
-        public async Task<string> ValidateEmail(ObjectId memberId, string confirmCode)
+        public async Task<string> ValidateEmail(string memberId, string confirmCode)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                MemberDTO dto = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException(ErrorCode.MemberNotExist)).To<MemberDTO>();
+                MemberDTO dto = (await _unitOfWork.Members.GetByIdAsync(new ObjectId(memberId)) ?? throw new MemberServiceException(ErrorCode.MemberNotExist)).To<MemberDTO>();
 
                 // Validate the confirmation code
                 if (string.Compare(dto.ConfirmCode, confirmCode) != 0) throw new MemberServiceException(ErrorCode.WrongConfirmationCode);
