@@ -318,6 +318,20 @@ namespace BoardGame.Services
 
             return member == null || (member != null && member.Id == memberId);
         }
+
+        public async Task<bool> Delete(string ObjectId)
+        {
+            try
+            {
+                await _unitOfWork.Members.DeleteAsync(new ObjectId(ObjectId));
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 
     /// <summary>

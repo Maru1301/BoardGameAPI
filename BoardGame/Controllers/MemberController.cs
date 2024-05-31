@@ -196,5 +196,28 @@ namespace BoardGame.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
+        [HttpDelete, AllowAnonymous]
+        public async Task<IActionResult> Delete(string ObjectId)
+        {
+            try
+            {
+                var role = HttpContext.GetJwtClaim(ClaimTypes.Role).Value;
+
+                if (role != Role.Admin)
+                {
+                    ObjectId = string.Empty;
+                }
+
+                var result = await _memberService.Delete(ObjectId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
     }
 }
