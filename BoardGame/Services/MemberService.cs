@@ -113,7 +113,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (await IsEmailAvailableAsync(dto.Email, dto.Id)) throw new MemberServiceException(ErrorCode.EmailExist);
+                if (await IsEmailAvailableAsync(dto.Email, dto.Id) == false) throw new MemberServiceException(ErrorCode.EmailExist);
 
                 var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
 
@@ -198,12 +198,14 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                MemberDTO dto = (await _unitOfWork.Members.GetByIdAsync(new ObjectId(memberId)) ?? throw new MemberServiceException(ErrorCode.MemberNotExist)).To<MemberDTO>();
+                Member entity = await _unitOfWork.Members.GetByIdAsync(new ObjectId(memberId)) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
                 // Validate the confirmation code
-                if (string.Compare(dto.ConfirmCode, confirmCode) != 0) throw new MemberServiceException(ErrorCode.WrongConfirmationCode);
+                if (string.Compare(entity.ConfirmCode, confirmCode) != 0) throw new MemberServiceException(ErrorCode.WrongConfirmationCode);
 
-                await _unitOfWork.Members.UpdateAsync(dto.To<Member>());
+                entity.IsConfirmed = true;
+
+                await _unitOfWork.Members.UpdateAsync(entity);
 
                 await _unitOfWork.CommitTransactionAsync();
                 return "Validation successful";
@@ -319,11 +321,13 @@ namespace BoardGame.Services
             return member == null || (member != null && member.Id == memberId);
         }
 
-        public async Task<bool> Delete(string ObjectId)
+        public async Task<bool> Delete(string account)
         {
             try
             {
-                await _unitOfWork.Members.DeleteAsync(new ObjectId(ObjectId));
+                var member = await _unitOfWork.Members.GetByAccountAsync(account) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
+
+                await _unitOfWork.Members.DeleteAsync(member.Id);
 
                 return true;
             }

@@ -16,7 +16,7 @@
         public const string AccountExist = "Account already exists";
         public const string NameExist = "Name already exists";
         public const string EmailExist = "Email already exists";
-        public const string AccountNotMatch = "GameInfo account does not match the login account!";
+        public const string AccountNotMatch = "Login Account does not matched!";
     }
 
     public enum Result : short

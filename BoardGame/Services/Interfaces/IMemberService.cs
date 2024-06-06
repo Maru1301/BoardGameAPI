@@ -29,6 +29,6 @@ namespace BoardGame.Services.Interfaces
 
         Task<bool> IsEmailAvailableAsync(string email, ObjectId memberId);
 
-        public Task<bool> Delete(string ObjectId);
+        public Task<bool> Delete(string account);
     }
 }

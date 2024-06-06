@@ -24,8 +24,9 @@ namespace BoardGame.Controllers
         {
             try
             {
-                _logger.LogInformation("ListMember");
+                //_logger.LogInformation("ListMember");
                 var members = await _memberService.ListMembers();
+
                 return Ok(members.Select(m => m.To<MemberResponseDTO>()).ToList());
             }
             catch (MemberServiceException ex)
@@ -63,15 +64,15 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> Login([FromQuery] MemberLoginRequestDTO login)
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] MemberLoginRequestDTO login)
         {
-            _logger.LogInformation($"{login.Account} tries to login");
+            //_logger.LogInformation($"{login.Account} tries to login");
             try
             {
                 var token = await _memberService.ValidateUser(login.To<LoginDTO>());
 
-                return Ok(token);
+                return token.Ok();
             }
             catch(MemberServiceException ex)
             {
@@ -90,9 +91,9 @@ namespace BoardGame.Controllers
             {
                 var domainName = GetDomainName();
 
-                string Message = await _memberService.Register(vm.To<RegisterDTO>(), domainName);
+                string message = await _memberService.Register(vm.To<RegisterDTO>(), domainName);
 
-                return Ok(Message);
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -102,11 +103,6 @@ namespace BoardGame.Controllers
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
-        }
-
-        private string GetDomainName()
-        {
-            return $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
         }
 
         [HttpGet]
@@ -119,7 +115,7 @@ namespace BoardGame.Controllers
 
                 string message = await _memberService.ResendConfirmationCode(new ObjectId(memberId), domainName);
                 
-                return Ok(message);
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -132,7 +128,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost]
-        public async Task<string> EditMemberInfo(EditRequestDTO vm)
+        public async Task<IActionResult> EditMemberInfo(EditRequestDTO vm)
         {
             try
             {
@@ -142,22 +138,22 @@ namespace BoardGame.Controllers
 
                 dto.Id = new ObjectId(memberId);
 
-                string Message = await _memberService.EditMemberInfo(dto);
+                string message = await _memberService.EditMemberInfo(dto);
 
-                return Message;
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
-                return $"Edition failed. Please check the provided information. {ex.Message}";
+                return BadRequest($"Edition failed. Please check the provided information. {ex.Message}");
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
         [HttpPost]
-        public async Task<string> ResetPassword(ResetPasswordRequestDTO vm)
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequestDTO vm)
         {
             try
             {
@@ -167,17 +163,17 @@ namespace BoardGame.Controllers
 
                 dto.Id = new ObjectId(memberId);
 
-                string Message = await _memberService.ResetPassword(dto);
+                string message = await _memberService.ResetPassword(dto);
 
-                return Message;
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
-                return $"Reset failed. Please check the provided information. {ex.Message}";
+                return BadRequest($"Reset failed. Please check the provided information. {ex.Message}");
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -186,9 +182,9 @@ namespace BoardGame.Controllers
         {
             try
             {
-                string Message = await _memberService.ValidateEmail(memberId, confirmationCode);
+                string message = await _memberService.ValidateEmail(memberId, confirmationCode);
 
-                return Ok(Message);
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -201,26 +197,31 @@ namespace BoardGame.Controllers
         }
 
         [HttpDelete, AllowAnonymous]
-        public async Task<IActionResult> Delete(string ObjectId)
+        public async Task<IActionResult> Delete(string account)
         {
             try
             {
                 var role = HttpContext.GetJwtClaim(ClaimTypes.Role).Value;
+                var jwtAccount = HttpContext.GetJwtClaim(ClaimTypes.Name).Value;
 
-                if (role != Role.Admin)
+                if (role != Role.Admin && account != jwtAccount)
                 {
-                    ObjectId = string.Empty;
+                    return BadRequest(ErrorCode.AccountNotMatch);
                 }
 
-                var result = await _memberService.Delete(ObjectId);
+                var result = await _memberService.Delete(account);
 
-                return Ok(result);
+                return result.Ok();
             }
             catch (Exception ex)
             {
-
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
+        }
+
+        private string GetDomainName()
+        {
+            return $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
         }
     }
 }
