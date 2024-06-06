@@ -3,6 +3,7 @@
 # API Doc
 
 ## Content
+[Member](Member)
 
 ## Member
 
@@ -12,7 +13,7 @@ This API endpoint allows users to register for an account on the application. Up
 
 **Request URL:** 
 
-`<{$siteurl}>/Member/Register` ****
+`<{$siteurl}>/Member/Register`
 
 **Request Method:** 
 
@@ -136,7 +137,7 @@ This API endpoint allows users to activate their registration by verifying their
 
 **Request URL**: 
 
-`<{$siteurl}>/Member/ActivateRegistration ****`
+`<{$siteurl}>/Member/ActivateRegistration`
 
 **Request Method**: 
 
