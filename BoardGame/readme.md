@@ -3,10 +3,10 @@
 # API Doc
 
 ## Content
-[Member](#member)
-[Register](#register)
-[Login](#login)
-[ActivateRegistration](#activateRegistration)
+[Member](#member) <\br>
+[Register](#register) <\br>
+[Login](#login) <\br>
+[ActivateRegistration](#activateRegistration) <\br>
 
 ## Member
 
