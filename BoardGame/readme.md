@@ -1,6 +1,4 @@
-# BoardGame
-
-# API Doc
+# BoardGame API Doc
 
 ## Content
 [Member](#member) <br />
