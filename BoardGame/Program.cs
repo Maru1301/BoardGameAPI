@@ -12,6 +12,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using NLog;
+using NLog.Web;
 
 namespace BoardGame
 {
@@ -20,6 +22,9 @@ namespace BoardGame
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
 
             ConfigureServices(builder.Services, builder.Configuration);
 

@@ -14,15 +14,17 @@ namespace BoardGame.Controllers
     [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class MemberController(IMemberService memberService) : ControllerBase
+    public class MemberController(IMemberService memberService, ILogger<MemberController> logger) : ControllerBase
     {
         private readonly IMemberService _memberService = memberService;
+        private readonly ILogger<MemberController> _logger = logger;
 
         [HttpGet, AuthorizeRoles(Role.Admin)]
         public async Task<IActionResult> ListMembers()
         {
             try
             {
+                _logger.LogInformation("ListMember");
                 var members = await _memberService.ListMembers();
                 return Ok(members.Select(m => m.To<MemberResponseDTO>()).ToList());
             }
@@ -64,6 +66,7 @@ namespace BoardGame.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> Login([FromQuery] MemberLoginRequestDTO login)
         {
+            _logger.LogInformation($"{login.Account} tries to login");
             try
             {
                 var token = await _memberService.ValidateUser(login.To<LoginDTO>());
