@@ -4,6 +4,9 @@
 
 ## Content
 [Member](#member)
+[Register](#register)
+[Login](#login)
+[ActivateRegistration](#activateRegistration)
 
 ## Member
 
