@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Utilities;
+using Utility;
 
 namespace BoardGame.Models.DTOs
 {

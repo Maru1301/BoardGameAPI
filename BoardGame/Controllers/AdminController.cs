@@ -6,18 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using BoardGame.Services;
 using System.Net;
 using BoardGame.Authorizations;
+using Utility;
 
 namespace BoardGame.Controllers
 {
     [AuthorizeRoles(Role.Admin)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class AdminController(IAdminService adminService) : ControllerBase
     {
         private readonly IAdminService _adminService = adminService;
 
 
-        [HttpPost("[action]")]
+        [HttpPost]
         public async Task<IActionResult> AddAdmin(AdminCreateRequestDTO vm)
         {
             try
@@ -36,7 +37,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]"), AllowAnonymous]
+        [HttpGet, AllowAnonymous]
         public async Task<IActionResult> Login([FromQuery] AdminLoginRequestDTO vm)
         {
             try

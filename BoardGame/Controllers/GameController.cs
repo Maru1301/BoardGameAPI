@@ -3,19 +3,20 @@ using BoardGame.Infrastractures;
 using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
+using Utility;
 using static BoardGame.Models.DTOs.GameDTOs;
 
 namespace BoardGame.Controllers
 {
     [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class GameController(IGameService gameService) : ControllerBase
     {
         private readonly IGameService _gameService = gameService;
         
-        [HttpGet("[action]")]
-        [AuthorizeRoles(Role.Admin)]
+        [HttpGet, AuthorizeRoles(Role.Admin)]
         public async Task<IActionResult> GetGameList()
         {
             try
@@ -30,19 +31,14 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> BeginNewGame(GameInfoRequestDTO vm)
+        [HttpPost]
+        public async Task<IActionResult> BeginNewGame(GameInfoRequestDTO request)
         {
             try
             {
-                var user = HttpContext.User;
+                string userAccount = GetUserAccount();
 
-                // Extract the user Account from the JWT claim
-                string userAccount = user.Identity?.Name ?? string.Empty;
-
-                if (string.IsNullOrEmpty(userAccount)) return BadRequest("Invalid Account!");
-
-                var Id = await _gameService.BeginNewGame(vm.To<GameInfoDTO>(), userAccount);
+                var Id = await _gameService.BeginNewGame(request.To<GameInfoDTO>(), userAccount);
 
                 return Ok(Id);
             }
@@ -52,7 +48,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> EndGame()
         {
             try
@@ -66,12 +62,12 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> BeginNewRound(RoundInfoRequestDTO vm)
+        [HttpPost]
+        public async Task<IActionResult> BeginNewRound(RoundInfoRequestDTO request)
         {
             try
             {
-                await _gameService.BeginNewRound(vm.To<RoundInfoDTO>());
+                await _gameService.BeginNewRound(request.To<RoundInfoDTO>());
 
                 return Ok();
             }
@@ -81,17 +77,36 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> OpenNextCard()
         {
-            //var rule = _gameService.MapRule(ruleCharacter);
+            try
+            {
+                //todo: make sure that the request is sent by the correct player
+                string userAccount = GetUserAccount();
 
-            throw new NotImplementedException();
+                //var rule = _gameService.MapRule(ruleCharacter);
+                return Ok(userAccount);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
-        [HttpGet("[action]")]
+        private string GetUserAccount()
+        {
+            string userAccount = HttpContext.GetJwtClaim(ClaimTypes.Name).Value;
+
+            if (string.IsNullOrEmpty(userAccount)) throw new Exception("Invalid Account!");
+
+            return userAccount;
+        }
+
+        [HttpGet]
         public async Task<IActionResult> EndRound(Character playerChosenCharacter)
         {
+            //todo: make sure that the request is sent by the correct player
             throw new NotImplementedException();
         }
     }

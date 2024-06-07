@@ -1,11 +1,12 @@
 ﻿using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
-using Utilities;
+using Utility;
 
 namespace BoardGame.Models.DTOs
 {
     public class MemberDTO
     {
+        public ObjectId Id { get; set;}
         public string Name { get; set; } = string.Empty;
         public string Account { get; set; } = string.Empty;
         public string EncryptedPassword { get; set; } = string.Empty;

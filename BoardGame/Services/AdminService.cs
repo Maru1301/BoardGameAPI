@@ -2,7 +2,7 @@
 using BoardGame.Models.DTOs;
 using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
-using Utilities;
+using Utility;
 
 namespace BoardGame.Services
 {
@@ -16,7 +16,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (await CheckAccountExistAsync(dto.Account) == false) throw new AdminServiceException("Account already exists");
+                if (await CheckAccountExistAsync(dto.Account) == false) throw new AdminServiceException(ErrorCode.AccountExist);
 
                 await _unitOfWork.Admins.AddAsync(dto.To<Admin>());
 
@@ -25,13 +25,13 @@ namespace BoardGame.Services
             }
             catch(AdminServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
+                await _unitOfWork.RollbackTransactionAsync();
                 throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw; 
             }
         }
 
@@ -40,7 +40,7 @@ namespace BoardGame.Services
             var admin = await _unitOfWork.Admins.GetByAccountAsync(dto.Account);
             if (admin == null || !ValidatePassword(admin.To<AdminDTO>(), dto.Password))
             {
-                throw new AdminServiceException("Invalid Account or Password!");
+                throw new AdminServiceException(ErrorCode.InvalidAccountOrPassword);
             }
 
             // Authorize the user and generate a JWT token.

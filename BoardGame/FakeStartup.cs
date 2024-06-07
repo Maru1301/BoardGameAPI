@@ -1,41 +1,22 @@
-using BoardGame.Filters;
+﻿using BoardGame.Filters;
 using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
-using BoardGame.Services;
 using BoardGame.Services.Interfaces;
+using BoardGame.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using NLog;
-using NLog.Web;
 
 namespace BoardGame
 {
-    public class Program
+    public class FakeStartup(IConfiguration configuration)
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
-
-            builder.Logging.ClearProviders();
-            builder.Host.UseNLog();
-
-            ConfigureServices(builder.Services, builder.Configuration);
-
-            var app = builder.Build();
-
-            Configure(app, app.Environment);
-
-            app.MapControllers();
-
-            app.Run();
-        }
+        public IConfiguration Configuration { get; } = configuration;
 
         private static void ConfigureServices(IServiceCollection services, Microsoft.Extensions.Configuration.ConfigurationManager configuration)
         {
@@ -108,20 +89,6 @@ namespace BoardGame
             });
         }
 
-        private static void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
-        {
-            if (environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseCors("AllowEveryone");
-            app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseAuthorization();
-        }
-
         private static void RegisterScopedServices(IServiceCollection services)
         {
             //register UoW
@@ -141,6 +108,20 @@ namespace BoardGame
                     services.AddScoped(interfaceType, type);
                 }
             }
+        }
+
+        private static void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
+        {
+            if (environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseCors("AllowEveryone");
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
         }
     }
 }

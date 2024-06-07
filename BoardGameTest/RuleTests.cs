@@ -11,6 +11,496 @@ namespace BoardGameTest
     {
         private static readonly IServiceProvider ServiceProvider;
 
+        public static TheoryData<PlayerRoundInfo, PlayerRoundInfo, Result> AssassinRuleData => new()
+        {
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Draw
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Draw
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player1Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player1Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player1Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Sheild,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Crown,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 3},
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 2 },
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player1CharacterRuleWin
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 2},
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 3 },
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Player2CharacterRuleWin
+            },
+                {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 2},
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 2 },
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Draw
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 2},
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 2 },
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Draw
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 2},
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 1 },
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Draw
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 1},
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Assassin,
+                    Hand = new() { Dagger = 2 },
+                    ChosenCards = new RoundCards
+                    {
+                        Card1 = Card.Dagger,
+                        Card2 = Card.Crown,
+                        Card3 = Card.Crown,
+                        LastOpened = 1,
+                    }
+                },
+                Result.Draw
+            }
+        };
+
         static RuleTests()
         {
             var services = new ServiceCollection();
@@ -20,6 +510,7 @@ namespace BoardGameTest
 
             // Register mocks for dependencies (if any)
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICacheService, CacheService>();
             services.AddDbContext<AppDbContext>(options =>
                 options.UseMongoDB("mongodb+srv://Maru:13011821@cluster0.r3hywvh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", "BoardGameDB"), ServiceLifetime.Scoped);
 
@@ -28,376 +519,8 @@ namespace BoardGameTest
 
         public class AssassinRuleTests()
         {
-            public static IEnumerable<object[]> RuleData()
-            {
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 3},
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1CharacterRuleWin
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 2},
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 3 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2CharacterRuleWin
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 2},
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 2},
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 1 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 1},
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Assassin,
-                        Hand = new() { Dagger = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-            }
-
             [Theory]
-            [MemberData(nameof(RuleData))]
+            [MemberData(nameof(AssassinRuleData), MemberType = typeof(RuleTests))]
             public void TestAssassinRule_NormalRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
             {
                 // Get the service instance from the static field

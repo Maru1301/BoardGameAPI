@@ -1,5 +1,5 @@
 ﻿using System.Net.Mail;
-using Utilities;
+using Utility;
 
 namespace BoardGame.Infrastractures
 {

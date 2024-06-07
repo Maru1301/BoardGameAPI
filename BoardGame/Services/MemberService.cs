@@ -1,19 +1,21 @@
 ﻿using BoardGame.Models.DTOs;
 using BoardGame.Infrastractures;
-using Utilities;
 using BoardGame.Services.Interfaces;
 using BoardGame.Models.EFModels;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Data;
+using Utility;
 
 namespace BoardGame.Services
 {
-    public class MemberService(IUnitOfWork unitOfWork, IConfiguration configuration, ICacheService cacheService) : IService, IMemberService
+    public class MemberService(IUnitOfWork unitOfWork, IConfiguration configuration, ICacheService cacheService, JWTHelper jwt) : IService, IMemberService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IConfiguration _configuration = configuration;
         private readonly ICacheService _cacheService = cacheService;
+        private readonly JWTHelper _jwt = jwt;
 
         /// <summary>
         /// Register a new user based on the provided information.
@@ -26,14 +28,14 @@ namespace BoardGame.Services
         /// <returns>A message indicating successful registration.</returns>
         /// <exception cref="MemberServiceException">Thrown if error occured in MemberService.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during registration.</exception>
-        public async Task<string> Register(RegisterDTO dto, string confirmationUrlTemplate)
+        public async Task<string> Register(RegisterDTO dto, string domainName)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (!await IsAccountAvailableAsync(dto.Account)) throw new MemberServiceException("Account already exists");
-                if (!await IsNameAvailableAsync(dto.Name)) throw new MemberServiceException("Name already exists");
-                if (!await IsEmailAvailableAsync(dto.Email)) throw new MemberServiceException("Email already exists");
+                if (!await IsAccountAvailableAsync(dto.Account)) throw new MemberServiceException(ErrorCode.AccountExist);
+                if (!await IsNameAvailableAsync(dto.Name)) throw new MemberServiceException(ErrorCode.NameExist);
+                if (!await IsEmailAvailableAsync(dto.Email)) throw new MemberServiceException(ErrorCode.EmailExist);
 
                 //create a new confirm code
                 dto.ConfirmCode = Guid.NewGuid().ToString("N");
@@ -41,7 +43,10 @@ namespace BoardGame.Services
                 await _unitOfWork.Members.AddAsync(dto.To<Member>());
                 await _unitOfWork.CommitTransactionAsync();
 
-                var entity = (await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException("Member doesn't exist!"));
+                var entity = (await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
+
+                // Define a template for the confirmation email URL.
+                string confirmationUrlTemplate = $"{domainName}/Member/ActivateRegistration";
 
                 SendConfirmationCode(entity, confirmationUrlTemplate);
 
@@ -50,13 +55,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -65,20 +70,18 @@ namespace BoardGame.Services
             // Generate confirmation URL
             string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={entity.ConfirmCode}";
 
-            // Send confirmation email
             new EmailHelper(_configuration).SendConfirmationEmail(url, entity.Name!, entity.Email!);
         }
 
-        public async Task<string> ResendConfirmationCode(ObjectId memberId)
+        public async Task<string> ResendConfirmationCode(ObjectId memberId, string domainName)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Find the member by ID, Throw an exception if member not found
-                var entity = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException("Member doesn't exist!"));
+                var entity = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
 
                 // Define a template for the confirmation email URL.
-                string confirmationUrlTemplate = "https://localhost:44318/Member/ValidateEmail";
+                string confirmationUrlTemplate = $"{domainName}/Member/ValidateEmail";
 
                 SendConfirmationCode(entity, confirmationUrlTemplate);
 
@@ -86,13 +89,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -110,11 +113,9 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Check if email already exists before update (excluding current member)
-                if (await IsEmailAvailableAsync(dto.Email, dto.Id)) throw new MemberServiceException("Email already exists");
+                if (await IsEmailAvailableAsync(dto.Email, dto.Id) == false) throw new MemberServiceException(ErrorCode.EmailExist);
 
-                // Find the member by ID, Throw an exception if member not found
-                var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!"));
+                var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
 
                 // Update member information
                 entity.Name = dto.Name;
@@ -131,13 +132,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -153,8 +154,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Find the member by ID, Throw an exception if member not found
-                var entity = await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException("Member doesn't exist!");
+                var entity = await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
                 // Validate old password matches the hashed and salted password in the database
                 var oldEncryptedPassword = HashUtility.ToSHA256(dto.OldPassword, entity.Salt);
@@ -174,13 +174,13 @@ namespace BoardGame.Services
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
@@ -193,43 +193,44 @@ namespace BoardGame.Services
         /// <returns>A message indicating successful email validation ("Validation successful").</returns>
         /// <exception cref="MemberServiceException">Thrown if the member is not found or there's an error within the MemberService logic.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during validation.</exception>
-        public async Task<string> ValidateEmail(ObjectId memberId, string confirmCode)
+        public async Task<string> ValidateEmail(string memberId, string confirmCode)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                // Find the member by ID, Throw an exception if member not found
-                MemberDTO dto = (await _unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException("Member doesn't exist!")).To<MemberDTO>();
+                Member entity = await _unitOfWork.Members.GetByIdAsync(new ObjectId(memberId)) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
                 // Validate the confirmation code
-                if (string.Compare(dto.ConfirmCode, confirmCode) != 0) throw new MemberServiceException("Wrong confirm code!");
+                if (string.Compare(entity.ConfirmCode, confirmCode) != 0) throw new MemberServiceException(ErrorCode.WrongConfirmationCode);
 
-                await _unitOfWork.Members.UpdateAsync(dto.To<Member>());
+                entity.IsConfirmed = true;
+
+                await _unitOfWork.Members.UpdateAsync(entity);
 
                 await _unitOfWork.CommitTransactionAsync();
                 return "Validation successful";
             }
             catch (MemberServiceException)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
             catch (Exception)
             {
-                await _unitOfWork.RollbackTransactionAsync(); // Roll back the transaction on error
-                throw; // Re-throw the exception for handling in the controller
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
         }
 
-        public async Task<(ObjectId Id, string Account)> ValidateUser(LoginDTO dto)
+        public async Task<string> ValidateUser(LoginDTO dto)
         {
-            var member = await _unitOfWork.Members.GetByAccountAsync(dto.Account);
-            if (member == null || !ValidatePassword(member.To<MemberDTO>(), dto.Password))
-            {
-                return (ObjectId.Empty, string.Empty);
-            }
+            var member = await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
+            
+            if(!ValidatePassword(member.To<MemberDTO>(), dto.Password)) throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
 
-            return (member.Id, member.IsConfirmed ? Infrastractures.Role.Member : Infrastractures.Role.Guest);
+            var token = _jwt.GenerateToken(member.Id, member.Account, member.IsConfirmed ? Infrastractures.Role.Member : Infrastractures.Role.Guest);
+
+            return token;
         }
 
         private static bool ValidatePassword(MemberDTO member, string password)
@@ -239,7 +240,6 @@ namespace BoardGame.Services
 
         public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
-            // Cache key for member list
             const string cacheKey = "members";
 
             // Try to get members from cache
@@ -262,7 +262,6 @@ namespace BoardGame.Services
 
         public async Task<MemberDTO> GetMemberInfo(ObjectId id) 
         {
-            // Cache key for member list
             const string cacheKey = "members";
 
             // Try to get members from cache
@@ -273,9 +272,9 @@ namespace BoardGame.Services
                 return JsonConvert.DeserializeObject<MemberDTO>(cachedMember.ToString())!;
             }
 
-            var member = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException("Member doesn't exist!");
+            var member = await _unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
-            // Add members to cache with expiration (optional)
+            // Add members to cache with expiration
             var entries = new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member));
             await _cacheService.HashSetAsync(cacheKey, [entries]);
 
@@ -320,6 +319,22 @@ namespace BoardGame.Services
             var member = await _unitOfWork.Members.GetByEmailAsync(email);
 
             return member == null || (member != null && member.Id == memberId);
+        }
+
+        public async Task<bool> Delete(string account)
+        {
+            try
+            {
+                var member = await _unitOfWork.Members.GetByAccountAsync(account) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
+
+                await _unitOfWork.Members.DeleteAsync(member.Id);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 

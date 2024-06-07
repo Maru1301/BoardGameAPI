@@ -8,24 +8,26 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Net;
 using System.Security.Claims;
+using Utility;
 
 namespace BoardGame.Controllers
 {
     [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
-    [Route("api/[controller]")]
-    public class MemberController(IMemberService memberService, JWTHelper jwt) : ControllerBase
+    [Route("api/[controller]/[action]")]
+    public class MemberController(IMemberService memberService, ILogger<MemberController> logger) : ControllerBase
     {
         private readonly IMemberService _memberService = memberService;
+        private readonly ILogger<MemberController> _logger = logger;
 
-        private readonly JWTHelper _jwt = jwt;
-
-        [HttpGet("[action]"), AuthorizeRoles(Role.Admin)]
+        [HttpGet, AuthorizeRoles(Role.Admin)]
         public async Task<IActionResult> ListMembers()
         {
             try
             {
+                //_logger.LogInformation("ListMember");
                 var members = await _memberService.ListMembers();
+
                 return Ok(members.Select(m => m.To<MemberResponseDTO>()).ToList());
             }
             catch (MemberServiceException ex)
@@ -38,24 +40,18 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> GetMemberInfo()
         {
             try
             {
-                // Get the current user from the HttpContext
-                var user = HttpContext.User;
-
                 // Extract the user ID (or other relevant claim) from the JWT claim
-                var idClaim = user.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Error occured while parsing JWT");
-                var id = idClaim.Value;
+                var id = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
                 if(string.IsNullOrEmpty(id)) return NotFound();
 
-                // Use the user ID to retrieve member information from your database
                 var member = await _memberService.GetMemberInfo(new ObjectId(id));
 
-                // Return the member information 
                 return Ok(member.To<MemberResponseDTO>());
             }
             catch (MemberServiceException)
@@ -69,20 +65,15 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]"), AllowAnonymous]
-        public async Task<IActionResult> Login([FromQuery] MemberLoginRequestDTO login)
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] MemberLoginRequestDTO login)
         {
+            //_logger.LogInformation($"{login.Account} tries to login");
             try
             {
-                 var (Id, role) = await _memberService.ValidateUser(login.To<LoginDTO>());
-                if (Id == ObjectId.Empty || string.IsNullOrEmpty(role))
-                {
-                    return BadRequest("Invalid Account or Password.");
-                }
+                var token = await _memberService.ValidateUser(login.To<LoginDTO>());
 
-                // Authorize the user and generate a JWT token.
-                var token = _jwt.GenerateToken(Id, login.Account, role);
-                return Ok(token);
+                return token.Ok();
             }
             catch(MemberServiceException ex)
             {
@@ -94,17 +85,16 @@ namespace BoardGame.Controllers
             }
         }
         
-        [HttpPost("[action]"), AllowAnonymous]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Register(RegisterRequestDTO vm)
         {
             try
             {
-                // Define a template for the confirmation email URL.
-                string confirmationUrlTemplate = "https://localhost:44318/Member/ActivateRegistration";
+                var domainName = GetDomainName();
 
-                string Message = await _memberService.Register(vm.To<RegisterDTO>(), confirmationUrlTemplate);
+                string message = await _memberService.Register(vm.To<RegisterDTO>(), domainName);
 
-                return Ok(Message);
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -116,18 +106,17 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> ResendConfirmationCode()
         {
             try
             {
-                var user = HttpContext.User;
+                string memberId = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
+                var domainName = GetDomainName();
 
-                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-
-                string message = await _memberService.ResendConfirmationCode(new ObjectId(memberId));
+                string message = await _memberService.ResendConfirmationCode(new ObjectId(memberId), domainName);
                 
-                return Ok(message);
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -139,68 +128,64 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpPost("[action]")]
-        public async Task<string> EditMemberInfo(EditRequestDTO vm)
+        [HttpPost]
+        public async Task<IActionResult> EditMemberInfo(EditRequestDTO vm)
         {
             try
             {
-                var user = HttpContext.User;
-
-                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                string memberId = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
                 var dto = vm.To<EditDTO>();
 
                 dto.Id = new ObjectId(memberId);
 
-                string Message = await _memberService.EditMemberInfo(dto);
+                string message = await _memberService.EditMemberInfo(dto);
 
-                return Message;
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
-                return $"Edition failed. Please check the provided information. {ex.Message}";
+                return BadRequest($"Edition failed. Please check the provided information. {ex.Message}");
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
-        [HttpPost("[action]")]
-        public async Task<string> ResetPassword(ResetPasswordRequestDTO vm)
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequestDTO vm)
         {
             try
             {
-                var user = HttpContext.User;
-
-                string memberId = user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                string memberId = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
                 var dto = vm.To<ResetPasswordDTO>();
 
                 dto.Id = new ObjectId(memberId);
 
-                string Message = await _memberService.ResetPassword(dto);
+                string message = await _memberService.ResetPassword(dto);
 
-                return Message;
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
-                return $"Reset failed. Please check the provided information. {ex.Message}";
+                return BadRequest($"Reset failed. Please check the provided information. {ex.Message}");
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
-        [HttpGet("[action]"), AllowAnonymous]
+        [HttpGet, AllowAnonymous]
         public async Task<IActionResult> ValidateEmail(string memberId, string confirmationCode)
         {
             try
             {
-                string Message = await _memberService.ValidateEmail(new ObjectId(memberId), confirmationCode);
+                string message = await _memberService.ValidateEmail(memberId, confirmationCode);
 
-                return Ok(Message);
+                return message.Ok();
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -210,6 +195,34 @@ namespace BoardGame.Controllers
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
+        }
+
+        [HttpDelete, AllowAnonymous]
+        public async Task<IActionResult> Delete(string account)
+        {
+            try
+            {
+                var role = HttpContext.GetJwtClaim(ClaimTypes.Role).Value;
+                var jwtAccount = HttpContext.GetJwtClaim(ClaimTypes.Name).Value;
+
+                if (role != Role.Admin && account != jwtAccount)
+                {
+                    return BadRequest(ErrorCode.AccountNotMatch);
+                }
+
+                var result = await _memberService.Delete(account);
+
+                return result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        private string GetDomainName()
+        {
+            return $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
         }
     }
 }

@@ -42,13 +42,15 @@ namespace BoardGame.Models.DTOs
 
         public class RoundInfoRequestDTO
         {
-            public ObjectId Id { get; set; }
+            public ObjectId GameId { get; set; }
             public PlayerRoundInfo Player1 { get; set; } = new();
             public PlayerRoundInfo Player2 { get; set; } = new();
         }
 
         public class RoundInfoDTO
         {
+            public ObjectId GameId { get; set; }
+
             public string Winner { get; set; } = string.Empty;
 
             //0: player first, 1: bot first
