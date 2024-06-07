@@ -1,12 +1,12 @@
 ﻿using BoardGame.Models.DTOs;
 using BoardGame.Infrastractures;
-using Utilities;
 using BoardGame.Services.Interfaces;
 using BoardGame.Models.EFModels;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Data;
+using Utility;
 
 namespace BoardGame.Services
 {
