@@ -4,6 +4,7 @@ using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
+using Utility;
 using static BoardGame.Models.DTOs.GameDTOs;
 
 namespace BoardGame.Controllers
