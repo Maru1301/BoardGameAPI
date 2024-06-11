@@ -13,7 +13,7 @@ namespace Menu_Practice.Menu
 
         public void Push(OpponentMenuOption option)
         {
-            _options.Add(option);
+            MenuOptions.Add(option);
         }
     }
 

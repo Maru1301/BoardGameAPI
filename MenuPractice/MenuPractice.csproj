@@ -6,6 +6,7 @@
     <RootNamespace>Menu_Practice</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
 
 </Project>

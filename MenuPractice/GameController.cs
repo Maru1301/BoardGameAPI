@@ -9,13 +9,13 @@ namespace Menu_Practice
         private readonly Player _npc = new();
         private bool _playerGoFirst;
         private int _roundCount;
-        private readonly int _endGame = 5;
+        private const int EndGame = 5;
         private Func<PlayerInfoContainer, PlayerInfoContainer, Result>? _useRule;
 
         public GameController(Character character, Character opponent)
         {
-            _player.Character = new(character);
-            _npc.Character = new(opponent);
+            _player.Character = new Character(character);
+            _npc.Character = new Character(opponent);
         }
 
         public void BeginNewGame()
@@ -24,14 +24,14 @@ namespace Menu_Practice
             _roundCount = 0;
         }
 
-        private bool IsPlayerGoFirst()
+        private static bool IsPlayerGoFirst()
         {
             //who go first
             var random = new Random();
-            int WhoGoFirst = random.Next(1);
-            int PlayerGoFirst = 1;
+            var whoGoFirst = random.Next(1);
+            const int playerGoFirst = 1;
 
-            return WhoGoFirst == PlayerGoFirst;
+            return whoGoFirst == playerGoFirst;
         }
 
         public void BeginNewRound()
@@ -45,73 +45,58 @@ namespace Menu_Practice
             return _player.Character.Cards;
         }
 
-        public List<int> GetNPCCards()
+        public List<int> GetNpcCards()
         {
             return _npc.Character.Cards;
         }
 
-        public int GetNPCChosenCard()
+        public int GetNpcChosenCard()
         {
             Random random = new();
-            List<int> npcCards = _npc.Character.Cards;
+            var npcCards = _npc.Character.Cards;
 
-            List<int> canChooseCards = new();
-            foreach(var item in npcCards.Select((cardAmount, index) => new { index, cardAmount }))
-            {
-                if(item.cardAmount > 0)
-                {
-                    canChooseCards.Add(item.index);
-                }
-            }
+            var canChooseCards = (from item in npcCards.Select((cardAmount, index) => new { index, cardAmount }) where item.cardAmount > 0 select item.index).ToList();
 
-            int chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
+            var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
 
             return chosenCard;
         }
 
         public Result JudgeRound(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
         {
-            Result result = _useRule!(playerInfo, ncpInfo);
+            var result = _useRule!(playerInfo, ncpInfo);
 
             return result;
         }
 
-        public Card GetNPCWinCard()
+        public Card GetNpcWinCard()
         {
             Random random = new();
-            List<int> playerCards = _player.Character.Cards;
+            var playerCards = _player.Character.Cards;
 
-            List<int> canChooseCards = new();
-            foreach (var item in playerCards.Select((cardAmount, index) => new { index, cardAmount }))
-            {
-                if (item.cardAmount > 0)
-                {
-                    canChooseCards.Add(item.index);
-                }
-            }
+            var canChooseCards = (from item in playerCards.Select((cardAmount, index) => new { index, cardAmount }) where item.cardAmount > 0 select item.index).ToList();
 
-            int chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
+            var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
 
             return (Card)chosenCard;
         }
 
         public void ProcessSettlement(Result result, Card card)
         {
-            bool? playerWin = IsPlayerWin(result);
+            var playerWin = IsPlayerWin(result);
 
-            if(playerWin == null)
+            switch (playerWin)
             {
-                return;
-            }
-            else if(playerWin == true)
-            {
-                _player.Character.Cards[(int)card]++;
-                _npc.Character.Cards[(int)card]--;
-            }
-            else
-            {
-                _npc.Character.Cards[(int)card]++;
-                _player.Character.Cards[(int)card]--;
+                case null:
+                    return;
+                case true:
+                    _player.Character.Cards[(int)card]++;
+                    _npc.Character.Cards[(int)card]--;
+                    break;
+                default:
+                    _npc.Character.Cards[(int)card]++;
+                    _player.Character.Cards[(int)card]--;
+                    break;
             }
         }
 
@@ -119,28 +104,23 @@ namespace Menu_Practice
         {
             if (result.Equals(Result.Draw)) return null;
 
-            int resultNum = (int)result;
-            if (resultNum % 2 == 0)
-            {
-                return true;
-            }
-
-            return false;
+            var resultNum = (int)result;
+            return resultNum % 2 == 0;
         }
 
         public Status EndRound()
         {
-            if (_roundCount == _endGame) return Status.InMenu;
+            if (_roundCount == EndGame) return Status.InMenu;
 
             _playerGoFirst = !_playerGoFirst;
 
             return Status.InGame;
         }
 
-        public string GetOutcome()
+        public static string GetOutcome()
         {
-            int playerPoint = /*_player.Character.PointLogic()*/0;
-            int npcPoint = /*_npc.Character.PointLogic()*/0;
+            const int playerPoint = 0;
+            const int npcPoint = 0;
 
             if(playerPoint == npcPoint)
             {
@@ -159,15 +139,9 @@ namespace Menu_Practice
     }
 }
 
-class PlayerInfoContainer
+internal class PlayerInfoContainer(List<int> cards, int chosenCard)
 {
-    public List<int> Cards = new();
+    public readonly List<int> Cards = cards;
 
-    public int ChosenCard;
-
-    public PlayerInfoContainer(List<int> Cards, int ChosenCard)
-    {
-        this.Cards = Cards;
-        this.ChosenCard = ChosenCard;
-    }
+    public readonly int ChosenCard = chosenCard;
 }

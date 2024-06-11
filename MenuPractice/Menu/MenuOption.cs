@@ -1,4 +1,6 @@
-﻿namespace Menu_Practice
+﻿using Menu_Practice.Menu;
+
+namespace Menu_Practice
 {
     internal class MenuOption
     {

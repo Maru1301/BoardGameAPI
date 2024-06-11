@@ -5,18 +5,19 @@ namespace Menu_Practice
 {
     internal partial class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.CursorVisible = false;
             
-            MenuList currentMenuList = GenerateMenu();
+            ConsoleController.ShowLoading();
+
+            var currentMenuList = GenerateMenu();
 
             MenuController menuController = new(currentMenuList);
 
             ConsoleController consoleController = new();
-            consoleController.ShowLoading();
 
-            Status status = Status.InMenu;
+            var status = Status.InMenu;
             while (status != Status.End)
             {
                 status = RunMenu(status, consoleController, currentMenuList, menuController);
@@ -28,22 +29,23 @@ namespace Menu_Practice
             }
         }
 
-        static MenuList GenerateMenu()
+        private static MenuList GenerateMenu()
         {
-            IMenuBuilder menuBuilder = new MenuBuilder();
+            CharacterList characterList = new();
+            IMenuBuilder menuBuilder = new MenuBuilder(characterList);
             MenuDirector menuDirector = new(menuBuilder);
             menuDirector.ConstructMenu();
 
             return menuBuilder.GetRootMenuList();
         }
 
-        static Status RunMenu(Status status, ConsoleController consoleController, MenuList currentMenuList, MenuController menuController)
+        private static Status RunMenu(Status status, ConsoleController consoleController, MenuList currentMenuList, MenuController menuController)
         {
-            int removedIndex = 0;
+            var removedIndex = 0;
             MenuOption removedOption = new();
             while (status == Status.InMenu)
             {
-                MenuOption menuOption = consoleController.GetMenuOption(currentMenuList);
+                var menuOption = consoleController.GetMenuOption(currentMenuList);
                 if (currentMenuList.IsRootList && menuOption.OptionName == "Exit")
                 {
                     status = Status.End;
@@ -82,13 +84,13 @@ namespace Menu_Practice
 
             return status;
         }
-        
-        static Status RunGame(Status status, ConsoleController consoleController, MenuController menuController)
-        {
-            consoleController.ShowLoading();
 
-            Character playerCharacter = menuController.GetChosenCharacter();
-            Character opponentCharacter = menuController.GetChosenOpponent();
+        private static Status RunGame(Status status, ConsoleController consoleController, MenuController menuController)
+        {
+            ConsoleController.ShowLoading();
+
+            var playerCharacter = menuController.GetChosenCharacter();
+            var opponentCharacter = menuController.GetChosenOpponent();
 
             GameController gameController = new(playerCharacter, opponentCharacter);
 
@@ -98,43 +100,34 @@ namespace Menu_Practice
             {
                 gameController.BeginNewRound();
 
-                List<int> playerCards = gameController.GetPlayerCards();
-                List<int> npcCards = gameController.GetNPCCards();
+                var playerCards = gameController.GetPlayerCards();
+                var npcCards = gameController.GetNpcCards();
 
-                int playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
-                int npcChosenCard = gameController.GetNPCChosenCard();
-                consoleController.ShowChosenCards(playerChosenCard, npcChosenCard);
+                var playerChosenCard = consoleController.GetPlayerChosenCard(playerCards);
+                var npcChosenCard = gameController.GetNpcChosenCard();
+                ConsoleController.ShowChosenCards(playerChosenCard, npcChosenCard);
                 PlayerInfoContainer playerInfoContainer = new(playerCards, playerChosenCard);
                 PlayerInfoContainer npcInfoContainer = new(npcCards, npcChosenCard);
                 Result result = gameController.JudgeRound(playerInfoContainer, npcInfoContainer);
 
-                Card card = Card.None;
-                if(result == Result.BasicWin)
+                var card = result switch
                 {
-                    card = consoleController.GetPlayerWinCard(npcInfoContainer.Cards);
-                }
-                else if(result == Result.BasicLose)
-                {
-                    card = gameController.GetNPCWinCard();
-                }
-                else if(result == Result.CharacterRuleWin)
-                {
-                    card = (Card)npcChosenCard;
-                }
-                else if(result == Result.CharacterRuleLose)
-                {
-                    card = (Card)playerChosenCard;
-                }
+                    Result.BasicWin => consoleController.GetPlayerWinCard(npcInfoContainer.Cards),
+                    Result.BasicLose => gameController.GetNpcWinCard(),
+                    Result.CharacterRuleWin => (Card)npcChosenCard,
+                    Result.CharacterRuleLose => (Card)playerChosenCard,
+                    _ => Card.None
+                };
 
                 gameController.ProcessSettlement(result, card);
-                consoleController.ShowRoundResult(result, card);
+                ConsoleController.ShowRoundResult(result, card);
 
                 status = gameController.EndRound();
             }
 
-            var outcome = gameController.GetOutcome();
+            var outcome = GameController.GetOutcome();
 
-            consoleController.Show(outcome);
+            ConsoleController.Show(outcome);
 
             return status;
         }

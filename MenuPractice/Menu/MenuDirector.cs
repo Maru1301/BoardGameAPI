@@ -1,35 +1,25 @@
 ﻿namespace Menu_Practice.Menu
 {
-    internal class MenuDirector
+    internal class MenuDirector(IMenuBuilder builder)
     {
-        private readonly IMenuBuilder _builder;
-        public MenuDirector(IMenuBuilder builder)
-        {
-            _builder = builder;
-        }
-
         public void ConstructMenu()
         {
-            string Title = "MainMenu";
-            MenuList MainMenuList = _builder.BuildMainMenuList(Title);
+            var title = "MainMenu";
+            var mainMenuList = builder.BuildMainMenuList(title);
 
-            Title = "Choose a character";
-            MenuList CharacterMenuList = _builder.BuildCharacterMenuList(Title);
+            title = "Choose a character";
+            var characterMenuList = builder.BuildCharacterMenuList(title);
             
-            _builder.ConnectMenuOptionWithMenuList(MainMenuList.Options.First(), CharacterMenuList);
+            builder.ConnectMenuOptionWithMenuList(mainMenuList.Options.First(), characterMenuList);
             
-            Title = "Choose an opponent";
-            MenuList OpponentMenuList = _builder.BuildOpponentMenuList(Title);
+            title = "Choose an opponent";
+            var opponentMenuList = builder.BuildOpponentMenuList(title);
             
-            List<MenuList?> CharacterInfoMenuLists = CharacterMenuList.Options.Select(option => option.NextMenuList).ToList();
-            List<List<MenuOption>> CharacterInfoMenuOptionList = CharacterInfoMenuLists.Select(menuList => menuList != null ? menuList.Options : new()).ToList();
-            foreach (var MenuOptionList in CharacterInfoMenuOptionList)
+            var characterInfoMenuLists = characterMenuList.Options.Select(option => option.NextMenuList).ToList();
+            var characterInfoMenuOptionList = characterInfoMenuLists.Select(menuList => menuList != null ? menuList.Options : new()).ToList();
+            foreach (var option in from menuOptionList in characterInfoMenuOptionList where menuOptionList.Count > 0 select menuOptionList.First())
             {
-                if(MenuOptionList != null && MenuOptionList.Count > 0)
-                {
-                    var Option = MenuOptionList.First();
-                    _builder.ConnectMenuOptionWithMenuList(Option, OpponentMenuList);
-                }
+                builder.ConnectMenuOptionWithMenuList(option, opponentMenuList);
             }
         }
     }

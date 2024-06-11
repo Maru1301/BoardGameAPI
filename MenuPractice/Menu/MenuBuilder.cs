@@ -2,21 +2,14 @@
 
 namespace Menu_Practice.Menu
 {
-    internal class MenuBuilder : IMenuBuilder
+    internal class MenuBuilder(CharacterList characterList) : IMenuBuilder
     {
-        private MenuList _rootMenuList;
-        private readonly CharacterList _characterList;
-        public MenuBuilder()
-        {
-            _rootMenuList = new MenuList();
-            _characterList = new CharacterList();
-        }
+        private MenuList _rootMenuList = new();
 
         public MenuList BuildMainMenuList(string title)
         {
-            MenuList menuList;
-            bool IsRootList = true;
-            menuList = new(title, IsRootList);
+            const bool isRootList = true;
+            var menuList = new MenuList(title, isRootList);
             MenuOption menuOptionStart = new("Start");
             menuList.Push(menuOptionStart);
             ConstructMenuList(menuList);
@@ -27,58 +20,53 @@ namespace Menu_Practice.Menu
 
         public MenuList BuildCharacterMenuList(string title)
         {
-            MenuOption CurrentMenuOption;
-            Character CurrentCharacter;
-            MenuList CharacterMenuList = new(title);
-            MenuList CharacterInfoMenu;
+            MenuList characterMenuList = new(title);
 
-            foreach ((string name, Character character) in _characterList.Characters)
+            foreach (var (name, character) in characterList.Characters)
             {
-                CurrentMenuOption = new(name);
-                CharacterMenuList.Push(CurrentMenuOption);
-                CurrentCharacter = character;
-                CharacterInfoMenu = new CharacterInfoMenu(character);
-                ConstructMenuList(CharacterInfoMenu);
-                CurrentMenuOption.NextMenuList = CharacterInfoMenu;
+                MenuOption currentMenuOption = new(name);
+                characterMenuList.Push(currentMenuOption);
+                MenuList characterInfoMenu = new CharacterInfoMenu(character);
+                ConstructMenuList(characterInfoMenu);
+                currentMenuOption.NextMenuList = characterInfoMenu;
             }
 
-            ConstructMenuList(CharacterMenuList);
+            ConstructMenuList(characterMenuList);
 
-            return CharacterMenuList;
+            return characterMenuList;
         }
 
         public MenuList BuildOpponentMenuList(string title)
         {
-            OpponentMenuOption opponentMenuOption;
             OpponentMenu opponentMenuList = new(title);
-            foreach((string name, Character character) in _characterList.Characters)
+            foreach(var (name, character) in characterList.Characters)
             {
-                opponentMenuOption = new(name, character);
+                var opponentMenuOption = new OpponentMenuOption(name, character);
                 opponentMenuList.Push(opponentMenuOption);
             }
 
-            ConstructMenuList((MenuList)opponentMenuList);
+            ConstructMenuList(opponentMenuList);
 
             return opponentMenuList;
         }
 
-        public static void ConstructMenuList(MenuList list)
+        private static void ConstructMenuList(MenuList list)
         {
             if (list.IsRootList)
             {
-                MenuOption ExitOption = new("Exit");
-                list.Push(ExitOption);
+                MenuOption exitOption = new("Exit");
+                list.Push(exitOption);
             }
             else
             {
                 if (list.GetType() == new CharacterInfoMenu(new Character()).GetType())
                 {
-                    MenuOption GoOption = new("Select");
-                    list.Push(GoOption);
+                    MenuOption goOption = new("Select");
+                    list.Push(goOption);
                 }
 
-                MenuOption BackOption = new("Back");
-                list.Push(BackOption);
+                MenuOption backOption = new("Back");
+                list.Push(backOption);
             }
         }
 
@@ -91,7 +79,5 @@ namespace Menu_Practice.Menu
         {
             menuOption.NextMenuList = menuList;
         }
-
-        
     }
 }
