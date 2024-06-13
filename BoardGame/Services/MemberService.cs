@@ -6,7 +6,6 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Data;
-using Utility;
 
 namespace BoardGame.Services
 {
@@ -157,7 +156,7 @@ namespace BoardGame.Services
                 var entity = await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
                 // Validate old password matches the hashed and salted password in the database
-                var oldEncryptedPassword = HashUtility.ToSHA256(dto.OldPassword, entity.Salt);
+                var oldEncryptedPassword = Utility.HashUtility.ToSHA256(dto.OldPassword, entity.Salt);
                 if (!entity.EncryptedPassword.Equals(oldEncryptedPassword))
                 {
                     throw new MemberServiceException("Old password confirmation failed");
@@ -235,7 +234,7 @@ namespace BoardGame.Services
 
         private static bool ValidatePassword(MemberDTO member, string password)
         {
-            return HashUtility.ToSHA256(password, member.Salt) == member.EncryptedPassword;
+            return Utility.HashUtility.ToSHA256(password, member.Salt) == member.EncryptedPassword;
         }
 
         public async Task<IEnumerable<MemberDTO>> ListMembers()

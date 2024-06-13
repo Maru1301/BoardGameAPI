@@ -2,7 +2,6 @@
 using BoardGame.Models.DTOs;
 using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
-using Utility;
 
 namespace BoardGame.Services
 {
@@ -51,7 +50,7 @@ namespace BoardGame.Services
 
         private static bool ValidatePassword(AdminDTO admin, string password)
         {
-            return HashUtility.ToSHA256(password, admin.Salt) == admin.EncryptedPassword;
+            return Utility.HashUtility.ToSHA256(password, admin.Salt) == admin.EncryptedPassword;
         }
 
         private async Task<bool> CheckAccountExistAsync(string account)
