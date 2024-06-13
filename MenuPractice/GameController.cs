@@ -100,7 +100,7 @@ namespace Menu_Practice
             }
         }
 
-        private bool? IsPlayerWin(Result result)
+        private static bool? IsPlayerWin(Result result)
         {
             if (result.Equals(Result.Draw)) return null;
 
@@ -139,7 +139,7 @@ namespace Menu_Practice
     }
 }
 
-internal class PlayerInfoContainer(List<int> cards, int chosenCard)
+public class PlayerInfoContainer(List<int> cards, int chosenCard)
 {
     public readonly List<int> Cards = cards;
 

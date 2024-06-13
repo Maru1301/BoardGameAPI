@@ -1,21 +1,14 @@
 ﻿namespace Menu_Practice.Menu
 {
-    internal class MenuList
+    public class MenuList(string title = "", bool isRootList = false)
     {
-        protected List<MenuOption> MenuOptions;
+        protected List<MenuOption> MenuOptions = [];
 
-        public string Title { get; }
+        public string Title { get; } = title;
 
         public List<MenuOption> Options { get => MenuOptions; set => MenuOptions = value; }
 
-        public bool IsRootList { get; }
-
-        public MenuList(string title = "", bool isRootList = false)
-        {
-            Title = title;
-            MenuOptions = new List<MenuOption>();
-            IsRootList = isRootList;
-        }
+        public bool IsRootList { get; } = isRootList;
 
         public void Push(MenuOption option)
         {

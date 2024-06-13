@@ -1,29 +1,25 @@
-﻿namespace Menu_Practice
+﻿namespace Menu_Practice;
+
+public enum Status : short
 {
-    internal partial class Program
-    {
-        public enum Status : short
-        {
-            InMenu = 1,
-            InGame = 2,
-            End = -1,
-        }
+    InMenu = 1,
+    InGame = 2,
+    End = -1,
+}
 
-        public enum Result : short
-        {
-            BasicWin = 0,
-            BasicLose = 1,
-            CharacterRuleWin = 2,
-            CharacterRuleLose = 3,
-            Draw = -1
-        }
+public enum Result : short
+{
+    BasicWin = 0,
+    BasicLose = 1,
+    CharacterRuleWin = 2,
+    CharacterRuleLose = 3,
+    Draw = -1
+}
 
-        public enum Card : short
-        {
-            None = -1,
-            Crown = 0,
-            Shield = 1,
-            Dagger = 2
-        }
-    }
+public enum Card : short
+{
+    None = -1,
+    Crown = 0,
+    Shield = 1,
+    Dagger = 2
 }

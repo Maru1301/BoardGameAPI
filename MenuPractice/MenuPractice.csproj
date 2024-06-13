@@ -9,4 +9,8 @@
     <LangVersion>12</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="RestSharp" Version="111.2.0" />
+  </ItemGroup>
+
 </Project>

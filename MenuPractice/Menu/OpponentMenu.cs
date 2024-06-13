@@ -23,8 +23,8 @@ namespace Menu_Practice.Menu
 
         public Character Character { get => _character; }
 
-        public OpponentMenuOption(string optionName, Character character, MenuList? prevMenuList = null, MenuList? nextMenuList = null) 
-            : base(optionName, prevMenuList, nextMenuList)
+        public OpponentMenuOption(string optionName, Character character, MenuList? nextMenuList = null) 
+            : base(optionName, nextMenuList)
         {
             _character = character;
         }
