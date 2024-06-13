@@ -72,7 +72,7 @@ namespace BoardGame.Controllers
             {
                 var token = await _memberService.ValidateUser(login.To<LoginDTO>());
 
-                return token.Ok();
+                return Ok(new { token });
             }
             catch(MemberServiceException ex)
             {
@@ -93,7 +93,7 @@ namespace BoardGame.Controllers
 
                 string message = await _memberService.Register(vm.To<RegisterDTO>(), domainName);
 
-                return message.Ok();
+                return Ok(new { message });
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -115,7 +115,7 @@ namespace BoardGame.Controllers
 
                 string message = await _memberService.ResendConfirmationCode(new ObjectId(memberId), domainName);
                 
-                return message.Ok();
+                return Ok(new { message });
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -140,7 +140,7 @@ namespace BoardGame.Controllers
 
                 string message = await _memberService.EditMemberInfo(dto);
 
-                return message.Ok();
+                return Ok(new { message });
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -165,7 +165,7 @@ namespace BoardGame.Controllers
 
                 string message = await _memberService.ResetPassword(dto);
 
-                return message.Ok();
+                return Ok(new { message });
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -184,7 +184,7 @@ namespace BoardGame.Controllers
             {
                 string message = await _memberService.ValidateEmail(memberId, confirmationCode);
 
-                return message.Ok();
+                return Ok(new { message });
             }
             catch (MemberServiceException ex) // Catch specific member service exceptions
             {
@@ -211,7 +211,7 @@ namespace BoardGame.Controllers
 
                 var result = await _memberService.Delete(account);
 
-                return result.Ok();
+                return Ok(new { result });
             }
             catch (Exception ex)
             {

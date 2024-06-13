@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace BoardGame.Infrastractures
@@ -35,16 +34,6 @@ namespace BoardGame.Infrastractures
         {
             return httpContext.User.Claims.FirstOrDefault(x => x.Type == claimType) ?? 
                 throw new Exception(ErrorCode.ErrorParsingJwt);
-        }
-
-        public static OkObjectResult Ok(this string s)
-        {
-            return new OkObjectResult(new { s });
-        }
-
-        public static OkObjectResult Ok(this bool result)
-        {
-            return new OkObjectResult(new { result });
         }
     }
 }
