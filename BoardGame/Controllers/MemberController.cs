@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Net;
 using System.Security.Claims;
-using Utility;
 
 namespace BoardGame.Controllers
 {

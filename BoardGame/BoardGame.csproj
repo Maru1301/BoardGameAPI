@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="JWT.Extensions.AspNetCore" Version="10.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
@@ -30,8 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Utility">
-      <HintPath>Libs\Utility.dll</HintPath>
+    <Reference Include="Utilities">
+      <HintPath>Libs\Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
 

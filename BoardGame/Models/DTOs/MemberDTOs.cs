@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
-using Utility;
+using Utilities;
 
 namespace BoardGame.Models.DTOs
 {

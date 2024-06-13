@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using BoardGame.Services;
 using System.Net;
 using BoardGame.Authorizations;
-using Utility;
 
 namespace BoardGame.Controllers
 {
