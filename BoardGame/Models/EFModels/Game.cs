@@ -48,7 +48,6 @@ namespace BoardGame.Models.EFModels
 
     public class PlayerRoundInfo
     {
-        //public int CompressedInfo { get; set; } = 0;
         public Character Character { get; set; }
 
         public CardSet Hand { get; set; } = new();
