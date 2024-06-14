@@ -10,7 +10,9 @@ namespace BoardGame.Services.Interfaces
 
         public Task<HashEntry[]> HashGetAllAsync(string key);
 
-        public Task HashSetAsync(string key, HashEntry[] entries, TimeSpan expiry = default);
+        public Task HashSetAsync(string key, HashEntry[] entries) => HashSetAsync(key, entries, default);
+
+        public Task HashSetAsync(string key, HashEntry[] entries, TimeSpan expiry);
 
         public Task<bool> RemoveDataAsync(string key);
 
