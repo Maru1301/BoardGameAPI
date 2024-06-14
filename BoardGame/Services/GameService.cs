@@ -54,7 +54,7 @@ namespace BoardGame.Services
             
             dto.WhoGoesFirst = DetermineWhoGoesFirst();
 
-            //if(game.Player2 == "Bot")
+            //todo: if(game.Player2 == "Bot")
 
             //todo: store round information in redis
         }
