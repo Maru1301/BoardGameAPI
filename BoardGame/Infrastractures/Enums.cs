@@ -2,9 +2,9 @@
 {
     public static class Role
     {
-        public static string Admin { get { return "Admin"; } }
-        public static string Member { get { return "Member"; } }
-        public static string Guest { get { return "Guest"; } }
+        public const string Admin = "Admin"; 
+        public const string Member = "Member";
+        public const string Guest = "Guest";
     }
 
     public static class ErrorCode
