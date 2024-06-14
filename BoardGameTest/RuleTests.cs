@@ -10,6 +10,29 @@ namespace BoardGameTest
     public class RuleTests
     {
         private static readonly IServiceProvider ServiceProvider;
+        private static readonly RoundCards _CCC = new()
+        {
+            Card1 = Card.Crown,
+            Card2 = Card.Crown,
+            Card3 = Card.Crown,
+            LastOpened = 1,
+        };
+
+        private static readonly RoundCards _SCC = new()
+        {
+            Card1 = Card.Sheild,
+            Card2 = Card.Crown,
+            Card3 = Card.Crown,
+            LastOpened = 1,
+        };
+
+        private static readonly RoundCards _DCC = new()
+        {
+            Card1 = Card.Dagger,
+            Card2 = Card.Crown,
+            Card3 = Card.Crown,
+            LastOpened = 1,
+        };
 
         public static TheoryData<PlayerRoundInfo, PlayerRoundInfo, Result> AssassinRuleData => new()
         {
@@ -18,25 +41,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _CCC
                 },
                 Result.Draw
             },
@@ -45,25 +56,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 Result.Draw
             },
@@ -72,25 +71,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 Result.Player1Win
             },
@@ -99,25 +86,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Player1Win
             },
@@ -126,25 +101,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _CCC
                 },
                 Result.Player1Win
             },
@@ -153,25 +116,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Player2Win
             },
@@ -180,25 +131,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Player2Win
             },
@@ -207,25 +146,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 Result.Player2Win
             },
@@ -234,25 +161,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 Result.Player2Win
             },
@@ -261,25 +176,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _CCC
                 },
                 Result.Player2Win
             },
@@ -288,25 +191,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _CCC
                 },
                 Result.Player2Win
             },
@@ -315,25 +206,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Sheild,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Crown,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _CCC
                 },
                 Result.Player2Win
             },
@@ -342,25 +221,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 3},
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 2 },
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Player1CharacterRuleWin
             },
@@ -369,25 +236,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 2},
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 3 },
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Player2CharacterRuleWin
             },
@@ -396,25 +251,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 2},
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 2 },
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Draw
             },
@@ -423,25 +266,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 2},
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 2 },
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Draw
             },
@@ -450,25 +281,13 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 2},
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 1 },
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Draw
             },
@@ -477,28 +296,260 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 1},
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new() { Dagger = 2 },
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = Card.Dagger,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = _DCC
                 },
                 Result.Draw
             }
+        };
+
+        public static TheoryData<PlayerRoundInfo, PlayerRoundInfo, Result> DeceiverRuleData => new()
+        {
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _CCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 1},
+                    ChosenCards = _CCC
+                },
+                Result.Player1CharacterRuleWin
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(){ Sheild = 1 },
+                    ChosenCards = _CCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2},
+                    ChosenCards = _CCC
+                },
+                Result.Player2CharacterRuleWin
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _CCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2},
+                    ChosenCards = _CCC
+                },
+                Result.Draw
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                Result.Draw
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _CCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                Result.Player1Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _DCC
+                },
+                Result.Player1Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _DCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _CCC
+                },
+                Result.Player1Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _CCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _DCC
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _CCC
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _DCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                Result.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 1 },
+                    ChosenCards = _SCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _SCC
+                },
+                Result.Player1CharacterRuleWin
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _SCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 1 },
+                    ChosenCards = _SCC
+                },
+                Result.Player2CharacterRuleWin
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _SCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _SCC
+                },
+                Result.Draw
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 1 },
+                    ChosenCards = _DCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _DCC
+                },
+                Result.Player1CharacterRuleWin
+            },
+                {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _DCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 1 },
+                    ChosenCards = _DCC
+                },
+                Result.Player2CharacterRuleWin
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _DCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = Character.Deceiver,
+                    Hand = new() { Sheild = 2 },
+                    ChosenCards = _DCC
+                },
+                Result.Draw
+            },
         };
 
         static RuleTests()
@@ -573,460 +624,8 @@ namespace BoardGameTest
 
         public class DeceiverRuleTests
         {
-            public static IEnumerable<object[]> RuleData()
-            {
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 1},
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1CharacterRuleWin
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 1 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2},
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2CharacterRuleWin
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2},
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Crown,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new(),
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2Win
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 1 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1CharacterRuleWin
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 1 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2CharacterRuleWin
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Sheild,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 1 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player1CharacterRuleWin
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 1 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Player2CharacterRuleWin
-                };
-                yield return new object[]
-                {
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    new PlayerRoundInfo
-                    {
-                        Character = Character.Deceiver,
-                        Hand = new() { Sheild = 2 },
-                        ChosenCards = new RoundCards
-                        {
-                            Card1 = Card.Dagger,
-                            Card2 = Card.Crown,
-                            Card3 = Card.Crown,
-                            LastOpened = 1,
-                        }
-                    },
-                    Result.Draw
-                };
-            }
-
             [Theory]
-            [MemberData(nameof(RuleData))]
+            [MemberData(nameof(DeceiverRuleData), MemberType = typeof(RuleTests))]
             public void TesRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
             {
                 // Get the service instance from the static field
