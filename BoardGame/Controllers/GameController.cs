@@ -99,7 +99,10 @@ namespace BoardGame.Controllers
         {
             string userAccount = HttpContext.GetJwtClaim(ClaimTypes.Name).Value;
 
-            if (string.IsNullOrEmpty(userAccount)) throw new Exception("Invalid Account!");
+            if (string.IsNullOrEmpty(userAccount))
+            {
+                throw new Exception("Invalid Account!");
+            }
 
             return userAccount;
         }
