@@ -33,9 +33,9 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (!await IsAccountAvailableAsync(dto.Account)) throw new MemberServiceException(ErrorCode.AccountExist);
-                if (!await IsNameAvailableAsync(dto.Name)) throw new MemberServiceException(ErrorCode.NameExist);
-                if (!await IsEmailAvailableAsync(dto.Email)) throw new MemberServiceException(ErrorCode.EmailExist);
+                if (!await IsAccountAvailableAsync(dto.Account)) { throw new MemberServiceException(ErrorCode.AccountExist); }
+                if (!await IsNameAvailableAsync(dto.Name)) { throw new MemberServiceException(ErrorCode.NameExist); }
+                if (!await IsEmailAvailableAsync(dto.Email)) { throw new MemberServiceException(ErrorCode.EmailExist); }
 
                 //create a new confirm code
                 dto.ConfirmCode = Guid.NewGuid().ToString("N");
@@ -113,7 +113,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (await IsEmailAvailableAsync(dto.Email, dto.Id) == false) throw new MemberServiceException(ErrorCode.EmailExist);
+                if (await IsEmailAvailableAsync(dto.Email, dto.Id) == false) { throw new MemberServiceException(ErrorCode.EmailExist); }
 
                 var entity = (await _unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
 
@@ -201,7 +201,7 @@ namespace BoardGame.Services
                 Member entity = await _unitOfWork.Members.GetByIdAsync(new ObjectId(memberId)) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
                 // Validate the confirmation code
-                if (string.Compare(entity.ConfirmCode, confirmCode) != 0) throw new MemberServiceException(ErrorCode.WrongConfirmationCode);
+                if (string.Compare(entity.ConfirmCode, confirmCode) != 0) { throw new MemberServiceException(ErrorCode.WrongConfirmationCode); }
 
                 entity.IsConfirmed = true;
 
@@ -226,7 +226,7 @@ namespace BoardGame.Services
         {
             var member = await _unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
             
-            if(!ValidatePassword(member.To<MemberDTO>(), dto.Password)) throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
+            if(!ValidatePassword(member.To<MemberDTO>(), dto.Password)) { throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword); }
 
             var token = _jwt.GenerateToken(member.Id, member.Account, member.IsConfirmed ? Infrastractures.Role.Member : Infrastractures.Role.Guest);
 

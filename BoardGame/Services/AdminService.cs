@@ -16,7 +16,10 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (await CheckAccountExistAsync(dto.Account) == false) throw new AdminServiceException(ErrorCode.AccountExist);
+                if (await CheckAccountExistAsync(dto.Account) == false)
+                {
+                    throw new AdminServiceException(ErrorCode.AccountExist);
+                }
 
                 await _unitOfWork.Admins.AddAsync(dto.To<Admin>());
 

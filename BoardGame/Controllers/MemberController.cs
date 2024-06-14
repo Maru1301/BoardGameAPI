@@ -48,7 +48,10 @@ namespace BoardGame.Controllers
                 // Extract the user ID (or other relevant claim) from the JWT claim
                 var id = HttpContext.GetJwtClaim(ClaimTypes.NameIdentifier).Value;
 
-                if(string.IsNullOrEmpty(id)) return NotFound();
+                if (string.IsNullOrEmpty(id)) 
+                {
+                    return NotFound();
+                } 
 
                 var member = await _memberService.GetMemberInfo(new ObjectId(id));
 

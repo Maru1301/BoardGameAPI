@@ -25,7 +25,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (dto.Player1Account != userAccount) throw new GameServiceException(ErrorCode.AccountNotMatch);
+                if (dto.Player1Account != userAccount) { throw new GameServiceException(ErrorCode.AccountNotMatch); }
                 await ValidateGameInfo(dto);
                 
                 var Id = await _unitOfWork.Games.AddAsync(dto.To<Game>());
@@ -97,7 +97,7 @@ namespace BoardGame.Services
                 dto.Player2Characters.Characetr3
             };
 
-            if (chosenCharacters1.Count != 3 || chosenCharacters2.Count != 3) throw new GameServiceException("Duplicated characters");
+            if (chosenCharacters1.Count != 3 || chosenCharacters2.Count != 3) { throw new GameServiceException("Duplicated characters"); }
         }
     }
 
