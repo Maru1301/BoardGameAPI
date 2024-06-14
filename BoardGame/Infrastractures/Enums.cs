@@ -2,21 +2,21 @@
 {
     public static class Role
     {
-        public const string Admin = "Admin";
-        public const string Member = "Member";
-        public const string Guest = "Guest";
+        public static string Admin { get { return "Admin"; } }
+        public static string Member { get { return "Member"; } }
+        public static string Guest { get { return "Guest"; } }
     }
 
     public static class ErrorCode
     {
-        public const string InvalidAccountOrPassword = "Invalid Account or Password";
-        public const string MemberNotExist = "Member doesn't exist!";
-        public const string WrongConfirmationCode = "Wrong confirmation code!";
-        public const string ErrorParsingJwt = "Error occured while parsing JWT";
-        public const string AccountExist = "Account already exists";
-        public const string NameExist = "Name already exists";
-        public const string EmailExist = "Email already exists";
-        public const string AccountNotMatch = "Login Account does not matched!";
+        public static string InvalidAccountOrPassword { get { return "Invalid Account or Password"; } } 
+        public static string MemberNotExist { get { return "Member doesn't exist!"; } }
+        public static string WrongConfirmationCode { get { return "Wrong confirmation code!"; } }
+        public static string ErrorParsingJwt { get { return "Error occured while parsing JWT"; } } 
+        public static string AccountExist { get { return "Account already exists"; } } 
+        public static string NameExist { get { return "Name already exists"; } } 
+        public static string EmailExist { get { return "Email already exists"; } } 
+        public static string AccountNotMatch { get { return "Login Account does not matched!"; } } 
     }
 
     public enum Result : short
