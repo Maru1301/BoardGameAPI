@@ -6,6 +6,7 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Data;
+using Utility;
 
 namespace BoardGame.Services
 {

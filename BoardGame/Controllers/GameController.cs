@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
 using static BoardGame.Models.DTOs.GameDTOs;
+using Utility;
 
 namespace BoardGame.Controllers
 {

@@ -2,6 +2,7 @@
 using BoardGame.Models.DTOs;
 using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
+using Utility;
 
 namespace BoardGame.Services
 {

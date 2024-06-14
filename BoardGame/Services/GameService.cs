@@ -3,6 +3,7 @@ using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
 using MongoDB.Bson;
 using static BoardGame.Models.DTOs.GameDTOs;
+using Utility;
 
 namespace BoardGame.Services
 {
