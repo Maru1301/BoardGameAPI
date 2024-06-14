@@ -86,7 +86,6 @@ namespace BoardGame.Controllers
                 //todo: make sure that the request is sent by the correct player
                 string userAccount = GetUserAccount();
 
-                //var rule = _gameService.MapRule(ruleCharacter);
                 return Ok(userAccount);
             }
             catch (Exception e)
