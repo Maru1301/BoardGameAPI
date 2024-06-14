@@ -10,7 +10,7 @@ namespace BoardGame.Infrastractures
     {
         private readonly JWTSettingsOptions _settings = settings.CurrentValue;
 
-        public string GenerateToken(ObjectId Id, string account, string role, int expireHours = 1)
+        public string GenerateToken(ObjectId Id, string account, string role)
         {
             var token = BuildToken(Id, account, role);
 
