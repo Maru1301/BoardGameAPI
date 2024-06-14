@@ -34,7 +34,7 @@ namespace BoardGame.Services
             return await _db.HashGetAllAsync(key);
         }
 
-        public async Task HashSetAsync(string key, HashEntry[] entries, TimeSpan expiry = default)
+        public async Task HashSetAsync(string key, HashEntry[] entries, TimeSpan expiry)
         {
             await _db.HashSetAsync(key, entries);
             await _db.KeyExpireAsync(key, expiry);
