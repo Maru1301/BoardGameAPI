@@ -4,14 +4,15 @@ using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
-using Utility;
 using static BoardGame.Models.DTOs.GameDTOs;
+using Utility;
 
 namespace BoardGame.Controllers
 {
     [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
     [Route("api/[controller]/[action]")]
+    [ValidateAntiForgeryToken]
     public class GameController(IGameService gameService) : ControllerBase
     {
         private readonly IGameService _gameService = gameService;
@@ -85,7 +86,6 @@ namespace BoardGame.Controllers
                 //todo: make sure that the request is sent by the correct player
                 string userAccount = GetUserAccount();
 
-                //var rule = _gameService.MapRule(ruleCharacter);
                 return Ok(userAccount);
             }
             catch (Exception e)
@@ -98,7 +98,10 @@ namespace BoardGame.Controllers
         {
             string userAccount = HttpContext.GetJwtClaim(ClaimTypes.Name).Value;
 
-            if (string.IsNullOrEmpty(userAccount)) throw new Exception("Invalid Account!");
+            if (string.IsNullOrEmpty(userAccount))
+            {
+                throw new Exception("Invalid Account!");
+            }
 
             return userAccount;
         }

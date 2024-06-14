@@ -1,44 +1,34 @@
-﻿using static Menu_Practice.Program;
+﻿namespace Menu_Practice.Characters;
 
-namespace Menu_Practice.Characters
+public class Character
 {
-    internal class Character
+    public string Name { get; set; } = string.Empty;
+
+    public string Rule { get; set; } = string.Empty;
+
+    public List<int> Cards { get; set; } = [];
+
+    public string DisqualificationCondition { get; set; } = string.Empty;
+
+    public string EvolutionCondition { get; set; } = string.Empty;
+
+    public string AdditionalPointCondition { get; set; } = string.Empty;
+
+    public Func<PlayerInfoContainer, PlayerInfoContainer, Result>? UseRuleLogic { get; set; }
+
+    public Character()
     {
-        private string _name = string.Empty;
-        private string _rule = string.Empty;
-        private List<int> _cards = new();
-        private string _disqualificationCondition = string.Empty;
-        private string _evolutionCondition = string.Empty;
-        private string _additionalPointCondition = string.Empty;
+        
+    }
 
-        public string Name { get => _name; set => _name = value; }
-        
-        public string Rule { get => _rule; set => _rule = value; }
-        
-        public List<int> Cards { get => _cards; set => _cards = value; }
-        
-        public string DisqualificationCondition { get => _disqualificationCondition; set => _disqualificationCondition = value; }
-        
-        public string EvolutionCondition { get => _evolutionCondition; set => _evolutionCondition = value; }
-        
-        public string AdditionalPointCondition { get => _additionalPointCondition; set => _additionalPointCondition = value; }
-
-        public Func<PlayerInfoContainer, PlayerInfoContainer, Result>? UseRuleLogic { get; set; }
-
-        public Character()
-        {
-            
-        }
-
-        public Character(Character character)
-        {
-            _name = character.Name;
-            _rule = character.Rule;
-            _cards = new(character.Cards);
-            _disqualificationCondition = character.DisqualificationCondition;
-            _evolutionCondition = character.EvolutionCondition;
-            AdditionalPointCondition = character.AdditionalPointCondition;
-            UseRuleLogic = character.UseRuleLogic;
-        }
+    public Character(Character character)
+    {
+        Name = character.Name;
+        Rule = character.Rule;
+        Cards = [..character.Cards];
+        DisqualificationCondition = character.DisqualificationCondition;
+        EvolutionCondition = character.EvolutionCondition;
+        AdditionalPointCondition = character.AdditionalPointCondition;
+        UseRuleLogic = character.UseRuleLogic;
     }
 }

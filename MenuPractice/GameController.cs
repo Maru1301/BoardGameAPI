@@ -1,173 +1,142 @@
 ﻿using Menu_Practice.Characters;
-using static Menu_Practice.Program;
 
-namespace Menu_Practice
+namespace Menu_Practice;
+
+public class GameController
 {
-    internal class GameController
+    private readonly Player _player = new();
+    private readonly Player _npc = new();
+    private bool _playerGoFirst;
+    private int _roundCount;
+    private const int EndGame = 5;
+    private Func<PlayerInfoContainer, PlayerInfoContainer, Result>? _useRule;
+
+    public GameController(Character character, Character opponent)
     {
-        private readonly Player _player = new();
-        private readonly Player _npc = new();
-        private bool _playerGoFirst;
-        private int _roundCount;
-        private readonly int _endGame = 5;
-        private Func<PlayerInfoContainer, PlayerInfoContainer, Result>? _useRule;
+        _player.Character = new Character(character);
+        _npc.Character = new Character(opponent);
+    }
 
-        public GameController(Character character, Character opponent)
+    public void BeginNewGame()
+    {
+        _playerGoFirst = IsPlayerGoFirst();
+        _roundCount = 0;
+    }
+
+    private static bool IsPlayerGoFirst()
+    {
+        //who go first
+        var random = new Random();
+        var whoGoFirst = random.Next(1);
+        const int playerGoFirst = 1;
+
+        return whoGoFirst == playerGoFirst;
+    }
+
+    public void BeginNewRound()
+    {
+        _useRule = _playerGoFirst ? _player.Character.UseRuleLogic : _npc.Character.UseRuleLogic;
+        _roundCount++;
+    }
+
+    public List<int> GetPlayerCards()
+    {
+        return _player.Character.Cards;
+    }
+
+    public List<int> GetNpcCards()
+    {
+        return _npc.Character.Cards;
+    }
+
+    public int GetNpcChosenCard()
+    {
+        Random random = new();
+        var npcCards = _npc.Character.Cards;
+
+        var canChooseCards = (from item in npcCards.Select((cardAmount, index) => new { index, cardAmount }) where item.cardAmount > 0 select item.index).ToList();
+
+        var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
+
+        return chosenCard;
+    }
+
+    public Result JudgeRound(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
+    {
+        var result = _useRule!(playerInfo, ncpInfo);
+
+        return result;
+    }
+
+    public Card GetNpcWinCard()
+    {
+        Random random = new();
+        var playerCards = _player.Character.Cards;
+
+        var canChooseCards = (from item in playerCards.Select((cardAmount, index) => new { index, cardAmount }) where item.cardAmount > 0 select item.index).ToList();
+
+        var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
+
+        return (Card)chosenCard;
+    }
+
+    public void ProcessSettlement(Result result, Card card)
+    {
+        var playerWin = IsPlayerWin(result);
+
+        switch (playerWin)
         {
-            _player.Character = new(character);
-            _npc.Character = new(opponent);
-        }
-
-        public void BeginNewGame()
-        {
-            _playerGoFirst = IsPlayerGoFirst();
-            _roundCount = 0;
-        }
-
-        private bool IsPlayerGoFirst()
-        {
-            //who go first
-            var random = new Random();
-            int WhoGoFirst = random.Next(1);
-            int PlayerGoFirst = 1;
-
-            return WhoGoFirst == PlayerGoFirst;
-        }
-
-        public void BeginNewRound()
-        {
-            _useRule = _playerGoFirst ? _player.Character.UseRuleLogic : _npc.Character.UseRuleLogic;
-            _roundCount++;
-        }
-
-        public List<int> GetPlayerCards()
-        {
-            return _player.Character.Cards;
-        }
-
-        public List<int> GetNPCCards()
-        {
-            return _npc.Character.Cards;
-        }
-
-        public int GetNPCChosenCard()
-        {
-            Random random = new();
-            List<int> npcCards = _npc.Character.Cards;
-
-            List<int> canChooseCards = new();
-            foreach(var item in npcCards.Select((cardAmount, index) => new { index, cardAmount }))
-            {
-                if(item.cardAmount > 0)
-                {
-                    canChooseCards.Add(item.index);
-                }
-            }
-
-            int chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
-
-            return chosenCard;
-        }
-
-        public Result JudgeRound(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
-        {
-            Result result = _useRule!(playerInfo, ncpInfo);
-
-            return result;
-        }
-
-        public Card GetNPCWinCard()
-        {
-            Random random = new();
-            List<int> playerCards = _player.Character.Cards;
-
-            List<int> canChooseCards = new();
-            foreach (var item in playerCards.Select((cardAmount, index) => new { index, cardAmount }))
-            {
-                if (item.cardAmount > 0)
-                {
-                    canChooseCards.Add(item.index);
-                }
-            }
-
-            int chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
-
-            return (Card)chosenCard;
-        }
-
-        public void ProcessSettlement(Result result, Card card)
-        {
-            bool? playerWin = IsPlayerWin(result);
-
-            if(playerWin == null)
-            {
+            case null:
                 return;
-            }
-            else if(playerWin == true)
-            {
+            case true:
                 _player.Character.Cards[(int)card]++;
                 _npc.Character.Cards[(int)card]--;
-            }
-            else
-            {
+                break;
+            default:
                 _npc.Character.Cards[(int)card]++;
                 _player.Character.Cards[(int)card]--;
-            }
+                break;
         }
+    }
 
-        private bool? IsPlayerWin(Result result)
-        {
-            if (result.Equals(Result.Draw)) return null;
+    private static bool? IsPlayerWin(Result result)
+    {
+        if (result.Equals(Result.Draw)) return null;
 
-            int resultNum = (int)result;
-            if (resultNum % 2 == 0)
-            {
-                return true;
-            }
+        var resultNum = (int)result;
+        return resultNum % 2 == 0;
+    }
 
-            return false;
-        }
+    public Status EndRound()
+    {
+        if (_roundCount == EndGame) return Status.InMenu;
 
-        public Status EndRound()
-        {
-            if (_roundCount == _endGame) return Status.InMenu;
+        _playerGoFirst = !_playerGoFirst;
 
-            _playerGoFirst = !_playerGoFirst;
+        return Status.InGame;
+    }
 
-            return Status.InGame;
-        }
+    public static string GetOutcome()
+    {
+        const int playerPoint = 0;
+        const int npcPoint = 0;
 
-        public string GetOutcome()
-        {
-            int playerPoint = /*_player.Character.PointLogic()*/0;
-            int npcPoint = /*_npc.Character.PointLogic()*/0;
+        return playerPoint == npcPoint ? "平手" : 
+               playerPoint > npcPoint ? "勝利" : 
+               "敗北";
+    }
 
-            if(playerPoint == npcPoint)
-            {
-                return "平手";
-            }
+    private class Player
+    {
+        public Character Character { get; set; } = new();
 
-            return playerPoint > npcPoint ? "勝利" : "敗北";
-        }
-
-        private class Player
-        {
-            public Character Character { get; set; } = new();
-
-            public bool GoFirst { get; set; }
-        }
+        public bool GoFirst { get; set; }
     }
 }
 
-class PlayerInfoContainer
+public class PlayerInfoContainer(List<int> cards, int chosenCard)
 {
-    public List<int> Cards = new();
+public readonly List<int> Cards = cards;
 
-    public int ChosenCard;
-
-    public PlayerInfoContainer(List<int> Cards, int ChosenCard)
-    {
-        this.Cards = Cards;
-        this.ChosenCard = ChosenCard;
-    }
+public readonly int ChosenCard = chosenCard;
 }

@@ -2,15 +2,11 @@
 
 namespace Menu_Practice.Characters
 {
-    internal class CharacterDirector
+    internal class CharacterDirector(ref ICharacterBuilder builder)
     {
-        private readonly ICharacterBuilder _builder;
-        public CharacterDirector(ref ICharacterBuilder builder)
-        {
-            _builder = builder;
-        }
+        private readonly ICharacterBuilder _builder = builder;
 
-        public void ConstructChracter()
+        public void ConstructCharacter()
         {
             _builder.BuildName();
             _builder.BuildRule();

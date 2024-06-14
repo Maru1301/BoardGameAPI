@@ -4,11 +4,7 @@ namespace Menu_Practice.Characters.Builders
 {
     internal class KnightBuilder : ICharacterBuilder
     {
-        private readonly Character _character;
-        public KnightBuilder()
-        {
-            _character = new Character();
-        }
+        private readonly Character _character = new();
 
         public void BuildName()
         {
@@ -22,7 +18,7 @@ namespace Menu_Practice.Characters.Builders
 
         public void BuildCards()
         {
-            List<int> cards = new(){ 3, 5, 1 };
+            List<int> cards = [3, 5, 1];
             _character.Cards = cards;
         }
         public void BuildDisqualificationCondition()
@@ -45,7 +41,7 @@ namespace Menu_Practice.Characters.Builders
             _character.UseRuleLogic = RuleLogic;
         }
 
-        public Result RuleLogic(PlayerInfoContainer player1Info, PlayerInfoContainer player2Info)
+        private static Result RuleLogic(PlayerInfoContainer player1Info, PlayerInfoContainer player2Info)
         {
             switch ((player1Info.ChosenCard, player2Info.ChosenCard))
             {

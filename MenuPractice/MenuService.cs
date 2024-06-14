@@ -1,17 +1,16 @@
 ﻿using Menu_Practice.Characters;
+using Menu_Practice.Menu;
 
 namespace Menu_Practice
 {
-    internal class MenuController
+    public class MenuService
     {
         private readonly Stack<MenuList> _menuStack = new();
-        private Character _chosenCharacter;
-        private Character _chosenOpponent;
+        private Character _chosenCharacter = new();
+        private Character _chosenOpponent = new();
 
-        public MenuController(MenuList rootMenuList)
+        public void Init(MenuList rootMenuList)
         {
-            _chosenCharacter = new();
-            _chosenOpponent = new();  
             _menuStack.Push(rootMenuList);
         }
 

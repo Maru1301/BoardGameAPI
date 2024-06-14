@@ -2,8 +2,9 @@
 using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
 using MongoDB.Bson;
-using Utility;
 using static BoardGame.Models.DTOs.GameDTOs;
+using Utility;
+using System.Security.Cryptography;
 
 namespace BoardGame.Services
 {
@@ -24,7 +25,7 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (dto.Player1Account != userAccount) throw new GameServiceException(ErrorCode.AccountNotMatch);
+                if (dto.Player1Account != userAccount) { throw new GameServiceException(ErrorCode.AccountNotMatch); }
                 await ValidateGameInfo(dto);
                 
                 var Id = await _unitOfWork.Games.AddAsync(dto.To<Game>());
@@ -60,7 +61,7 @@ namespace BoardGame.Services
 
         private static WhoGoesFirst DetermineWhoGoesFirst()
         {
-            var random = new Random().Next(1);
+            var random = RandomNumberGenerator.GetInt32(1);
             return (WhoGoesFirst)random;
         }
 
@@ -96,7 +97,7 @@ namespace BoardGame.Services
                 dto.Player2Characters.Characetr3
             };
 
-            if (chosenCharacters1.Count != 3 || chosenCharacters2.Count != 3) throw new GameServiceException("Duplicated characters");
+            if (chosenCharacters1.Count != 3 || chosenCharacters2.Count != 3) { throw new GameServiceException("Duplicated characters"); }
         }
     }
 

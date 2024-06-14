@@ -4,34 +4,23 @@ using Menu_Practice.Menu;
 
 namespace Menu_Practice.Menu
 {
-    internal class OpponentMenu : MenuList
+    public class OpponentMenu(string title) : MenuList(title)
     {
-        public OpponentMenu(string title) : base(title)
-        {
-
-        }
-
         public void Push(OpponentMenuOption option)
         {
-            _options.Add(option);
+            MenuOptions.Add(option);
         }
     }
 
-    class OpponentMenuOption : MenuOption
+    public class OpponentMenuOption(string optionName, Character character, MenuList? nextMenuList = null) : MenuOption(optionName, nextMenuList)
     {
-        private readonly Character _character;
+        private readonly Character _character = character;
 
         public Character Character { get => _character; }
-
-        public OpponentMenuOption(string optionName, Character character, MenuList? prevMenuList = null, MenuList? nextMenuList = null) 
-            : base(optionName, prevMenuList, nextMenuList)
-        {
-            _character = character;
-        }
     }
 }
 
-internal static class OpponentMenuExt
+public static class OpponentMenuExt
 {
     public static (MenuOption, int) FilterChosenCharacter(this OpponentMenu menu, Character character)
     {

@@ -1,29 +1,15 @@
-﻿namespace Menu_Practice
+﻿using Menu_Practice.Menu;
+
+namespace Menu_Practice
 {
-    internal class MenuOption
+    public class MenuOption(string? optionName = null, MenuList? nextMenuList = null)
     {
-        private readonly string _optionName;
+        private readonly string? _optionName = optionName;
 
-        private readonly MenuList? _prevMenuList;
+        private MenuList? _nextMenuList = nextMenuList;
 
-        private MenuList? _nextMenuList;
-
-        public string OptionName { get => _optionName; }
-
-        public MenuList? PrevMenuList { get => _prevMenuList; }
+        public string? OptionName { get => _optionName; }
 
         public MenuList? NextMenuList { get => _nextMenuList; set => _nextMenuList = value; }
-
-        public MenuOption()
-        {
-            _optionName = string.Empty;
-        }
-
-        public MenuOption(string optionName, MenuList? prevMenuList = null, MenuList? nextMenuList = null)
-        {
-            _optionName = optionName;
-            _prevMenuList = prevMenuList;
-            _nextMenuList = nextMenuList;
-        }
     }
 }

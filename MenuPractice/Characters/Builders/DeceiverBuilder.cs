@@ -4,11 +4,7 @@ namespace Menu_Practice.Characters.Builders
 {
     internal class DeceiverBuilder : ICharacterBuilder
     {
-        private readonly Character _character;
-        public DeceiverBuilder()
-        {
-            _character = new Character();
-        }
+        private readonly Character _character = new();
 
         public void BuildName()
         {
@@ -22,7 +18,7 @@ namespace Menu_Practice.Characters.Builders
 
         public void BuildCards()
         {
-            List<int> cards = new(){ 4, 1, 4 };
+            List<int> cards = [4, 1, 4];
             _character.Cards = cards;
         }
         public void BuildDisqualificationCondition()
@@ -45,7 +41,7 @@ namespace Menu_Practice.Characters.Builders
             _character.UseRuleLogic = RuleLogic;
         }
 
-        public Result RuleLogic(PlayerInfoContainer player1Info, PlayerInfoContainer player2Info)
+        private static Result RuleLogic(PlayerInfoContainer player1Info, PlayerInfoContainer player2Info)
         {
             switch ((player1Info.ChosenCard, player2Info.ChosenCard))
             {

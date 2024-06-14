@@ -20,7 +20,10 @@ namespace BoardGame.Filters
             var AllowAnonymous = Descriptor?.Metadata.GetMetadata<AllowAnonymousAttribute>() != null;
             //如果不需要鎖頭則return回去
             if (!Authorize || AllowAnonymous)
+            {
                 return;
+            }
+
             //需要鎖頭則在swagger-UI中定義出來
             operation.Security =
             [

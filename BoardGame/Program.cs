@@ -12,7 +12,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using NLog;
 using NLog.Web;
 
 namespace BoardGame

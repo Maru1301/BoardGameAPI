@@ -517,7 +517,7 @@ namespace BoardGameTest
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        public class AssassinRuleTests()
+        public class AssassinRuleTests
         {
             [Theory]
             [MemberData(nameof(AssassinRuleData), MemberType = typeof(RuleTests))]
@@ -571,7 +571,7 @@ namespace BoardGameTest
             }
         }
 
-        public class DeceiverRuleTests()
+        public class DeceiverRuleTests
         {
             public static IEnumerable<object[]> RuleData()
             {

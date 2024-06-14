@@ -16,7 +16,10 @@ namespace BoardGame.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                if (await CheckAccountExistAsync(dto.Account) == false) throw new AdminServiceException(ErrorCode.AccountExist);
+                if (await CheckAccountExistAsync(dto.Account) == false)
+                {
+                    throw new AdminServiceException(ErrorCode.AccountExist);
+                }
 
                 await _unitOfWork.Admins.AddAsync(dto.To<Admin>());
 
@@ -51,7 +54,7 @@ namespace BoardGame.Services
 
         private static bool ValidatePassword(AdminDTO admin, string password)
         {
-            return HashUtility.ToSHA256(password, admin.Salt) == admin.EncryptedPassword;
+            return Utility.HashUtility.ToSHA256(password, admin.Salt) == admin.EncryptedPassword;
         }
 
         private async Task<bool> CheckAccountExistAsync(string account)
