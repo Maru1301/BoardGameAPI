@@ -16,6 +16,7 @@ namespace BoardGame.Services
         private readonly IConfiguration _configuration = configuration;
         private readonly ICacheService _cacheService = cacheService;
         private readonly JWTHelper _jwt = jwt;
+        private readonly string _cacheKey = "members";
 
         /// <summary>
         /// Register a new user based on the provided information.
@@ -235,15 +236,13 @@ namespace BoardGame.Services
 
         private static bool ValidatePassword(MemberDTO member, string password)
         {
-            return Utility.HashUtility.ToSHA256(password, member.Salt) == member.EncryptedPassword;
+            return HashUtility.ToSHA256(password, member.Salt) == member.EncryptedPassword;
         }
 
         public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
-            const string cacheKey = "members";
-
             // Try to get members from cache
-            var cachedMembers = await _cacheService.HashGetAllAsync(cacheKey);
+            var cachedMembers = await _cacheService.HashGetAllAsync(_cacheKey);
 
             if (cachedMembers != null && cachedMembers.Length > 0)
             {
@@ -255,7 +254,7 @@ namespace BoardGame.Services
 
             // Add members to cache with expiration (optional)
             var entries = members.Select(member => new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member))).ToArray();
-            await _cacheService.HashSetAsync(cacheKey, entries, TimeSpan.FromSeconds(10));
+            await _cacheService.HashSetAsync(_cacheKey, entries, TimeSpan.FromSeconds(10));
 
             return members.Select(x => x.To<MemberDTO>());
         }
