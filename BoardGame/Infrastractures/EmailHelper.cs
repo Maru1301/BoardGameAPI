@@ -3,18 +3,12 @@ using Utility;
 
 namespace BoardGame.Infrastractures
 {
-    public class EmailHelper
+    public class EmailHelper(IConfiguration configuration)
     {
-        private readonly string AppName = string.Empty;
-        private readonly string EmailAccount = string.Empty;
-        private readonly string EmailPassword = string.Empty;
+        private readonly string AppName = configuration["AppName"] ?? string.Empty;
+        private readonly string EmailAccount = configuration["Email:Account"] ?? string.Empty;
+        private readonly string EmailPassword = configuration["Email:Password"] ?? string.Empty;
 
-        public EmailHelper(IConfiguration configuration)
-        {
-            AppName = configuration["AppName"] ?? string.Empty;
-            EmailAccount = configuration["Email:Account"] ?? string.Empty;
-            EmailPassword = configuration["Email:Password"] ?? string.Empty;
-        }
         /// <summary>
         /// Sends a confirmation email to a newly registered user.
         /// </summary>
