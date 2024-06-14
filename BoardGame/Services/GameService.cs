@@ -4,6 +4,7 @@ using BoardGame.Services.Interfaces;
 using MongoDB.Bson;
 using static BoardGame.Models.DTOs.GameDTOs;
 using Utility;
+using System.Security.Cryptography;
 
 namespace BoardGame.Services
 {
@@ -60,7 +61,7 @@ namespace BoardGame.Services
 
         private static WhoGoesFirst DetermineWhoGoesFirst()
         {
-            var random = new Random().Next(1);
+            var random = RandomNumberGenerator.GetInt32(1);
             return (WhoGoesFirst)random;
         }
 
