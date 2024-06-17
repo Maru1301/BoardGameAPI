@@ -13,13 +13,13 @@ namespace BoardGame.Controllers
     [AuthorizeRoles(Role.Admin)]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [ValidateAntiForgeryToken]
     public class AdminController(IAdminService adminService) : ControllerBase
     {
         private readonly IAdminService _adminService = adminService;
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAdmin(AdminCreateRequestDTO vm)
         {
             try
@@ -45,7 +45,7 @@ namespace BoardGame.Controllers
             {
                 var token = await _adminService.ValidateUser(vm.To<LoginDTO>());
 
-                return Ok(token);
+                return Ok(new { token });
             }
             catch (AdminServiceException ex)
             {
