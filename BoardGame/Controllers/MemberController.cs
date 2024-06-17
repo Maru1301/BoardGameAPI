@@ -25,7 +25,6 @@ namespace BoardGame.Controllers
         {
             try
             {
-                //_logger.LogInformation("ListMember");
                 var members = await _memberService.ListMembers();
 
                 return Ok(members.Select(m => m.To<MemberResponseDTO>()).ToList());
@@ -71,7 +70,6 @@ namespace BoardGame.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] MemberLoginRequestDTO login)
         {
-            //_logger.LogInformation($"{login.Account} tries to login");
             try
             {
                 var token = await _memberService.ValidateUser(login.To<LoginDTO>());
