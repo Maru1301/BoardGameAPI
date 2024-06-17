@@ -1,6 +1,6 @@
 ﻿namespace BoardGame.Infrastractures
 {
-    public static class Role
+    public class Role
     {
         public const string Admin = "Admin"; 
         public const string Member = "Member";
@@ -9,14 +9,14 @@
 
     public static class ErrorCode
     {
-        public static string InvalidAccountOrPassword { get { return "Invalid Account or Password"; } } 
-        public static string MemberNotExist { get { return "Member doesn't exist!"; } }
-        public static string WrongConfirmationCode { get { return "Wrong confirmation code!"; } }
-        public static string ErrorParsingJwt { get { return "Error occured while parsing JWT"; } } 
-        public static string AccountExist { get { return "Account already exists"; } } 
-        public static string NameExist { get { return "Name already exists"; } } 
-        public static string EmailExist { get { return "Email already exists"; } } 
-        public static string AccountNotMatch { get { return "Login Account does not matched!"; } } 
+        public static string InvalidAccountOrPassword { get => "Invalid Account or Password"; } 
+        public static string MemberNotExist { get => "Member doesn't exist!"; }
+        public static string WrongConfirmationCode { get => "Wrong confirmation code!"; }
+        public static string ErrorParsingJwt { get => "Error occured while parsing JWT"; }
+        public static string AccountExist { get => "Account already exists"; }
+        public static string NameExist { get => "Name already exists"; }
+        public static string EmailExist { get => "Email already exists"; }
+        public static string AccountNotMatch { get => "Login Account does not matched!"; }
     }
 
     public enum Result : short
