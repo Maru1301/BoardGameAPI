@@ -12,7 +12,6 @@ namespace BoardGame.Controllers
     [AuthorizeRoles(Role.Member, Role.Guest, Role.Admin)]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [ValidateAntiForgeryToken]
     public class GameController(IGameService gameService) : ControllerBase
     {
         private readonly IGameService _gameService = gameService;
@@ -33,6 +32,7 @@ namespace BoardGame.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> BeginNewGame(GameInfoRequestDTO request)
         {
             try
