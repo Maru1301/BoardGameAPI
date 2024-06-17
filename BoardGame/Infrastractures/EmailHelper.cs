@@ -17,7 +17,7 @@ namespace BoardGame.Infrastractures
         /// <param name="emailAddress">The email address of the registered user.</param>
         public void SendConfirmationEmail(string confirmationUrl, string name, string email)
         {
-            string subject = "[New Member Confirmation Email]";
+            const string subject = "[New Member Confirmation Email]";
             string body = $@"Hi {name},
 
 						<br />
