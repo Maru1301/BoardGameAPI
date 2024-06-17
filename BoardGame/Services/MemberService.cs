@@ -261,10 +261,8 @@ namespace BoardGame.Services
 
         public async Task<MemberDTO> GetMemberInfo(ObjectId id) 
         {
-            const string cacheKey = "members";
-
             // Try to get members from cache
-            var cachedMember = await _cacheService.HashGetAsync(cacheKey, id.ToString());
+            var cachedMember = await _cacheService.HashGetAsync(_cacheKey, id.ToString());
 
             if (cachedMember.HasValue)
             {
@@ -275,7 +273,7 @@ namespace BoardGame.Services
 
             // Add members to cache with expiration
             var entries = new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member));
-            await _cacheService.HashSetAsync(cacheKey, [entries]);
+            await _cacheService.HashSetAsync(_cacheKey, [entries]);
 
             return member.To<MemberDTO>();
         }
