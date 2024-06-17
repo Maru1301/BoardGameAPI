@@ -4,39 +4,43 @@ namespace BoardGame.Infrastractures
 {
     public static class CharacterFuncExtensions
     {
-        public static (Card, Card) GetLastOpenedCard(RoundCards playerChosenCards, RoundCards player2ChosenCards)
+        public static Card GetLastOpenedCard(RoundCards playerChosenCards)
         {
-            var lastOpenCard1 = playerChosenCards.LastOpened switch
+            return playerChosenCards.LastOpened switch
             {
                 1 => playerChosenCards.Card1,
                 2 => playerChosenCards.Card2,
                 3 => playerChosenCards.Card3,
                 _ => throw new NotImplementedException(),
             };
-
-            var lastOpenCard2 = player2ChosenCards.LastOpened switch
-            {
-                1 => player2ChosenCards.Card1,
-                2 => player2ChosenCards.Card2,
-                3 => player2ChosenCards.Card3,
-                _ => throw new NotImplementedException(),
-            };
-
-            return (lastOpenCard1, lastOpenCard2);
         }
     }
-    public static class Assassin
+
+    public abstract class CharacterBase
     {
-        public static CardSet StartHand { get; set; } = new CardSet()
+        public abstract CardSet StartHand { get; set; }
+
+        public Result Rule(PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
+        {
+            var lastOpenCard1 = CharacterFuncExtensions.GetLastOpenedCard(player1Info.ChosenCards);
+            var lastOpenCard2 = CharacterFuncExtensions.GetLastOpenedCard(player2Info.ChosenCards);
+
+            return DetermineResult(lastOpenCard1, lastOpenCard2, player1Info, player2Info);
+        }
+
+        protected abstract Result DetermineResult(Card lastOpenCard1, Card lastOpenCard2, PlayerRoundInfo player1Info, PlayerRoundInfo player2Info);
+    }
+
+    public class Assassin : CharacterBase
+    {
+        public override CardSet StartHand { get; set; } = new CardSet()
         {
             Crown = 2,
             Sheild = 2,
             Dagger = 5
         };
-        public static Result Rule(PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
+        protected override Result DetermineResult(Card lastOpenCard1, Card lastOpenCard2, PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
         {
-            var (lastOpenCard1, lastOpenCard2) = CharacterFuncExtensions.GetLastOpenedCard(player1Info.ChosenCards, player2Info.ChosenCards);
-
             return (lastOpenCard1, lastOpenCard2) switch
             {
                 (Card.Crown, Card.Crown) or (Card.Sheild, Card.Sheild) => Result.Draw,
@@ -49,18 +53,16 @@ namespace BoardGame.Infrastractures
         }
     }
 
-    public static class Deceiver
+    public class Deceiver : CharacterBase
     {
-        public static CardSet StartHand { get; set; } = new CardSet()
+        public override CardSet StartHand { get; set; } = new CardSet()
         {
             Crown = 4,
             Sheild = 1,
             Dagger = 4
         };
-        public static Result Rule(PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
+        protected override Result DetermineResult(Card lastOpenCard1, Card lastOpenCard2, PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
         {
-            var (lastOpenCard1, lastOpenCard2) = CharacterFuncExtensions.GetLastOpenedCard(player1Info.ChosenCards, player2Info.ChosenCards);
-
             return (lastOpenCard1, lastOpenCard2) switch
             {
                 (Card.Crown, Card.Crown) => player1Info.Hand.Sheild > player2Info.Hand.Sheild ? Result.Player1CharacterRuleWin :
@@ -74,18 +76,16 @@ namespace BoardGame.Infrastractures
         }
     }
 
-    public static class Knight
+    public class Knight : CharacterBase
     {
-        public static CardSet StartHand { get; set; } = new CardSet()
+        public override CardSet StartHand { get; set; } = new CardSet()
         {
             Crown = 3,
             Sheild = 5,
             Dagger = 1
         };
-        public static Result Rule(PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
+        protected override Result DetermineResult(Card lastOpenCard1, Card lastOpenCard2, PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
         {
-            var (lastOpenCard1, lastOpenCard2) = CharacterFuncExtensions.GetLastOpenedCard(player1Info.ChosenCards, player2Info.ChosenCards);
-
             return (lastOpenCard1, lastOpenCard2) switch
             {
                 (Card.Crown, Card.Crown) => player1Info.Hand.Dagger < player2Info.Hand.Dagger ? Result.Player1CharacterRuleWin :
@@ -102,18 +102,16 @@ namespace BoardGame.Infrastractures
             };
         }
     }
-    public static class Lobbyist
+    public class Lobbyist : CharacterBase
     {
-        public static CardSet StartHand { get; set; } = new CardSet()
+        public override CardSet StartHand { get; set; } = new CardSet()
         {
             Crown = 5,
             Sheild = 2,
             Dagger = 2
         };
-        public static Result Rule(PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
+        protected override Result DetermineResult(Card lastOpenCard1, Card lastOpenCard2, PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
         {
-            var (lastOpenCard1, lastOpenCard2) = CharacterFuncExtensions.GetLastOpenedCard(player1Info.ChosenCards, player2Info.ChosenCards);
-
             return (lastOpenCard1, lastOpenCard2) switch
             {
                 (Card.Crown, Card.Crown) => (player1Info.Hand.Crown > 2 && player1Info.Hand.Crown > player2Info.Hand.Crown) ? Result.Player1CharacterRuleWin :
@@ -127,18 +125,16 @@ namespace BoardGame.Infrastractures
             };
         }
     }
-    public static class Lord
+    public class Lord : CharacterBase
     {
-        public static CardSet StartHand { get; set; } = new CardSet()
+        public override CardSet StartHand { get; set; } = new CardSet()
         {
             Crown = 0,
             Sheild = 6,
             Dagger = 3
         };
-        public static Result Rule(PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
+        protected override Result DetermineResult(Card lastOpenCard1, Card lastOpenCard2, PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
         {
-            var (lastOpenCard1, lastOpenCard2) = CharacterFuncExtensions.GetLastOpenedCard(player1Info.ChosenCards, player2Info.ChosenCards);
-
             return (lastOpenCard1, lastOpenCard2) switch
             {
                 (Card.Crown, Card.Crown) => (player1Info.Hand.Crown > player2Info.Hand.Crown) ? Result.Player1CharacterRuleWin :
@@ -154,18 +150,16 @@ namespace BoardGame.Infrastractures
             };
         }
     }
-    public static class Soldier
+    public class Soldier : CharacterBase
     {
-        public static CardSet StartHand { get; set; } = new CardSet()
+        public override CardSet StartHand { get; set; } = new CardSet()
         {
             Crown = 2,
             Sheild = 5,
             Dagger = 2
         };
-        public static Result Rule(PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
+        protected override Result DetermineResult(Card lastOpenCard1, Card lastOpenCard2, PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
         {
-            var (lastOpenCard1, lastOpenCard2) = CharacterFuncExtensions.GetLastOpenedCard(player1Info.ChosenCards, player2Info.ChosenCards);
-
             return (lastOpenCard1, lastOpenCard2) switch
             {
                 (Card.Crown, Card.Crown) => (player1Info.Hand.Sheild > player2Info.Hand.Sheild) ? Result.Player1CharacterRuleWin :
