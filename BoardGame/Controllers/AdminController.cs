@@ -17,7 +17,6 @@ namespace BoardGame.Controllers
     {
         private readonly IAdminService _adminService = adminService;
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAdmin(AdminCreateRequestDTO vm)
