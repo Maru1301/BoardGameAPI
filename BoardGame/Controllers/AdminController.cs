@@ -13,7 +13,6 @@ namespace BoardGame.Controllers
     [AuthorizeRoles(Role.Admin)]
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [ValidateAntiForgeryToken]
     public class AdminController(IAdminService adminService) : ControllerBase
     {
         private readonly IAdminService _adminService = adminService;
