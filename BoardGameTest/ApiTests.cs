@@ -5,6 +5,8 @@ using Shouldly;
 using BoardGame.Models.DTOs;
 using Microsoft.Extensions.DependencyInjection;
 using BoardGame.Infrastractures;
+using RestSharp.Authenticators;
+using MongoDB.Bson;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
@@ -12,17 +14,24 @@ namespace BoardGameTest
 {
     public class ApiTests(WebApplicationFactory<FakeStartup> factory) : IClassFixture<WebApplicationFactory<FakeStartup>>
     {
+        private RestRequest CreateRequestWithJwt(string url, string id, string account, string role)
+        {
+            var request = new RestRequest(url);
+
+            using var scope = factory.Services.CreateScope();
+            var jwtHelper = scope.ServiceProvider.GetRequiredService<JWTHelper>();
+            var jwt = jwtHelper.GenerateToken(string.IsNullOrEmpty(id) ? new ObjectId() : new ObjectId(id), account, role);
+            request.Authenticator = new JwtAuthenticator(jwt);
+
+            return request;
+        }
+
         [Theory, TestPriority(100)]
         [InlineData("/api/Member/GetMemberInfo", "66262710924804b2f0c40e2a")]
         public async Task Test01_GetMemberInfoTest(string url, string id)
         {
             using var client = new RestClient(factory.CreateClient());
-            var request = new RestRequest(url);
-
-            using var scope = factory.Services.CreateScope();
-            var jwtHelper = scope.ServiceProvider.GetRequiredService<JWTHelper>();
-            var jwt = jwtHelper.GenerateToken(new MongoDB.Bson.ObjectId(id), "", Role.Member);
-            request.AddHeader("Authorization", $"Bearer {jwt}");
+            var request = CreateRequestWithJwt(url, id, string.Empty, Role.Member);
 
             var response = await client.GetAsync(request);
 
@@ -34,12 +43,7 @@ namespace BoardGameTest
         public async Task Test02_ListMembersTest(string url, string id)
         {
             using var client = new RestClient(factory.CreateClient());
-            var request = new RestRequest(url);
-            
-            using var scope = factory.Services.CreateScope();
-            var jwtHelper = scope.ServiceProvider.GetRequiredService<JWTHelper>();
-            var jwt = jwtHelper.GenerateToken(new MongoDB.Bson.ObjectId(id), "", Role.Admin);
-            request.AddHeader("Authorization", $"Bearer {jwt}");
+            var request = CreateRequestWithJwt(url, id, string.Empty, Role.Admin);
 
             var response = await client.GetAsync(request);
 
@@ -89,12 +93,7 @@ namespace BoardGameTest
         public async Task Test05_ResendConfirmationCodeTest(string url, string id)
         {
             using var client = new RestClient(factory.CreateClient());
-            var request = new RestRequest(url);
-
-            using var scope = factory.Services.CreateScope();
-            var jwtHelper = scope.ServiceProvider.GetRequiredService<JWTHelper>();
-            var jwt = jwtHelper.GenerateToken(new MongoDB.Bson.ObjectId(id), "", Role.Member);
-            request.AddHeader("Authorization", $"Bearer {jwt}");
+            var request = CreateRequestWithJwt(url, id, string.Empty, Role.Member);
 
             var response = await client.GetAsync(request);
 
@@ -107,17 +106,13 @@ namespace BoardGameTest
         public async Task Test06_EditMemberInfoTest(string url, string name, string email, string id)
         {
             using var client = new RestClient(factory.CreateClient());
-            var request = new RestRequest(url);
+            var request = CreateRequestWithJwt(url, id, string.Empty, Role.Member);
+
             request.AddBody(new EditRequestDTO
             {
                 Name = name,
                 Email = email
             });
-
-            using var scope = factory.Services.CreateScope();
-            var jwtHelper = scope.ServiceProvider.GetRequiredService<JWTHelper>();
-            var jwt = jwtHelper.GenerateToken(new MongoDB.Bson.ObjectId(id), "", Role.Member);
-            request.AddHeader("Authorization", $"Bearer {jwt}");
 
             var response = await client.PostAsync(request);
 
@@ -130,17 +125,13 @@ namespace BoardGameTest
         public async Task Test07_ResetPasswordTest(string url, string oldPassword, string newPassword, string id)
         {
             using var client = new RestClient(factory.CreateClient());
-            var request = new RestRequest(url);
+            var request = CreateRequestWithJwt(url, id, string.Empty, Role.Member);
+
             request.AddBody(new ResetPasswordRequestDTO
             {
                 OldPassword = oldPassword,
                 NewPassword = newPassword
             });
-
-            using var scope = factory.Services.CreateScope();
-            var jwtHelper = scope.ServiceProvider.GetRequiredService<JWTHelper>();
-            var jwt = jwtHelper.GenerateToken(new MongoDB.Bson.ObjectId(id), "", Role.Member);
-            request.AddHeader("Authorization", $"Bearer {jwt}");
 
             var response = await client.PostAsync(request);
 
@@ -167,13 +158,8 @@ namespace BoardGameTest
         public async Task Test09_DeleteMemberTest(string url, string account)
         {
             using var client = new RestClient(factory.CreateClient());
-            var request = new RestRequest(url);
+            var request = CreateRequestWithJwt(url, string.Empty, account, Role.Admin);
             request.AddQueryParameter("account", account);
-
-            using var scope = factory.Services.CreateScope();
-            var jwtHelper = scope.ServiceProvider.GetRequiredService<JWTHelper>();
-            var jwt = jwtHelper.GenerateToken(new MongoDB.Bson.ObjectId(), account, Role.Admin);
-            request.AddHeader("Authorization", $"Bearer {jwt}");
 
             var response = await client.DeleteAsync(request);
 
