@@ -13,7 +13,6 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using NLog.Web;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BoardGame
 {
@@ -84,11 +83,6 @@ namespace BoardGame
             var mongoDBSettings = configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>();
             services.AddDbContext<AppDbContext>(options =>
                 options.UseMongoDB(mongoDBSettings?.AtlasURI ?? "", mongoDBSettings?.DatabaseName ?? ""), ServiceLifetime.Scoped);
-
-            services.AddControllersWithViews(options =>
-            {
-                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-            });
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>
