@@ -124,7 +124,7 @@ namespace BoardGameTest
                     Hand = new(),
                     ChosenCards = _DCC
                 },
-                Result.Player2Win
+                Result.Draw
             },
             {
                 new PlayerRoundInfo
@@ -563,10 +563,18 @@ namespace BoardGameTest
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddDbContext<AppDbContext>(options =>
-                options.UseMongoDB("mongodb+srv://Maru:13011821@cluster0.r3hywvh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", "BoardGameDB"), ServiceLifetime.Scoped);
+                options.UseMongoDB(GetMongo(), "BoardGameDB"), ServiceLifetime.Scoped);
 
             ServiceProvider = services.BuildServiceProvider();
         }
+
+        private static string GetMongo()
+        {
+            return $"mongodb+srv://{UserName}:{Password}@cluster0.r3hywvh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+        }
+
+        private static string UserName { get => "Maru"; }
+        private static string Password { get => "13011821"; }
 
         public class AssassinRuleTests
         {
