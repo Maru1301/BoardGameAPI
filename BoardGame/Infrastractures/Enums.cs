@@ -1,10 +1,10 @@
 ﻿namespace BoardGame.Infrastractures
 {
-    public static class Role
+    public enum Role
     {
-        public const string Admin = "Admin"; 
-        public const string Member = "Member";
-        public const string Guest = "Guest";
+        Admin,
+        Member,
+        Guest,
     }
 
     public static class ErrorCode

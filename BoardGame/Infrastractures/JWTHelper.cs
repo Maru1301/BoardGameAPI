@@ -10,20 +10,20 @@ namespace BoardGame.Infrastractures
     {
         private readonly JWTSettingsOptions _settings = settings.CurrentValue;
 
-        public string GenerateToken(ObjectId Id, string account, string role)
+        public string GenerateToken(ObjectId Id, string account, Role role)
         {
             var token = BuildToken(Id, account, role);
 
             return token;
         }
 
-        private string BuildToken(ObjectId Id, string account, string role)
+        private string BuildToken(ObjectId Id, string account, Role role)
         {
             List<Claim> claims =
             [
                 new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
                 new Claim(ClaimTypes.Name, account),
-                new Claim(ClaimTypes.Role, role),
+                new Claim(ClaimTypes.Role, role.ToString()),
             ];
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.IssuerSigningKey));

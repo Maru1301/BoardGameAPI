@@ -14,7 +14,7 @@ namespace BoardGameTest
 {
     public class ApiTests(WebApplicationFactory<FakeStartup> factory) : IClassFixture<WebApplicationFactory<FakeStartup>>
     {
-        private RestRequest CreateRequestWithJwt(string url, string id, string account, string role)
+        private RestRequest CreateRequestWithJwt(string url, string id, string account, Role role)
         {
             var request = new RestRequest(url);
 

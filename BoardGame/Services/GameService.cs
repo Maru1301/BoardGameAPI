@@ -69,12 +69,12 @@ namespace BoardGame.Services
         {
             return character switch
             {
-                Character.Assassin => Assassin.Rule,
-                Character.Deceiver => Deceiver.Rule,
-                Character.Knight => Knight.Rule,
-                Character.Lobbyist => Lobbyist.Rule,
-                Character.Lord => Lord.Rule,
-                Character.Soldier => Soldier.Rule,
+                Character.Assassin => new Assassin().Rule,
+                Character.Deceiver => new Deceiver().Rule,
+                Character.Knight => new Knight().Rule,
+                Character.Lobbyist => new Lobbyist().Rule,
+                Character.Lord => new Lord().Rule,
+                Character.Soldier => new Soldier().Rule,
                 _ => throw new NotImplementedException()
             };
         }

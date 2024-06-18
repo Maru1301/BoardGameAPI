@@ -250,7 +250,7 @@ namespace BoardGame.Services
             }
 
             // If not cached, fetch from database
-            var members = (await _unitOfWork.Members.GetAllAsync());
+            var members = await _unitOfWork.Members.GetAllAsync();
 
             // Add members to cache with expiration (optional)
             var entries = members.Select(member => new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member))).ToArray();

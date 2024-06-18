@@ -39,7 +39,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet, AuthorizeRoles(Role.Member, Role.Guest)]
         public async Task<IActionResult> GetMemberInfo()
         {
             try
@@ -198,15 +198,15 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpDelete, AllowAnonymous]
+        [HttpDelete]
         public async Task<IActionResult> Delete(string account)
         {
             try
             {
-                var role = HttpContext.GetJwtClaim(ClaimTypes.Role).Value;
+                var roleStr = HttpContext.GetJwtClaim(ClaimTypes.Role).Value;
                 var jwtAccount = HttpContext.GetJwtClaim(ClaimTypes.Name).Value;
 
-                if (role != Role.Admin && account != jwtAccount)
+                if (roleStr != Role.Admin.ToString() && account != jwtAccount)
                 {
                     return BadRequest(ErrorCode.AccountNotMatch);
                 }
