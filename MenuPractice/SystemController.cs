@@ -9,7 +9,7 @@ namespace Menu_Practice
     {
         private readonly MenuService _menuService;
         private string _token = string.Empty;
-        private readonly string _domain = "https://localhost:44318/";
+        private readonly string _domain = Resources.TempDomainName;
 
         public SystemController(MenuService menuService)
         {

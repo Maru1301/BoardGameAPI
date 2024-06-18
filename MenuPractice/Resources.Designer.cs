@@ -70,6 +70,15 @@ namespace Menu_Practice {
         }
         
         /// <summary>
+        ///   查詢類似 Choose a character 的當地語系化字串。
+        /// </summary>
+        internal static string ChooseCharacter {
+            get {
+                return ResourceManager.GetString("ChooseCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 請選擇你要取得的卡 的當地語系化字串。
         /// </summary>
         internal static string ChooseObtainCard {
@@ -79,11 +88,92 @@ namespace Menu_Practice {
         }
         
         /// <summary>
+        ///   查詢類似 Choose an opponent 的當地語系化字串。
+        /// </summary>
+        internal static string ChooseOppoCharacter {
+            get {
+                return ResourceManager.GetString("ChooseOppoCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 所選卡片剩餘0張，請選別張卡 的當地語系化字串。
         /// </summary>
         internal static string ChooseOtherCard {
             get {
                 return ResourceManager.GetString("ChooseOtherCard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 MainMenu 的當地語系化字串。
+        /// </summary>
+        internal static string MainMenu {
+            get {
+                return ResourceManager.GetString("MainMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 &quot;https://localhost:44318/&quot; 的當地語系化字串。
+        /// </summary>
+        internal static string TempDomainName {
+            get {
+                return ResourceManager.GetString("TempDomainName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 刺客 的當地語系化字串。
+        /// </summary>
+        internal static string 刺客 {
+            get {
+                return ResourceManager.GetString("刺客", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 士兵 的當地語系化字串。
+        /// </summary>
+        internal static string 士兵 {
+            get {
+                return ResourceManager.GetString("士兵", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 詐欺師* 的當地語系化字串。
+        /// </summary>
+        internal static string 詐欺師_ {
+            get {
+                return ResourceManager.GetString("詐欺師*", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 說客 的當地語系化字串。
+        /// </summary>
+        internal static string 說客 {
+            get {
+                return ResourceManager.GetString("說客", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 領主 的當地語系化字串。
+        /// </summary>
+        internal static string 領主 {
+            get {
+                return ResourceManager.GetString("領主", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 騎士 的當地語系化字串。
+        /// </summary>
+        internal static string 騎士 {
+            get {
+                return ResourceManager.GetString("騎士", resourceCulture);
             }
         }
     }

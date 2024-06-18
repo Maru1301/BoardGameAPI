@@ -120,10 +120,40 @@
   <data name="ChooseCard" xml:space="preserve">
     <value>請選擇你要出的卡</value>
   </data>
+  <data name="ChooseCharacter" xml:space="preserve">
+    <value>Choose a character</value>
+  </data>
   <data name="ChooseObtainCard" xml:space="preserve">
     <value>請選擇你要取得的卡</value>
   </data>
+  <data name="ChooseOppoCharacter" xml:space="preserve">
+    <value>Choose an opponent</value>
+  </data>
   <data name="ChooseOtherCard" xml:space="preserve">
     <value>所選卡片剩餘0張，請選別張卡</value>
+  </data>
+  <data name="MainMenu" xml:space="preserve">
+    <value>MainMenu</value>
+  </data>
+  <data name="TempDomainName" xml:space="preserve">
+    <value>"https://localhost:44318/"</value>
+  </data>
+  <data name="刺客" xml:space="preserve">
+    <value>刺客</value>
+  </data>
+  <data name="士兵" xml:space="preserve">
+    <value>士兵</value>
+  </data>
+  <data name="詐欺師*" xml:space="preserve">
+    <value>詐欺師*</value>
+  </data>
+  <data name="說客" xml:space="preserve">
+    <value>說客</value>
+  </data>
+  <data name="領主" xml:space="preserve">
+    <value>領主</value>
+  </data>
+  <data name="騎士" xml:space="preserve">
+    <value>騎士</value>
   </data>
 </root>
