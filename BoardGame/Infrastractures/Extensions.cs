@@ -20,10 +20,15 @@ namespace BoardGame.Infrastractures
                 throw new Exception(ErrorCode.ErrorParsingJwt);
         }
 
-        public static async Task<List<T>?> ToListWithNoLockAsync<T>(
+        public static async Task<List<T>> ToListWithNoLockAsync<T>(this IQueryable<T> query)
+        {
+            return await ToListWithNoLockAsync(query, null, default);
+        }
+
+        public static async Task<List<T>> ToListWithNoLockAsync<T>(
             this IQueryable<T> query,
-            Expression<Func<T, bool>>? expression = null,
-            CancellationToken cancellationToken = default)
+            Expression<Func<T, bool>>? expression,
+            CancellationToken cancellationToken)
         {
             using var scope = CreateTrancation();
 
