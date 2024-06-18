@@ -2,7 +2,7 @@
 
 namespace Menu_Practice
 {
-    public class ConsoleService
+    public static class ConsoleService
     {
         private static readonly CancellationTokenSource _cancellationTokenSource = new();
         private static readonly List<string> Loadings =
@@ -12,10 +12,6 @@ namespace Menu_Practice
                 "Loading..",
                 "Loading..."
             ];
-
-        private int _chooser;
-        private string _title = string.Empty;
-        private string _hint = string.Empty;
 
         public static async Task ShowLoading()
         {
@@ -44,7 +40,7 @@ namespace Menu_Practice
             _cancellationTokenSource.Cancel();
         }
 
-        private void ShowMenuList(MenuList menuList)
+        private static void ShowMenuList(MenuList menuList, int chooser)
         {
             Console.Clear();
 
@@ -60,7 +56,7 @@ namespace Menu_Practice
             {
                 for(var i = 0; i < menuList.Options.Count; i++)
                 {
-                    Console.WriteLine(_chooser == i
+                    Console.WriteLine(chooser == i
                         ? $"=>  {menuList.Options[i].OptionName}"
                         : $"    {menuList.Options[i].OptionName}");
                 }
@@ -69,22 +65,21 @@ namespace Menu_Practice
             {
                 for (var i = 0; i < menuList.Options.Count; i++)
                 {
-                    Console.WriteLine(_chooser == i
+                    Console.WriteLine(chooser == i
                         ? $"=>  {menuList.Options[i].OptionName}"
                         : $"    {menuList.Options[i].OptionName}");
                 }
             }
         }
 
-        public MenuOption GetMenuOption(MenuList menuList)
+        public static MenuOption GetMenuOption(this MenuList menuList)
         {
-            _chooser = 0;
-
+            var chooser = 0;
             ConsoleKey key;
 
             do
             {
-                ShowMenuList(menuList);
+                ShowMenuList(menuList, chooser);
 
                 key = Console.ReadKey().Key;
 
@@ -93,9 +88,9 @@ namespace Menu_Practice
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.W:
                     {
-                        if (_chooser > 0)
+                        if (chooser > 0)
                         {
-                            _chooser--;
+                            chooser--;
                         }
 
                         break;
@@ -103,9 +98,9 @@ namespace Menu_Practice
                     case ConsoleKey.DownArrow:
                     case ConsoleKey.S:
                     {
-                        if (_chooser < menuList.Options.Count - 1)
+                        if (chooser < menuList.Options.Count - 1)
                         {
-                            _chooser++;
+                            chooser++;
                         }
 
                         break;
@@ -117,19 +112,20 @@ namespace Menu_Practice
                 }
             }while (key != ConsoleKey.Enter);
 
-            return menuList.Options[_chooser];
+            return menuList.Options[chooser];
         }
 
-        public int GetPlayerChosenCard(List<int> playerCards)
+        public static Card GetChosenCard(this List<int> playerCards)
         {
-            _chooser = 0;
-
+            var chooser = 0;
             ConsoleKey key;
 
-            _title = "請選擇你要出的卡";
+            var title = "請選擇你要出的卡";
+            string hint = string.Empty;
+            bool result;
             do
             {
-                ShowCards(playerCards);
+                ShowCards(playerCards, title, hint, chooser);
 
                 key = Console.ReadKey().Key;
 
@@ -137,50 +133,51 @@ namespace Menu_Practice
                 {
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.W:
-                    {
-                        if (_chooser > 0)
                         {
-                            _chooser--;
-                        }
+                            if (chooser > 0)
+                            {
+                                chooser--;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case ConsoleKey.DownArrow:
                     case ConsoleKey.S:
-                    {
-                        if (_chooser < playerCards.Count - 1)
                         {
-                            _chooser++;
-                        }
+                            if (chooser < playerCards.Count - 1)
+                            {
+                                chooser++;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case ConsoleKey.Enter:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
-                } 
+                }
 
-            } while (IsChosenCardEqualZero(playerCards, key) || key != ConsoleKey.Enter);
+                (result, hint) = IsChosenCardEqualZero(playerCards, key, chooser);
+            } while (result || key != ConsoleKey.Enter);
 
-            return _chooser;
+            return (Card)chooser;
         }
 
-        private bool IsChosenCardEqualZero(List<int> playerCards, ConsoleKey key)
+        private static (bool , string)IsChosenCardEqualZero(List<int> playerCards, ConsoleKey key, int chooser)
         {
-            if (key != ConsoleKey.Enter || playerCards[_chooser] != 0) return false;
-            _hint = "所選卡片剩餘0張，請選別張卡";
-            return true;
+            if (key != ConsoleKey.Enter || playerCards[chooser] != 0) return (false, string.Empty);
+            var hint = "所選卡片剩餘0張，請選別張卡";
+            return (true, hint);
         }
 
-        private void ShowCards(IEnumerable<int> cards)
+        private static void ShowCards(IEnumerable<int> cards, string title, string hint, int chooser)
         {
             Console.Clear();
 
-            Console.WriteLine(_title);
+            Console.WriteLine(title);
             foreach (var item in cards.Select((cardAmount, index) => new { index, cardAmount }))
             {
-                Console.Write(_chooser == item.index ? "=>  " : "    ");
+                Console.Write(chooser == item.index ? "=>  " : "    ");
 
                 switch (item.index)
                 {
@@ -195,20 +192,20 @@ namespace Menu_Practice
                         break;
                 }
             }
-            Console.WriteLine(_hint);
-            _hint = string.Empty;
+            Console.WriteLine(hint);
         }
 
-        public Card GetPlayerWinCard(List<int> npcCards)
+        public static Card GetPlayerWinCard(this List<int> npcCards)
         {
-            _chooser = 0;
-
+            var chooser = 0;
             ConsoleKey key;
 
-            _title = "請選擇你要取得的卡";
+            var title = "請選擇你要取得的卡";
+            var hint = string.Empty;
+            bool result;
             do
             {
-                ShowCards(npcCards);
+                ShowCards(npcCards, title, hint, chooser);
 
                 key = Console.ReadKey().Key;
 
@@ -217,9 +214,9 @@ namespace Menu_Practice
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.W:
                     {
-                        if (_chooser > 0)
+                        if (chooser > 0)
                         {
-                            _chooser--;
+                            chooser--;
                         }
 
                         break;
@@ -227,24 +224,25 @@ namespace Menu_Practice
                     case ConsoleKey.DownArrow:
                     case ConsoleKey.S:
                     {
-                        if (_chooser < npcCards.Count - 1)
+                        if (chooser < npcCards.Count - 1)
                         {
-                            _chooser++;
+                            chooser++;
                         }
 
                         break;
                     }
                 }
 
-            } while (IsChosenCardEqualZero(npcCards, key) || key != ConsoleKey.Enter);
+                (result, hint) = IsChosenCardEqualZero(npcCards, key, chooser);
+            } while (result || key != ConsoleKey.Enter);
 
-            return (Card)_chooser;
+            return (Card)chooser;
         }
 
-        public static void ShowChosenCards(int playerChosenCard, int npcChosenCard)
+        public static void ShowChosenCards(this (Card playerChosenCard, Card npcChosenCard) set)
         {
-            var playerCardName = GetCardName(playerChosenCard);
-            var npcCardName = GetCardName(npcChosenCard);
+            var playerCardName = GetCardName(set.playerChosenCard);
+            var npcCardName = GetCardName(set.npcChosenCard);
             const int millisecond = 200;
 
             for (var i = 0; i < 12; i++)
@@ -264,32 +262,26 @@ namespace Menu_Practice
             }
         }
 
-        private static string GetCardName(int card)
+        private static string GetCardName(Card card)
         {
             return card switch
-            {
-                0 => "皇冠",
-                1 => "盾牌",
-                2 => "匕首",
-                _ => "",
-            };
-        }
-
-        public static void ShowRoundResult(Result result, Card card)
-        {
-            var cardName = card switch
             {
                 Card.Crown => "皇冠",
                 Card.Shield => "盾牌",
                 Card.Dagger => "匕首",
-                _ => string.Empty
+                _ => "",
             };
+        }
 
-            if (result == Result.Draw)
+        public static void ShowRoundResult(this (Result result, Card card) set)
+        {
+            var cardName = GetCardName(set.card);
+
+            if (set.result == Result.Draw)
             {
                 Console.WriteLine("平手!");
             }
-            else if((int)result % 2 == 0)
+            else if(set.result == Result.BasicWin || set.result == Result.CharacterRuleWin)
             {
                 Console.WriteLine($"勝利!\r\n取得一張{cardName}");
             }
@@ -305,7 +297,7 @@ namespace Menu_Practice
             } while (key != ConsoleKey.Enter);
         }
 
-        public (string account, string password) GetUserCredentials()
+        public static (string? account, string? password) GetUserCredentials()
         {
             Console.WriteLine("Enter your account:");
             var account = Console.ReadLine();

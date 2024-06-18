@@ -49,7 +49,7 @@ public class GameController
         return _npc.Character.Cards;
     }
 
-    public int GetNpcChosenCard()
+    public Card GetNpcChosenCard()
     {
         Random random = new();
         var npcCards = _npc.Character.Cards;
@@ -58,7 +58,7 @@ public class GameController
 
         var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
 
-        return chosenCard;
+        return (Card)chosenCard;
     }
 
     public Result JudgeRound(PlayerInfoContainer playerInfo, PlayerInfoContainer ncpInfo)
@@ -134,9 +134,9 @@ public class GameController
     }
 }
 
-public class PlayerInfoContainer(List<int> cards, int chosenCard)
+public class PlayerInfoContainer(List<int> cards, Card chosenCard)
 {
-public readonly List<int> Cards = cards;
+    public readonly List<int> Cards = cards;
 
-public readonly int ChosenCard = chosenCard;
+    public readonly Card ChosenCard = chosenCard;
 }

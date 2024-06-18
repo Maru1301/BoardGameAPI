@@ -1,6 +1,4 @@
-﻿using static Menu_Practice.Program;
-
-namespace Menu_Practice.Characters.Builders
+﻿namespace Menu_Practice.Characters.Builders
 {
     internal class LordBuilder : ICharacterBuilder
     {
@@ -45,7 +43,7 @@ namespace Menu_Practice.Characters.Builders
         {
             switch ((player1Info.ChosenCard, player2Info.ChosenCard))
             {
-                case (0, 0):
+                case (Card.Crown, Card.Crown):
                     if (player1Info.Cards[0] > player2Info.Cards[0])
                     {
                         return Result.CharacterRuleWin;
@@ -58,11 +56,11 @@ namespace Menu_Practice.Characters.Builders
                     {
                         return Result.CharacterRuleLose;
                     }
-                case (0, 1):
+                case (Card.Crown, Card.Shield):
                     return Result.BasicWin;
-                case (0, 2):
+                case (Card.Crown, Card.Dagger):
                     return Result.BasicLose;
-                case (1, 0):
+                case (Card.Shield, Card.Crown):
                     if (player1Info.Cards[0] == 0 || player2Info.Cards[0] == 0)
                     {
                         return Result.Draw;
@@ -71,7 +69,7 @@ namespace Menu_Practice.Characters.Builders
                     {
                         return Result.BasicLose;
                     }
-                case (1, 1):
+                case (Card.Shield, Card.Shield):
                     if (player1Info.Cards[1] > player2Info.Cards[1])
                     {
                         return Result.CharacterRuleWin;
@@ -84,13 +82,13 @@ namespace Menu_Practice.Characters.Builders
                     {
                         return Result.CharacterRuleLose;
                     }
-                case (1, 2):
+                case (Card.Shield, Card.Dagger):
                     return Result.BasicWin;
-                case (2, 0):
+                case (Card.Dagger, Card.Crown):
                     return Result.BasicWin;
-                case (2, 1):
+                case (Card.Dagger, Card.Shield):
                     return Result.BasicLose;
-                case (2, 2):
+                case (Card.Dagger, Card.Dagger):
                     if (player1Info.Cards[0] < player2Info.Cards[0])
                     {
                         return Result.CharacterRuleWin;
@@ -103,9 +101,9 @@ namespace Menu_Practice.Characters.Builders
                     {
                         return Result.CharacterRuleLose;
                     }
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            return Result.Draw;
         }
 
         public Character GetCharacter()

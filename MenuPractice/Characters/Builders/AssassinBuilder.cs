@@ -45,23 +45,23 @@ namespace Menu_Practice.Characters.Builders
         {
             switch ((player1Info.ChosenCard, player2Info.ChosenCard))
             {
-                case (0, 0):
+                case (Card.Crown, Card.Crown):
                     return Result.Draw;
-                case (0, 1):
+                case (Card.Crown, Card.Shield):
                     return Result.BasicWin;
-                case (0, 2):
+                case (Card.Crown, Card.Dagger):
                     return Result.BasicLose;
-                case (1, 0):
+                case (Card.Shield, Card.Crown):
                     return Result.BasicLose;
-                case (1, 1):
+                case (Card.Shield, Card.Shield):
                     return Result.Draw;
-                case (1, 2):
+                case (Card.Shield, Card.Dagger):
                     return Result.BasicWin;
-                case (2, 0):
+                case (Card.Dagger, Card.Crown):
                     return Result.BasicWin;
-                case (2, 1):
+                case (Card.Dagger, Card.Shield):
                     return Result.BasicLose;
-                case (2, 2):
+                case (Card.Dagger, Card.Dagger):
                     if (player1Info.Cards[2] > player2Info.Cards[2] && player1Info.Cards[2] > 2)
                     {
                         return Result.CharacterRuleWin;
@@ -71,9 +71,9 @@ namespace Menu_Practice.Characters.Builders
                         return Result.CharacterRuleLose;
                     }
                     return Result.Draw;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            return Result.Draw;
         }
 
         public Character GetCharacter()
