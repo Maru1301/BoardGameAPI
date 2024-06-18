@@ -61,7 +61,7 @@ namespace Menu_Practice {
         }
         
         /// <summary>
-        ///   查詢類似 &quot;請選擇你要出的卡&quot; 的當地語系化字串。
+        ///   查詢類似 請選擇你要出的卡 的當地語系化字串。
         /// </summary>
         internal static string ChooseCard {
             get {
@@ -70,7 +70,7 @@ namespace Menu_Practice {
         }
         
         /// <summary>
-        ///   查詢類似 &quot;請選擇你要取得的卡&quot; 的當地語系化字串。
+        ///   查詢類似 請選擇你要取得的卡 的當地語系化字串。
         /// </summary>
         internal static string ChooseObtainCard {
             get {
@@ -79,7 +79,7 @@ namespace Menu_Practice {
         }
         
         /// <summary>
-        ///   查詢類似 &quot;所選卡片剩餘0張，請選別張卡&quot; 的當地語系化字串。
+        ///   查詢類似 所選卡片剩餘0張，請選別張卡 的當地語系化字串。
         /// </summary>
         internal static string ChooseOtherCard {
             get {

@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ChooseCard" xml:space="preserve">
-    <value>"請選擇你要出的卡"</value>
+    <value>請選擇你要出的卡</value>
   </data>
   <data name="ChooseObtainCard" xml:space="preserve">
-    <value>"請選擇你要取得的卡"</value>
+    <value>請選擇你要取得的卡</value>
   </data>
   <data name="ChooseOtherCard" xml:space="preserve">
-    <value>"所選卡片剩餘0張，請選別張卡"</value>
+    <value>所選卡片剩餘0張，請選別張卡</value>
   </data>
 </root>
