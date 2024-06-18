@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System.Security.Claims;
+using System.Transactions;
 
 namespace BoardGame.Infrastractures
 {
@@ -15,6 +18,35 @@ namespace BoardGame.Infrastractures
         {
             return httpContext.User.Claims.FirstOrDefault(x => x.Type == claimType) ?? 
                 throw new Exception(ErrorCode.ErrorParsingJwt);
+        }
+
+        public static async Task<List<T>?> ToListWithNoLockAsync<T>(
+            this IQueryable<T> query,
+            Expression<Func<T, bool>>? expression = null,
+            CancellationToken cancellationToken = default)
+        {
+            using var scope = CreateTrancation();
+
+            if (expression != null)
+            {
+                query = query.Where(expression);
+            }
+
+            var result = await query.ToListAsync(cancellationToken);
+
+            scope.Complete();
+
+            return result;
+        }
+
+        private static TransactionScope CreateTrancation()
+        {
+            return new TransactionScope(TransactionScopeOption.Required,
+                                        new TransactionOptions()
+                                        {
+                                            IsolationLevel = IsolationLevel.ReadUncommitted
+                                        },
+                                       TransactionScopeAsyncFlowOption.Enabled);
         }
     }
 }
