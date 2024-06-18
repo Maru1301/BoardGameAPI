@@ -16,7 +16,7 @@ namespace BoardGame.Services
         private readonly IConfiguration _configuration = configuration;
         private readonly ICacheService _cacheService = cacheService;
         private readonly JWTHelper _jwt = jwt;
-        private readonly string _cacheKey = "members";
+        private static string CacheKey { get => "members"; }
 
         /// <summary>
         /// Register a new user based on the provided information.
@@ -242,7 +242,7 @@ namespace BoardGame.Services
         public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
             // Try to get members from cache
-            var cachedMembers = await _cacheService.HashGetAllAsync(_cacheKey);
+            var cachedMembers = await _cacheService.HashGetAllAsync(CacheKey);
 
             if (cachedMembers != null && cachedMembers.Length > 0)
             {
@@ -254,7 +254,7 @@ namespace BoardGame.Services
 
             // Add members to cache with expiration (optional)
             var entries = members.Select(member => new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member))).ToArray();
-            await _cacheService.HashSetAsync(_cacheKey, entries, TimeSpan.FromSeconds(10));
+            await _cacheService.HashSetAsync(CacheKey, entries, TimeSpan.FromSeconds(10));
 
             return members.Select(x => x.To<MemberDTO>());
         }
@@ -262,7 +262,7 @@ namespace BoardGame.Services
         public async Task<MemberDTO> GetMemberInfo(ObjectId id) 
         {
             // Try to get members from cache
-            var cachedMember = await _cacheService.HashGetAsync(_cacheKey, id.ToString());
+            var cachedMember = await _cacheService.HashGetAsync(CacheKey, id.ToString());
 
             if (cachedMember.HasValue)
             {
@@ -273,7 +273,7 @@ namespace BoardGame.Services
 
             // Add members to cache with expiration
             var entries = new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member));
-            await _cacheService.HashSetAsync(_cacheKey, [entries]);
+            await _cacheService.HashSetAsync(CacheKey, [entries]);
 
             return member.To<MemberDTO>();
         }
