@@ -24,16 +24,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS development
 # Copies the source code and sets the working directory.
 COPY . /source
 WORKDIR /source/BoardGame
-# Defines the default command to run when starting a container from the development stage.
-CMD dotnet run --no-launch-profile
 
-# Creates the final stage named final based on the mcr.microsoft.com/dotnet/aspnet:8.0-alpine image. This image contains the .NET runtime environment needed to run the application.
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
-# Sets the working directory within the final image to /app.
-WORKDIR /app
-
-# Copies the published application files (/app) from the build stage (--from=build) to the /app directory in the final image.
-COPY --from=build /app .
 # Creates a new user named appuser
 ARG UID=10001
 RUN adduser \
@@ -46,6 +37,17 @@ RUN adduser \
     appuser
 
 USER appuser
+
+# Defines the default command to run when starting a container from the development stage.
+CMD dotnet run --no-launch-profile
+
+# Creates the final stage named final based on the mcr.microsoft.com/dotnet/aspnet:8.0-alpine image. This image contains the .NET runtime environment needed to run the application.
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
+# Sets the working directory within the final image to /app.
+WORKDIR /app
+
+# Copies the published application files (/app) from the build stage (--from=build) to the /app directory in the final image.
+COPY --from=build /app .
 
 # ENTRYPOINT specifies the command that will be executed when the container starts. 
 # In this case, it runs the dotnet executable with the BoardGame.dll file as an argument. 
