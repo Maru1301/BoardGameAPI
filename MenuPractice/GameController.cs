@@ -101,7 +101,10 @@ public class GameController
 
     private static bool? IsPlayerWin(Result result)
     {
-        if (result.Equals(Result.Draw)) return null;
+        if (result.Equals(Result.Draw))
+        {
+            return null;
+        }
 
         var resultNum = (int)result;
         return resultNum % 2 == 0;
@@ -109,7 +112,10 @@ public class GameController
 
     public Status EndRound()
     {
-        if (_roundCount == EndGame) return Status.InMenu;
+        if (_roundCount == EndGame)
+        {
+            return Status.InMenu;
+        }
 
         _playerGoFirst = !_playerGoFirst;
 
@@ -136,7 +142,7 @@ public class GameController
 
 public class PlayerInfoContainer(List<int> cards, Card chosenCard)
 {
-    public readonly List<int> Cards = cards;
+    public List<int> Cards { get => cards; }
 
-    public readonly Card ChosenCard = chosenCard;
+    public Card ChosenCard { get => chosenCard; }
 }
