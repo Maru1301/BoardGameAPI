@@ -1,4 +1,5 @@
 ﻿using Menu_Practice.Menu;
+using System.Resources;
 
 namespace Menu_Practice
 {
@@ -120,7 +121,7 @@ namespace Menu_Practice
             var chooser = 0;
             ConsoleKey key;
 
-            var title = "請選擇你要出的卡";
+            var title = Resources.ChooseCard;
             string hint = string.Empty;
             bool result;
             do
@@ -166,7 +167,7 @@ namespace Menu_Practice
         private static (bool , string)IsChosenCardEqualZero(List<int> playerCards, ConsoleKey key, int chooser)
         {
             if (key != ConsoleKey.Enter || playerCards[chooser] != 0) return (false, string.Empty);
-            var hint = "所選卡片剩餘0張，請選別張卡";
+            var hint = Resources.ChooseOtherCard;
             return (true, hint);
         }
 
@@ -200,7 +201,7 @@ namespace Menu_Practice
             var chooser = 0;
             ConsoleKey key;
 
-            var title = "請選擇你要取得的卡";
+            var title = Resources.ChooseObtainCard;
             var hint = string.Empty;
             bool result;
             do
