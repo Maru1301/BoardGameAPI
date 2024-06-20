@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using NLog.Web;
+using BoardGame.Hubs;
 
 namespace BoardGame
 {
@@ -32,6 +33,7 @@ namespace BoardGame
             Configure(app, app.Environment);
 
             app.MapControllers();
+            app.MapHub<GameHub>("/gameHub");
 
             app.Run();
         }
@@ -105,6 +107,8 @@ namespace BoardGame
                 // Create additional filters to filter Authorize, AllowAnonymous, or even those without attributes
                 options.OperationFilter<AuthorizeCheckOperationFilter>();
             });
+
+            services.AddSignalR();
         }
 
         private static void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
