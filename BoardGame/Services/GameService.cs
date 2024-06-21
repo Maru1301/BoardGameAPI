@@ -17,17 +17,7 @@ namespace BoardGame.Services
         {
             try
             {
-                var cachedData = await cacheService.HashGetAllAsync(CacheKey.Member);
-
-                if (cachedData != null && cachedData.Length > 0)
-                {
-                    return cachedData.Select(cachedMember => JsonConvert.DeserializeObject<GameDTO>(cachedMember.Value.ToString()))!;
-                }
-
                 var games = await unitOfWork.Games.GetAllAsync();
-
-                var entries = games.Select(game => new HashEntry(game.Id.ToString(), JsonConvert.SerializeObject(game))).ToArray();
-                await cacheService.HashSetAsync(CacheKey.GameRecord, entries, TimeSpan.FromMinutes(5));
 
                 return games.Select(x => x.To<GameDTO>());
             }
