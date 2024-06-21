@@ -14,8 +14,6 @@
 
         public abstract void BuildAdditionalPointCondition();
 
-        public abstract void BuildGameLogic();
-
         public abstract Character GetCharacter();
     }
 }

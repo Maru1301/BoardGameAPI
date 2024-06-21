@@ -10,29 +10,11 @@ namespace BoardGameTest
     public class RuleTests
     {
         private static readonly IServiceProvider ServiceProvider;
-        private static readonly RoundCards _CCC = new()
-        {
-            Card1 = Card.Crown,
-            Card2 = Card.Crown,
-            Card3 = Card.Crown,
-            LastOpened = 1,
-        };
+        private static readonly List<Card> _CCC = [Card.Crown, Card.Crown, Card.Crown];
 
-        private static readonly RoundCards _SCC = new()
-        {
-            Card1 = Card.Sheild,
-            Card2 = Card.Crown,
-            Card3 = Card.Crown,
-            LastOpened = 1,
-        };
+        private static readonly List<Card> _SCC = [Card.Sheild, Card.Crown, Card.Crown];
 
-        private static readonly RoundCards _DCC = new()
-        {
-            Card1 = Card.Dagger,
-            Card2 = Card.Crown,
-            Card3 = Card.Crown,
-            LastOpened = 1,
-        };
+        private static readonly List<Card> _DCC = [Card.Dagger, Card.Crown, Card.Crown];
 
         public static TheoryData<PlayerRoundInfo, PlayerRoundInfo, Result> AssassinRuleData => new()
         {
@@ -41,7 +23,7 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = _CCC
+                    ChosenCards = _CCC,
                 },
                 new PlayerRoundInfo
                 {
@@ -246,7 +228,7 @@ namespace BoardGameTest
                 },
                 Result.Player2CharacterRuleWin
             },
-                {
+            {
                 new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
@@ -438,7 +420,7 @@ namespace BoardGameTest
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
-                {
+            {
                     Character = Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _CCC
@@ -453,7 +435,7 @@ namespace BoardGameTest
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
-                {
+            {
                     Character = Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _SCC
@@ -483,7 +465,7 @@ namespace BoardGameTest
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
-                {
+            {
                     Character = Character.Deceiver,
                     Hand = new() { Sheild = 1 },
                     ChosenCards = _SCC
@@ -498,7 +480,7 @@ namespace BoardGameTest
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
-                {
+            {
                     Character = Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _SCC
@@ -528,7 +510,7 @@ namespace BoardGameTest
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
-                {
+            {
                     Character = Character.Deceiver,
                     Hand = new() { Sheild = 1 },
                     ChosenCards = _DCC
@@ -603,25 +585,15 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = (Card)100,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = [(Card)100, Card.Crown, Card.Crown],
+                    LastOpened = 0,
                 };
                 var player2 = new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = (Card)200,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = [(Card)100, Card.Crown, Card.Crown],
+                    LastOpened = 0,
                 };
 
                 // Act and Assert
@@ -657,25 +629,15 @@ namespace BoardGameTest
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = (Card)100,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = [(Card)100, Card.Crown, Card.Crown],
+                    LastOpened = 0,
                 };
                 var player2 = new PlayerRoundInfo
                 {
                     Character = Character.Assassin,
                     Hand = new(),
-                    ChosenCards = new RoundCards
-                    {
-                        Card1 = (Card)200,
-                        Card2 = Card.Crown,
-                        Card3 = Card.Crown,
-                        LastOpened = 1,
-                    }
+                    ChosenCards = [(Card)100, Card.Crown, Card.Crown],
+                    LastOpened = 0,
                 };
 
                 // Act and Assert

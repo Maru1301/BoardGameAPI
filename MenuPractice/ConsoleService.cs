@@ -1,5 +1,4 @@
 ﻿using Menu_Practice.Menu;
-using System.Resources;
 
 namespace Menu_Practice
 {
@@ -41,7 +40,109 @@ namespace Menu_Practice
             _cancellationTokenSource.Cancel();
         }
 
-        private static void ShowMenuList(MenuList menuList, int chooser)
+        public static void RevealCard()
+        {
+            // Define the card characters
+            var cards = new List<char[,]>
+            {
+                new char[5, 9]
+                {
+                    {'┌', '─', '─', '─', '─', '─', '─', '─', '┐'},
+                    {'│', '0', ' ', ' ', ' ', ' ', ' ', ' ', '│'},
+                    {'│', ' ', ' ', ' ', '0', ' ', ' ', ' ', '│'},
+                    {'│', ' ', ' ', ' ', ' ', ' ', ' ', '0', '│'},
+                    {'└', '─', '─', '─', '─', '─', '─', '─', '┘'}
+                },
+                new char[5, 9]
+                {
+                    {' ', '┌', '─', '─', '─', '─', '─', '┐', ' '},
+                    {' ', '│', '0', ' ', ' ', ' ', ' ', '│', ' '},
+                    {' ', '│', ' ', ' ', '0', ' ', ' ', '│', ' '},
+                    {' ', '│', ' ', ' ', ' ', ' ', '0', '│', ' '},
+                    {' ', '└', '─', '─', '─', '─', '─', '┘', ' '}
+                },
+                new char[5, 9]
+                {
+                    {' ', ' ', '┌', '─', '─', '─', '┐', ' ', ' '},
+                    {' ', ' ', '│', '0', ' ', ' ', '│', ' ', ' '},
+                    {' ', ' ', '│', ' ', '0', ' ', '│', ' ', ' '},
+                    {' ', ' ', '│', ' ', ' ', '0', '│', ' ', ' '},
+                    {' ', ' ', '└', '─', '─', '─', '┘', ' ', ' '}
+                },
+                new char[5, 9]
+                {
+                    {' ', ' ', ' ', '┌', '─', '┐', ' ', ' ', ' '},
+                    {' ', ' ', ' ', '│', '0', '│', ' ', ' ', ' '},
+                    {' ', ' ', ' ', '│', '0', '│', ' ', ' ', ' '},
+                    {' ', ' ', ' ', '│', '0', '│', ' ', ' ', ' '},
+                    {' ', ' ', ' ', '└', '─', '┘', ' ', ' ', ' '}
+                },
+                new char[5, 9]
+                {
+                    {' ', ' ', ' ', ' ', '│', ' ', ' ', ' ', ' '},
+                    {' ', ' ', ' ', ' ', '│', ' ', ' ', ' ', ' '},
+                    {' ', ' ', ' ', ' ', '│', ' ', ' ', ' ', ' '},
+                    {' ', ' ', ' ', ' ', '│', ' ', ' ', ' ', ' '},
+                    {' ', ' ', ' ', ' ', '│', ' ', ' ', ' ', ' '}
+                },
+                new char[5, 9]
+                {
+                    {' ', ' ', ' ', '┌', '─', '┐', ' ', ' ', ' '},
+                    {' ', ' ', ' ', '│', ' ', '│', ' ', ' ', ' '},
+                    {' ', ' ', ' ', '│', ' ', '│', ' ', ' ', ' '},
+                    {' ', ' ', ' ', '│', ' ', '│', ' ', ' ', ' '},
+                    {' ', ' ', ' ', '└', '─', '┘', ' ', ' ', ' '}
+                },
+                new char[5, 9]
+                {
+                    {' ', ' ', '┌', '─', '─', '─', '┐', ' ', ' '},
+                    {' ', ' ', '│', ' ', ' ', ' ', '│', ' ', ' '},
+                    {' ', ' ', '│', ' ', ' ', ' ', '│', ' ', ' '},
+                    {' ', ' ', '│', ' ', ' ', ' ', '│', ' ', ' '},
+                    {' ', ' ', '└', '─', '─', '─', '┘', ' ', ' '}
+                },
+                new char[5, 9]
+                {
+                    {' ', '┌', '─', '─', '─', '─', '─', '┐', ' '},
+                    {' ', '│', ' ', ' ', ' ', ' ', ' ', '│', ' '},
+                    {' ', '│', ' ', ' ', ' ', ' ', ' ', '│', ' '},
+                    {' ', '│', ' ', ' ', ' ', ' ', ' ', '│', ' '},
+                    {' ', '└', '─', '─', '─', '─', '─', '┘', ' '}
+                },
+                new char[5, 9]
+                {
+                    {'┌', '─', '─', '─', '─', '─', '─', '─', '┐'},
+                    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│'},
+                    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│'},
+                    {'│', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '│'},
+                    {'└', '─', '─', '─', '─', '─', '─', '─', '┘'}
+                }
+            };
+
+            // Animate the card flip
+            for (int i = 0; i < cards.Count; i++)
+            {
+                Console.Clear();
+                DrawCard(cards[i]);
+                Thread.Sleep(60); // Adjust the delay to control the animation speed
+            }
+
+            Console.ReadLine(); // Wait for user input before closing
+        }
+
+        private static void DrawCard(char[,] card)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                for (int x = 0; x < 9; x++)
+                {
+                    Console.Write(card[y, x]);
+                }
+                Console.WriteLine();
+            }
+        }
+
+        private static void Show(this MenuList menuList, int chooser)
         {
             Console.Clear();
 
@@ -80,7 +181,7 @@ namespace Menu_Practice
 
             do
             {
-                ShowMenuList(menuList, chooser);
+                menuList.Show(chooser);
 
                 key = Console.ReadKey().Key;
 
@@ -126,7 +227,7 @@ namespace Menu_Practice
             bool result;
             do
             {
-                ShowCards(playerCards, title, hint, chooser);
+                playerCards.ShowCards(title, hint, chooser);
 
                 key = Console.ReadKey().Key;
 
@@ -171,7 +272,7 @@ namespace Menu_Practice
             return (true, hint);
         }
 
-        private static void ShowCards(IEnumerable<int> cards, string title, string hint, int chooser)
+        private static void ShowCards(this IEnumerable<int> cards, string title, string hint, int chooser)
         {
             Console.Clear();
 
@@ -206,7 +307,7 @@ namespace Menu_Practice
             bool result;
             do
             {
-                ShowCards(npcCards, title, hint, chooser);
+                npcCards.ShowCards(title, hint, chooser);
 
                 key = Console.ReadKey().Key;
 
@@ -248,17 +349,10 @@ namespace Menu_Practice
 
             for (var i = 0; i < 12; i++)
             {
-                var t = (i % 4) switch
-                {
-                    0 => "|",
-                    1 => "/",
-                    2 => "-",
-                    _ => "\\"
-                };
                 Console.Clear();
                 Console.WriteLine();
-                Console.WriteLine("玩家\t對上\t電腦");
-                Console.WriteLine($"{playerCardName}\t{t}\t{npcCardName}");
+                Console.WriteLine("玩家\t\t\t電腦");
+                Console.WriteLine($"{playerCardName}\t\t\t{npcCardName}");
                 Thread.Sleep(millisecond);
             }
         }
@@ -309,7 +403,7 @@ namespace Menu_Practice
             return (account, password);
         }
 
-        public static void Show(string text)
+        public static void Show(this string text)
         {
             Console.WriteLine(text);
         }

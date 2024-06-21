@@ -136,7 +136,7 @@
     <value>MainMenu</value>
   </data>
   <data name="TempDomainName" xml:space="preserve">
-    <value>"https://localhost:44318/"</value>
+    <value>https://localhost:44318/</value>
   </data>
   <data name="刺客" xml:space="preserve">
     <value>刺客</value>

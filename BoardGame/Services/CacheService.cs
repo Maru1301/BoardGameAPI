@@ -1,6 +1,5 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Services.Interfaces;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace BoardGame.Services
@@ -14,14 +13,29 @@ namespace BoardGame.Services
             _db = ConnectionHelper.Connection.GetDatabase();
         }
 
-        public async Task<T?> GetDataAsync<T>(string key)
+        public async Task<RedisValue> StringGetAsync(string key)
         {
-            var value = await _db.StringGetAsync(key);
-            if (!string.IsNullOrEmpty(value))
-            {
-                return JsonConvert.DeserializeObject<T>(value!);
-            }
-            return default;
+            return await _db.StringGetAsync(key);
+        }
+
+        public async Task StringSetAsync(string key, RedisValue value)
+        {
+            await _db.StringSetAsync(key, value);
+        }
+
+        public async Task<RedisValue> ListLeftPopAsync(string key)
+        {
+            return await _db.ListLeftPopAsync(key);
+        }
+
+        public async Task ListRightPushAsync(string key, RedisValue value)
+        {
+            await _db.ListRightPushAsync(key, value);
+        }
+
+        public async Task SetGetAsync(string key)
+        {
+            await _db.SetPopAsync(key);
         }
 
         public async Task<RedisValue> HashGetAsync(string key, string subKey)

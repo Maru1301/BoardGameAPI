@@ -115,7 +115,7 @@ namespace Menu_Practice {
         }
         
         /// <summary>
-        ///   查詢類似 &quot;https://localhost:44318/&quot; 的當地語系化字串。
+        ///   查詢類似 https://localhost:44318/ 的當地語系化字串。
         /// </summary>
         internal static string TempDomainName {
             get {

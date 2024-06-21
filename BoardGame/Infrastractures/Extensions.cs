@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Transactions;
@@ -17,6 +18,19 @@ namespace BoardGame.Infrastractures
         public static Claim GetJwtClaim(this HttpContext httpContext, string claimType)
         {
             return httpContext.User.Claims.FirstOrDefault(x => x.Type == claimType) ?? 
+                throw new Exception(ErrorCode.ErrorParsingJwt);
+        }
+
+        /// <summary>
+        /// Retrieves a specific claim from the current user's JWT token.
+        /// </summary>
+        /// <param name="hubCallerContext">The current HubCallerContext instance.</param>
+        /// <param name="claimType">The type of claim to retrieve (e.g., "name", "email").</param>
+        /// <returns>The claim object containing the requested claim value, or null if the claim is not found.</returns>
+        /// <exception cref="Exception">Throws an exception if there is an error parsing the JWT token (uses ErrorCode.ErrorParsingJwt).</exception>
+        public static Claim GetJwtClaim(this HubCallerContext hubCallerContext, string claimType)
+        {
+            return hubCallerContext.User!.Claims.FirstOrDefault(x => x.Type == claimType) ??
                 throw new Exception(ErrorCode.ErrorParsingJwt);
         }
 

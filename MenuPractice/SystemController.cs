@@ -2,31 +2,41 @@
 using Menu_Practice.Menu;
 using RestSharp;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Menu_Practice
 {
     public class SystemController
     {
         private readonly MenuService _menuService;
+        private readonly GameService _gameService;
         private string _token = string.Empty;
         private readonly string _domain = Resources.TempDomainName;
 
-        public SystemController(MenuService menuService)
+        public SystemController(MenuService menuService, GameService gameService)
         {
             Console.CursorVisible = false;
             _menuService = menuService;
+            _gameService = gameService;
 
             menuService.Init(GenerateMenu());
         }
 
         public async Task Start()
         {
-            //while (await LoginAsync() == false) { };
+            while (await LoginAsync() == false) { };
+            await _gameService.Test(_token);
+#if DEBUG
+
+#else
+            
+#endif
 
             var status = Status.InMenu;
             while (status != Status.End)
             {
-                if (RunMenu(status) == Status.InGame)
+                status = RunMenu(status);
+                if (status == Status.InGame)
                 {
                     status = RunGame(status);
                 }
@@ -69,7 +79,7 @@ namespace Menu_Practice
                     return false;
                 }
 
-                _token = r.Token;
+                _token = r.token;
 
                 ConsoleService.StopShowLoading();
                 await loadingTask;
@@ -144,47 +154,38 @@ namespace Menu_Practice
 
         private Status RunGame(Status status)
         {
-            status = Status.InGame;
             var playerCharacter = _menuService.GetChosenCharacter();
             var opponentCharacter = _menuService.GetChosenOpponent();
 
-            var gameController = new GameController(playerCharacter, opponentCharacter);
+            var gameService = new GameService(playerCharacter, opponentCharacter);
 
-            gameController.BeginNewGame();
+            gameService.BeginNewGame();
 
             while (status == Status.InGame)
             {
-                gameController.BeginNewRound();
+                gameService.BeginNewRound();
 
-                var playerCards = gameController.GetPlayerCards();
-                var npcCards = gameController.GetNpcCards();
-
-                var playerChosenCard = playerCards.GetChosenCard();
-                var npcChosenCard = gameController.GetNpcChosenCard();
+                var (playerChosenCard, npcChosenCard) = gameService.GetChosenCard();
                 (playerChosenCard, npcChosenCard).ShowChosenCards();
-                var playerInfoContainer = new PlayerInfoContainer(playerCards, playerChosenCard);
-                var npcInfoContainer = new PlayerInfoContainer(npcCards, npcChosenCard);
-                Result result = gameController.JudgeRound(playerInfoContainer, npcInfoContainer);
+                Result result = gameService.JudgeRound();
 
                 var card = result switch
                 {
-                    Result.BasicWin => npcInfoContainer.Cards.GetPlayerWinCard(),
-                    Result.BasicLose => gameController.GetNpcWinCard(),
+                    Result.BasicWin => gameService.GetPlayerWinCard(),
+                    Result.BasicLose => gameService.GetNpcWinCard(),
                     Result.CharacterRuleWin => npcChosenCard,
                     Result.CharacterRuleLose => playerChosenCard,
                     Result.Draw => Card.None,
                     _ => throw new NotImplementedException()
                 };
 
-                gameController.ProcessSettlement(result, card);
+                gameService.ProcessSettlement(result, card);
                 (result, card).ShowRoundResult();
 
-                status = gameController.EndRound();
+                status = gameService.EndRound();
             }
 
-            var outcome = GameController.GetOutcome();
-
-            ConsoleService.Show(outcome);
+            gameService.GetOutcome().Show();
 
             return status;
         }
@@ -192,6 +193,6 @@ namespace Menu_Practice
 
     public class Res
     {
-        public string Token { get; set; } = string.Empty;
+        public string token { get; set; } = string.Empty;
     }
 }

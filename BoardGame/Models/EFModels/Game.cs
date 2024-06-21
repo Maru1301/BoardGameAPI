@@ -10,12 +10,7 @@ namespace BoardGame.Models.EFModels
         public string Player2Account { get; set; } = string.Empty;
         public CharacterSet Player1Characters { get; set; } = new();
         public CharacterSet Player2Characters { get; set; } = new();
-        public Round? Round1 { get; set; }
-        public Round? Round2 { get; set; }
-        public Round? Round3 { get; set; }
-        public Round? Round4 { get; set; }
-        public Round? Round5 { get; set; }
-        public Round? Round6 { get; set; }
+        public List<Round> Round { get; set; } = [];
         public EndGameInfo? EndGameInfo { get; set; }
         public long CreatedTime { get; set; }
     }
@@ -31,6 +26,8 @@ namespace BoardGame.Models.EFModels
 
     public class Round
     {
+        public int Order { get; set; }
+
         //record by member account
         public string Winner { get; set; } = string.Empty;
 
@@ -52,14 +49,8 @@ namespace BoardGame.Models.EFModels
 
         public CardSet Hand { get; set; } = new();
 
-        public RoundCards ChosenCards { get; set; } = new();
-    }
+        public List<Card> ChosenCards { get; set; } = [];
 
-    public class RoundCards
-    {
-        public Card Card1 { get; set; }
-        public Card Card2 { get; set; }
-        public Card Card3 { get; set; }
         public int LastOpened { get; set; }
     }
 

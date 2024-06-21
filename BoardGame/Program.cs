@@ -24,7 +24,11 @@ namespace BoardGame
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Logging.ClearProviders();
-            builder.Host.UseNLog();
+
+            if (!builder.Environment.IsDevelopment())
+            {
+                builder.Host.UseNLog();
+            }
 
             ConfigureServices(builder.Services, builder.Configuration);
 

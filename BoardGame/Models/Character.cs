@@ -2,28 +2,26 @@
 
 namespace BoardGame.Infrastractures
 {
-    public static class CharacterFuncExtensions
-    {
-        public static Card GetLastOpenedCard(RoundCards playerChosenCards)
-        {
-            return playerChosenCards.LastOpened switch
-            {
-                1 => playerChosenCards.Card1,
-                2 => playerChosenCards.Card2,
-                3 => playerChosenCards.Card3,
-                _ => throw new NotImplementedException(),
-            };
-        }
-    }
-
     public abstract class CharacterBase
     {
         public abstract CardSet StartHand { get; set; }
 
         public Result Rule(PlayerRoundInfo player1Info, PlayerRoundInfo player2Info)
         {
-            var lastOpenCard1 = CharacterFuncExtensions.GetLastOpenedCard(player1Info.ChosenCards);
-            var lastOpenCard2 = CharacterFuncExtensions.GetLastOpenedCard(player2Info.ChosenCards);
+            if(player1Info.LastOpened > 2 || player2Info.LastOpened > 2)
+            {
+                throw new ArgumentOutOfRangeException("LastOpened", "lastopened out of range");
+            }
+
+            var lastOpenCard1 = player1Info.ChosenCards[player1Info.LastOpened];
+            var lastOpenCard2 = player2Info.ChosenCards[player2Info.LastOpened];
+
+            var Cards = new List<Card>() { Card.Crown, Card.Sheild, Card.Dagger };
+
+            if (!Cards.Contains(lastOpenCard1) || !Cards.Contains(lastOpenCard2)) 
+            {
+                throw new Exception("Invalid card combination");   
+            }
 
             return DetermineResult(lastOpenCard1, lastOpenCard2, player1Info, player2Info);
         }

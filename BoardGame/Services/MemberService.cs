@@ -6,6 +6,7 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using System.Data;
 using Utility;
+using StackExchange.Redis;
 
 namespace BoardGame.Services
 {
@@ -235,18 +236,19 @@ namespace BoardGame.Services
         public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
             // Try to get members from cache
-            var memberDTOs = await cacheService.HashGetAllAsync<MemberDTO>(CacheKey.Member);
+            var cachedData = await cacheService.HashGetAllAsync(CacheKey.Member);
 
-            if (memberDTOs.Any())
+            if (cachedData != null && cachedData.Length > 0)
             {
-                return memberDTOs;
+                return cachedData.Select(cachedMember => JsonConvert.DeserializeObject<MemberDTO>(cachedMember.Value.ToString()))!;
             }
 
             // If not cached, fetch from database
             var members = await unitOfWork.Members.GetAllAsync();
 
             // Add members to cache with expiration (optional)
-            await cacheService.HashSetAsync(CacheKey.Member, members, TimeSpan.FromSeconds(10));
+            var entries = members.Select(member => new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member))).ToArray();
+            await cacheService.HashSetAsync(CacheKey.Member, entries);
 
             return members.Select(x => x.To<MemberDTO>());
         }
@@ -264,7 +266,8 @@ namespace BoardGame.Services
             var member = await unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
 
             // Add members to cache with expiration
-            await cacheService.HashSetAsync(CacheKey.Member, new List<Member> { member });
+            var entries = new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member));
+            await cacheService.HashSetAsync(CacheKey.Member, [entries]);
 
             return member.To<MemberDTO>();
         }
