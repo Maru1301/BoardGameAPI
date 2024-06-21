@@ -11,7 +11,7 @@ namespace BoardGame.Services.Interfaces
 
         public Task<RedisValue> ListLeftPopAsync(string key);
 
-        public async Task ListRightPushAsync(string key, RedisValue value);
+        public Task ListRightPushAsync(string key, RedisValue value);
 
         public Task<RedisValue> HashGetAsync(string key, string subKey);
 
