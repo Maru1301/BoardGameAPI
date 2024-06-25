@@ -558,92 +558,46 @@ namespace BoardGameTest
         private static string UserName { get => "Maru"; }
         private static string Password { get => "13011821"; }
 
-        public class AssassinRuleTests
+        [Theory]
+        [MemberData(nameof(AssassinRuleData), MemberType = typeof(RuleTests))]
+        [MemberData(nameof(DeceiverRuleData), MemberType = typeof(RuleTests))]
+        public void TestRule_NormalRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
         {
-            [Theory]
-            [MemberData(nameof(AssassinRuleData), MemberType = typeof(RuleTests))]
-            public void TestAssassinRule_NormalRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
-            {
-                // Get the service instance from the static field
-                var service = ServiceProvider.GetService<IGameService>();
+            // Get the service instance from the static field
+            var service = ServiceProvider.GetService<IGameService>();
 
-                // Act
-                var result = service!.MapRule(player1.Character)(player1, player2);
+            // Act
+            var result = service!.MapRule(player1.Character)(player1, player2);
 
-                // Assert
-                Assert.Equal(result, expected);
-            }
-
-            [Fact]
-            public void TestAssassinRule_InvalidCardCombination()
-            {
-                // Get the service instance from the static field
-                var service = ServiceProvider.GetService<IGameService>();
-
-                // Arrange
-                var player1 = new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = [(Card)100, Card.Crown, Card.Crown],
-                    LastOpened = 0,
-                };
-                var player2 = new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = [(Card)100, Card.Crown, Card.Crown],
-                    LastOpened = 0,
-                };
-
-                // Act and Assert
-                var exception = Assert.Throws<Exception>(() => service!.MapRule(player1.Character)(player1, player2));
-                Assert.Equal("Invalid card combination", exception.Message);
-            }
+            // Assert
+            Assert.Equal(result, expected);
         }
 
-        public class DeceiverRuleTests
+        [Fact]
+        public void TestRule_InvalidCardCombination()
         {
-            [Theory]
-            [MemberData(nameof(DeceiverRuleData), MemberType = typeof(RuleTests))]
-            public void TesRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
+            // Get the service instance from the static field
+            var service = ServiceProvider.GetService<IGameService>();
+
+            // Arrange
+            var player1 = new PlayerRoundInfo
             {
-                // Get the service instance from the static field
-                var service = ServiceProvider.GetService<IGameService>();
-
-                // Act
-                var result = service!.MapRule(player1.Character)(player1, player2);
-
-                // Assert
-                Assert.Equal(result, expected);
-            }
-
-            [Fact]
-            public void TestInvalidCardCombination()
+                Character = Character.Assassin,
+                Hand = new(),
+                ChosenCards = [(Card)100, Card.Crown, Card.Crown],
+                LastOpened = 0,
+            };
+            var player2 = new PlayerRoundInfo
             {
-                // Get the service instance from the static field
-                var service = ServiceProvider.GetService<IGameService>();
+                Character = Character.Assassin,
+                Hand = new(),
+                ChosenCards = [(Card)100, Card.Crown, Card.Crown],
+                LastOpened = 0,
+            };
 
-                // Arrange
-                var player1 = new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = [(Card)100, Card.Crown, Card.Crown],
-                    LastOpened = 0,
-                };
-                var player2 = new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = [(Card)100, Card.Crown, Card.Crown],
-                    LastOpened = 0,
-                };
-
-                // Act and Assert
-                var exception = Assert.Throws<Exception>(() => service!.MapRule(player1.Character)(player1, player2));
-                Assert.Equal("Invalid card combination", exception.Message);
-            }
+            // Act and Assert
+            var exception = Assert.Throws<Exception>(() => service!.MapRule(player1.Character)(player1, player2));
+            Assert.Equal("Invalid card combination", exception.Message);
         }
     }
 }
