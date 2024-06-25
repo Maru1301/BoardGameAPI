@@ -17,7 +17,7 @@ namespace BoardGame.Controllers
     {
         private readonly IAdminService _adminService = adminService;
 
-        [HttpPost]
+        [HttpPost, AuthorizeRoles(Role.Admin)]
         public async Task<IActionResult> AddAdmin(AdminCreateRequestDTO vm)
         {
             try

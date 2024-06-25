@@ -119,13 +119,14 @@ public class GameHub(IGameService gameService) : Hub
 
             var card = await gameService.OpenNextCard(dto);
 
+            await Clients.OthersInGroup(dto.CurrentGameId).SendAsync("RevieveNextCard", card);
         }
         catch (Exception e)
         {
         }
     }
 
-    public async Task EndRound(Character playerChosenCharacter)
+    public async Task EndRound(string currentGameId)
     {
         try
         {
@@ -133,6 +134,7 @@ public class GameHub(IGameService gameService) : Hub
 
             await gameService.EndRound(playerChosenCharacter, userAccount);
 
+            await Clients.Group(currentGameId).SendAsync("RevieveEndRound", card);
         }
         catch (Exception ex)
         {
