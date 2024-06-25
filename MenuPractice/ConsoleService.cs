@@ -154,23 +154,11 @@ namespace Menu_Practice
 
             Console.WriteLine(menuList.Title);
 
-            if (menuList.GetType() == typeof(OpponentMenu))
+            for (var i = 0; i < menuList.Options.Count; i++)
             {
-                for(var i = 0; i < menuList.Options.Count; i++)
-                {
-                    Console.WriteLine(chooser == i
-                        ? $"=>  {menuList.Options[i].OptionName}"
-                        : $"    {menuList.Options[i].OptionName}");
-                }
-            }
-            else
-            {
-                for (var i = 0; i < menuList.Options.Count; i++)
-                {
-                    Console.WriteLine(chooser == i
-                        ? $"=>  {menuList.Options[i].OptionName}"
-                        : $"    {menuList.Options[i].OptionName}");
-                }
+                Console.WriteLine(chooser == i
+                    ? $"=>  {menuList.Options[i].OptionName}"
+                    : $"    {menuList.Options[i].OptionName}");
             }
         }
 
@@ -219,11 +207,13 @@ namespace Menu_Practice
 
         public static Card GetChosenCard(this List<int> playerCards)
         {
+            return Choose(playerCards, Resources.ChooseCard, string.Empty);
+        }
+
+        private static Card Choose(List<int> playerCards, string title, string hint)
+        {
             var chooser = 0;
             ConsoleKey key;
-
-            var title = Resources.ChooseCard;
-            string hint = string.Empty;
             bool result;
             do
             {
@@ -299,46 +289,7 @@ namespace Menu_Practice
 
         public static Card GetPlayerWinCard(this List<int> npcCards)
         {
-            var chooser = 0;
-            ConsoleKey key;
-
-            var title = Resources.ChooseObtainCard;
-            var hint = string.Empty;
-            bool result;
-            do
-            {
-                npcCards.ShowCards(title, hint, chooser);
-
-                key = Console.ReadKey().Key;
-
-                switch (key)
-                {
-                    case ConsoleKey.UpArrow:
-                    case ConsoleKey.W:
-                    {
-                        if (chooser > 0)
-                        {
-                            chooser--;
-                        }
-
-                        break;
-                    }
-                    case ConsoleKey.DownArrow:
-                    case ConsoleKey.S:
-                    {
-                        if (chooser < npcCards.Count - 1)
-                        {
-                            chooser++;
-                        }
-
-                        break;
-                    }
-                }
-
-                (result, hint) = IsChosenCardEqualZero(npcCards, key, chooser);
-            } while (result || key != ConsoleKey.Enter);
-
-            return (Card)chooser;
+            return Choose(npcCards, Resources.ChooseObtainCard, string.Empty);
         }
 
         public static void ShowChosenCards(this (Card playerChosenCard, Card npcChosenCard) set)

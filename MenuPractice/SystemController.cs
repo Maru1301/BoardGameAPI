@@ -24,12 +24,12 @@ namespace Menu_Practice
 
         public async Task Start()
         {
-            while (await LoginAsync() == false) { };
-            await _gameService.Test(_token);
+
 #if DEBUG
 
 #else
-            
+            while (await LoginAsync() == false) { };
+            await _gameService.Test(_token);
 #endif
 
             var status = Status.InMenu;
