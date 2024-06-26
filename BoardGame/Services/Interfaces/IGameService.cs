@@ -22,7 +22,7 @@ namespace BoardGame.Services.Interfaces
 
         Task EndGame(string currentGameId, string userAccount);
         Task BeginNewRound(RoundInfoDTO roundInfo, string userAccount);
-        Task<Card> OpenNextCard(OpenNextCardRequestDTO dto);
-        Task EndRound(Character playerChosenCharacter, string userAccount);
+        Task<(Card, bool)> OpenNextCard(OpenNextCardRequestDTO dto);
+        Task EndRound(string currentGameId, string userAccount);
     }
 }

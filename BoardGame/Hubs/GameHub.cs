@@ -19,7 +19,7 @@ public class GameHub(IGameService gameService) : Hub
         var roomId = await gameService.PlayWithBot(account);
         await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 
-        await Clients.Group(roomId).SendAsync("RevievedQueue", "game started");
+        await Clients.Group(roomId).SendAsync("ReceiveQueue", "game started");
     }
 
     public async Task StartQueuing()
@@ -31,16 +31,16 @@ public class GameHub(IGameService gameService) : Hub
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
             if (gameStarted) 
             {
-                await Clients.Group(roomId).SendAsync("RevievedQueue", "game started");
+                await Clients.Group(roomId).SendAsync("ReceiveQueue", "game started");
             }
         }
-        catch(GameServiceException ex)
+        catch (GameServiceException ex)
         {
-            await Clients.Client(Context.ConnectionId).SendAsync("RecievedQueue", ex.Message);
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveGameServiceException", ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            await Clients.Client(Context.ConnectionId).SendAsync("RecievedQueue", ex.Message);
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveException", e.Message);
         }
     }
 
@@ -92,8 +92,13 @@ public class GameHub(IGameService gameService) : Hub
             await gameService.EndGame(currentGameId, userAccount);
 
         }
-        catch (Exception ex)
+        catch (GameServiceException ex)
         {
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveGameServiceException", ex.Message);
+        }
+        catch (Exception e)
+        {
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveException", e.Message);
         }
     }
 
@@ -106,8 +111,13 @@ public class GameHub(IGameService gameService) : Hub
             await gameService.BeginNewRound(request.To<RoundInfoDTO>(), userAccount);
 
         }
-        catch (Exception ex)
+        catch (GameServiceException ex)
         {
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveGameServiceException", ex.Message);
+        }
+        catch (Exception e)
+        {
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveException", e.Message);
         }
     }
 
@@ -117,12 +127,22 @@ public class GameHub(IGameService gameService) : Hub
         {
             dto.UserAccount = GetUserAccount();
 
-            var card = await gameService.OpenNextCard(dto);
+            var (card, IsLastCardOpened) = await gameService.OpenNextCard(dto);
 
-            await Clients.OthersInGroup(dto.CurrentGameId).SendAsync("RevieveNextCard", card);
+            await Clients.OthersInGroup(dto.CurrentGameId).SendAsync("ReceiveNextCard", card);
+
+            if (IsLastCardOpened)
+            {
+                await gameService.EndRound(dto.CurrentGameId, dto.UserAccount);
+            }
+        }
+        catch(GameServiceException ex)
+        {
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveGameServiceException", ex.Message);
         }
         catch (Exception e)
         {
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveException", e.Message);
         }
     }
 
@@ -132,12 +152,17 @@ public class GameHub(IGameService gameService) : Hub
         {
             string userAccount = GetUserAccount();
 
-            await gameService.EndRound(playerChosenCharacter, userAccount);
+            await gameService.EndRound(currentGameId, userAccount);
 
-            await Clients.Group(currentGameId).SendAsync("RevieveEndRound", card);
+            await Clients.Group(currentGameId).SendAsync("ReceiveEndRound", card);
         }
-        catch (Exception ex)
+        catch (GameServiceException ex)
         {
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveGameServiceException", ex.Message);
+        }
+        catch (Exception e)
+        {
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveException", e.Message);
         }
     }
 

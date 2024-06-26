@@ -139,7 +139,7 @@ namespace BoardGame.Services
             {
                 await ValidateGameInfo(dto);
 
-                var entries = new HashEntry(currentGameId, JsonConvert.SerializeObject(dto.To<Game>()));
+                var entries = new HashEntry(currentGameId, JsonConvert.SerializeObject(dto.To<GameDTO>()));
                 await cacheService.HashSetAsync(CacheKey.CurrentGame, [entries]);
 
                 return currentGameId;
@@ -175,7 +175,7 @@ namespace BoardGame.Services
                 // Implement bot logic here
             }
 
-            var entries = new HashEntry(game.CurrentGameId, JsonConvert.SerializeObject(dto.To<Game>()));
+            var entries = new HashEntry(dto.CurrentGameId, JsonConvert.SerializeObject(game));
             await cacheService.HashSetAsync(CacheKey.CurrentGame, [entries]);
         }
 
@@ -239,9 +239,8 @@ namespace BoardGame.Services
             await cacheService.RemoveDataAsync(userAccount);
         }
 
-        public async Task<Card> OpenNextCard(OpenNextCardRequestDTO dto)
+        public async Task<(Card, bool)> OpenNextCard(OpenNextCardRequestDTO dto)
         {
-            // Retrieve the game from Redis
             var cacheData = await cacheService.HashGetAsync(CacheKey.CurrentGame, dto.CurrentGameId);
 
             if (!cacheData.HasValue)
@@ -249,31 +248,74 @@ namespace BoardGame.Services
                 throw new GameServiceException(ErrorCode.GameNotExist);
             }
 
-            var game = JsonConvert.DeserializeObject<GameDTO>(cacheData.ToString()) ?? throw new GameServiceException(ErrorCode.DeserializationFialed);
+            var cachedGame = JsonConvert.DeserializeObject<GameDTO>(cacheData.ToString()) 
+                             ?? throw new GameServiceException(ErrorCode.DeserializationFialed);
 
-            // Implement logic to open the next card
-            int lastOpened = game.Player1Account == dto.UserAccount ?
-                            ++game.Round[dto.RoundOrder].Player1.LastOpened :
-                            ++game.Round[dto.RoundOrder].Player2.LastOpened;
+            var round = cachedGame.Round[dto.RoundOrder];
+            var player1 = round.Player1;
+            var player2 = round.Player2;
+            var takeActionPlayer = IsPlayer1TakeAction(dto, cachedGame) ? player1 : player2;
 
-            // Update the game state in Redis
-            var entries = new HashEntry(game.CurrentGameId, JsonConvert.SerializeObject(dto.To<Game>()));
+            // Determine which player is allowed to take action now
+            bool isPlayer1GoesFirst = cachedGame.Round[cachedGame.CurrentRound].WhoGoesFirst == WhoGoesFirst.Player1;
+            bool isPlayer1Action = IsPlayer1TakeAction(dto, cachedGame);
+
+            // Check if it is player1's turn based on the turn order and current action
+            if (isPlayer1GoesFirst == isPlayer1Action)
+            {
+                // If it is player1's turn, ensure that the last opened times of both players are different
+                if (player1.LastOpened != player2.LastOpened)
+                {
+                    throw new GameServiceException(ErrorCode.NotYourTurn); // Throw an exception if they are different
+                }
+            }
+            else
+            {
+                // If it is player2's turn
+                if (isPlayer1GoesFirst)
+                {
+                    // If player1 goes first, ensure player2's last opened time is before player1's last opened time
+                    if (player2.LastOpened >= player1.LastOpened)
+                    {
+                        throw new GameServiceException(ErrorCode.NotYourTurn); // Throw an exception if player2's last opened time is not before player1's last opened time
+                    }
+                }
+                else
+                {
+                    // If player2 goes first, ensure player1's last opened time is before player2's last opened time
+                    if (player1.LastOpened >= player2.LastOpened)
+                    {
+                        throw new GameServiceException(ErrorCode.NotYourTurn); // Throw an exception if player1's last opened time is not before player2's last opened time
+                    }
+                }
+            }
+
+            int lastOpened = takeActionPlayer.LastOpened+1;
+            takeActionPlayer.LastOpened = lastOpened;
+
+
+            var entries = new HashEntry(dto.CurrentGameId, JsonConvert.SerializeObject(cachedGame));
             await cacheService.HashSetAsync(CacheKey.CurrentGame, [entries]);
 
-            return game.Round[dto.RoundOrder].Player2.ChosenCards[lastOpened];
+            return (takeActionPlayer.ChosenCards[lastOpened], 
+                    player1.LastOpened == player2.LastOpened && player1.LastOpened == 2); //  Check if both players have opened the last card
         }
 
-        public async Task EndRound(Character playerChosenCharacter, string userAccount)
+        private static bool IsPlayer1TakeAction(OpenNextCardRequestDTO dto, GameDTO game)
         {
-            // Retrieve the round information from Redis
-            //var cacheData = await cacheService.HashGetAsync(CacheKey.CurrentGame, dto.CurrentGameId);
+            return dto.UserAccount == game.Player1Account;
+        }
 
-            //if (!cacheData.HasValue)
-            //{
-            //    throw new GameServiceException(ErrorCode.GameNotExist);
-            //}
+        public async Task EndRound(string currentGameId, string userAccount)
+        {
+            var cacheData = await cacheService.HashGetAsync(CacheKey.CurrentGame, currentGameId);
 
-            //var game = JsonConvert.DeserializeObject<GameDTO>(cacheData.ToString()) ?? throw new GameServiceException(ErrorCode.DeserializationFialed);
+            if (!cacheData.HasValue)
+            {
+                throw new GameServiceException(ErrorCode.GameNotExist);
+            }
+
+            var game = JsonConvert.DeserializeObject<GameDTO>(cacheData.ToString()) ?? throw new GameServiceException(ErrorCode.DeserializationFialed);
 
             // Implement logic to end the round
             //round.Status = RoundStatus.Ended;

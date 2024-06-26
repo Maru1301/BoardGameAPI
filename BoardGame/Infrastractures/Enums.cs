@@ -1,4 +1,6 @@
-﻿namespace BoardGame.Infrastractures
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace BoardGame.Infrastractures
 {
     public enum Role
     {
@@ -21,6 +23,7 @@
         public static string GameNotExist { get => "Game does not exist"; }
         public static string DeserializationFialed { get => "Deserialization Fialed"; }
         public static string RoomNotFound { get => "Room Not Found"; }
+        public static string NotYourTurn { get => "Not Your Turn!"; }
     }
 
     public class CacheKey

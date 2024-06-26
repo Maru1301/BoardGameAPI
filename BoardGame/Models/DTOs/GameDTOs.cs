@@ -14,7 +14,6 @@ public class GameBaseDTO
 
 public class GameDTO : GameBaseDTO
 {
-    public string CurrentGameId { get; set; } = string.Empty;
     public int CurrentRound { get; set; }
     public List<Round> Round { get; set; } = [];
     public EndGameInfo EndGameInfo { get; set; } = new();
