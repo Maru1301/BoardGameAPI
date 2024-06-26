@@ -14,7 +14,7 @@ public class GameBaseDTO
 
 public class GameDTO : GameBaseDTO
 {
-    public int CurrentRound { get; set; }
+    public int CurrentRound { get; set; } = 0;
     public List<Round> Round { get; set; } = [];
     public EndGameInfo EndGameInfo { get; set; } = new();
     public long CreatedTime { get; set; }
@@ -26,12 +26,19 @@ public class GameInfoRequestDTO : GameBaseDTO
 
 public class GameInfoDTO : GameBaseDTO
 {
-    public long CreatedTime { get; set; } = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000;
+    public long CreatedTime { get; set; } = Extensions.GetTimeStamp();
 }
 
 public class RoundInfoRequestDTO
 {
     public string CurrentGameId { get; set; } = string.Empty;
+    public PlayerRoundInfo Player1 { get; set; } = new();
+    public PlayerRoundInfo Player2 { get; set; } = new();
+}
+
+public class RoundInfoResponseDTO
+{
+    public string Winner { get; set; } = string.Empty;
     public PlayerRoundInfo Player1 { get; set; } = new();
     public PlayerRoundInfo Player2 { get; set; } = new();
 }

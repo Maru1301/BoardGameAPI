@@ -24,6 +24,7 @@ namespace BoardGame.Infrastractures
         public static string DeserializationFialed { get => "Deserialization Fialed"; }
         public static string RoomNotFound { get => "Room Not Found"; }
         public static string NotYourTurn { get => "Not Your Turn!"; }
+        public static string LastRoundNotEnd { get => "The last round is not over yet"; }
     }
 
     public class CacheKey

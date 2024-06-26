@@ -152,9 +152,14 @@ public class GameHub(IGameService gameService) : Hub
         {
             string userAccount = GetUserAccount();
 
-            await gameService.EndRound(currentGameId, userAccount);
+            var (dto, isLastRound) = await gameService.EndRound(currentGameId, userAccount);
 
-            await Clients.Group(currentGameId).SendAsync("ReceiveEndRound", card);
+            await Clients.Group(currentGameId).SendAsync("ReceiveEndRound", dto.To<RoundInfoResponseDTO>());
+
+            if (isLastRound)
+            {
+                await EndGame(currentGameId);
+            }
         }
         catch (GameServiceException ex)
         {

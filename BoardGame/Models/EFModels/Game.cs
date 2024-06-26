@@ -41,6 +41,8 @@ namespace BoardGame.Models.EFModels
         public long RoundBegin { get; set; }
 
         public long RoundEnd { get; set; }
+
+        public bool InGame { get => RoundEnd == default; }
     }
 
     public class PlayerRoundInfo

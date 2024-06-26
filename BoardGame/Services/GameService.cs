@@ -167,6 +167,11 @@ namespace BoardGame.Services
 
             var game = JsonConvert.DeserializeObject<GameDTO>(cacheData.ToString()) ?? throw new GameServiceException(ErrorCode.DeserializationFialed);
 
+            if (game.Round[game.CurrentRound].InGame)
+            {
+                throw new GameServiceException(ErrorCode.LastRoundNotEnd);
+            }
+
             dto.WhoGoesFirst = DetermineWhoGoesFirst();
 
             // If the second player is a bot, handle bot logic
@@ -174,6 +179,10 @@ namespace BoardGame.Services
             {
                 // Implement bot logic here
             }
+
+            game.CurrentRound += 1;
+            var round = game.Round[game.CurrentRound];
+            round.RoundBegin = Extensions.GetTimeStamp();
 
             var entries = new HashEntry(dto.CurrentGameId, JsonConvert.SerializeObject(game));
             await cacheService.HashSetAsync(CacheKey.CurrentGame, [entries]);
@@ -293,7 +302,6 @@ namespace BoardGame.Services
             int lastOpened = takeActionPlayer.LastOpened+1;
             takeActionPlayer.LastOpened = lastOpened;
 
-
             var entries = new HashEntry(dto.CurrentGameId, JsonConvert.SerializeObject(cachedGame));
             await cacheService.HashSetAsync(CacheKey.CurrentGame, [entries]);
 
@@ -306,7 +314,7 @@ namespace BoardGame.Services
             return dto.UserAccount == game.Player1Account;
         }
 
-        public async Task EndRound(string currentGameId, string userAccount)
+        public async Task<(RoundInfoDTO, bool)> EndRound(string currentGameId, string userAccount)
         {
             var cacheData = await cacheService.HashGetAsync(CacheKey.CurrentGame, currentGameId);
 
@@ -315,14 +323,24 @@ namespace BoardGame.Services
                 throw new GameServiceException(ErrorCode.GameNotExist);
             }
 
-            var game = JsonConvert.DeserializeObject<GameDTO>(cacheData.ToString()) ?? throw new GameServiceException(ErrorCode.DeserializationFialed);
+            var cachedGame = JsonConvert.DeserializeObject<GameDTO>(cacheData.ToString()) 
+                             ?? throw new GameServiceException(ErrorCode.DeserializationFialed);
 
-            // Implement logic to end the round
-            //round.Status = RoundStatus.Ended;
-            //round.PlayerChosenCharacter = playerChosenCharacter;
+            var round = cachedGame.Round[cachedGame.CurrentRound];
+            round.RoundEnd = Extensions.GetTimeStamp();
 
-            //// Update the round state in Redis
-            //await cacheService.SetDataAsync(userAccount + "_round", round);
+            var roundDto = round.To<RoundInfoDTO>();
+            var rule = MapRule(roundDto.RuleCharacter);
+
+            var result = rule(round.Player1, round.Player2);
+            round.Winner = result > 0 ? cachedGame.Player1Account
+                         : result < 0 ? cachedGame.Player2Account
+                         : string.Empty;
+
+            var entries = new HashEntry(currentGameId, JsonConvert.SerializeObject(cachedGame));
+            await cacheService.HashSetAsync(CacheKey.CurrentGame, [entries]);
+
+            return (roundDto, cachedGame.CurrentRound == 5);
         }
     }
 
