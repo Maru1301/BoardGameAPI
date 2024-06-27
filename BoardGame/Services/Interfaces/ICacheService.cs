@@ -1,5 +1,4 @@
-﻿using BoardGame.Models.EFModels;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 
 namespace BoardGame.Services.Interfaces
 {
@@ -8,6 +7,8 @@ namespace BoardGame.Services.Interfaces
         public Task<RedisValue> StringGetAsync(string key);
 
         public Task StringSetAsync(string key, RedisValue value);
+
+        public Task<bool> StringDeleteAsync(string key);
 
         public Task<RedisValue> ListLeftPopAsync(string key);
 

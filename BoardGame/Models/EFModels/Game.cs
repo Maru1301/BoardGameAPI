@@ -8,20 +8,11 @@ namespace BoardGame.Models.EFModels
         public ObjectId Id { get; set; }
         public string Player1Account { get; set; } = string.Empty;
         public string Player2Account { get; set; } = string.Empty;
-        public CharacterSet Player1Characters { get; set; } = new();
-        public CharacterSet Player2Characters { get; set; } = new();
+        public List<Character> Player1Characters { get; set; } = new();
+        public List<Character> Player2Characters { get; set; } = new();
         public List<Round> Round { get; set; } = [];
         public EndGameInfo? EndGameInfo { get; set; }
         public long CreatedTime { get; set; }
-    }
-
-    public class CharacterSet
-    {
-        public Character Character1 { get; set; }
-
-        public Character Character2 { get; set; }
-
-        public Character Characetr3 { get; set; }
     }
 
     public class Round

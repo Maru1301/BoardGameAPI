@@ -47,7 +47,8 @@ namespace BoardGame.Infrastractures
     public enum WhoGoesFirst
     {
         Player1,
-        Player2
+        Player2,
+        None
     }
 
     public enum Character

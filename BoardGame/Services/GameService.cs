@@ -27,76 +27,82 @@ namespace BoardGame.Services
             }
         }
 
-        public async Task<string> PlayWithBot(string account)
+        public async Task<string> PlayWithBot(WhoGoesFirst whoGoesFirst, string account)
         {
-            var roomId = string.Empty;
-            var roomIdUsed = true;
-            while (roomIdUsed)
-            {
-                roomId = $"Room_{RandomNumberGenerator.GetHexString(16, true)}";
-                var cacheData = await cacheService.StringGetAsync(roomId);
-
-                roomIdUsed = !string.IsNullOrEmpty(cacheData);
-            }
-
-            var whoGoesFirst = DetermineWhoGoesFirst();
+            var currentGameId = await GetNewGameId();
+            whoGoesFirst = (whoGoesFirst == WhoGoesFirst.None) ? DetermineWhoGoesFirst() : whoGoesFirst;
 
             var dto = new GameInfoDTO()
             {
+                CurrentGameId = currentGameId,
+                WhoGoesFirst = whoGoesFirst,
                 Player1Account = account,
                 Player2Account = _bot,
             };
 
-            if (whoGoesFirst == WhoGoesFirst.Player2)
-            {
-                dto = new GameInfoDTO()
-                {
-                    Player1Account = _bot,
-                    Player2Account = account,
-                };
-            }
-            
-            await BeginNewGame(dto);
+            //await BeginNewGame(dto);
 
-            return roomId;
+            return currentGameId;
+        }
+
+        private async Task<string> GetNewGameId()
+        {
+            var currentGameId = string.Empty;
+            var currentGameIdInUsed = true;
+            while (currentGameIdInUsed)
+            {
+                currentGameId = RandomNumberGenerator.GetHexString(16, true);
+                var cacheData = await cacheService.StringGetAsync(currentGameId);
+
+                currentGameIdInUsed = !string.IsNullOrEmpty(cacheData);
+            }
+
+            return currentGameId;
         }
 
         public async Task<(bool, string)> Match(string account)
         {
             var player = await cacheService.ListLeftPopAsync(CacheKey.WaitingPlayer);
 
-            var roomId = string.Empty;
+            var currentGameId = string.Empty;
             if (string.IsNullOrEmpty(player))
             {
                 await cacheService.ListRightPushAsync(CacheKey.WaitingPlayer, account);
 
-                var roomIdUsed = true;
-                while (roomIdUsed)
+                var currentGameIdInUsed = true;
+                while (currentGameIdInUsed)
                 {
-                    roomId = $"Room_{RandomNumberGenerator.GetHexString(16, true)}";
-                    var cacheData = await cacheService.StringGetAsync(roomId);
+                    currentGameId = RandomNumberGenerator.GetHexString(16, true);
+                    var cacheData = await cacheService.StringGetAsync(currentGameId);
 
-                    roomIdUsed = !string.IsNullOrEmpty(cacheData);
+                    currentGameIdInUsed = !string.IsNullOrEmpty(cacheData);
                 }
 
-                await cacheService.StringSetAsync(roomId, account);
+                await cacheService.StringSetAsync(account, currentGameId);
 
-                return (false, roomId);
+                return (false, currentGameId);
             }
 
-            roomId = await cacheService.StringGetAsync(player.ToString());
+            currentGameId = await cacheService.StringGetAsync(player.ToString());
 
-            if (string.IsNullOrEmpty(roomId)) { throw new GameServiceException(ErrorCode.RoomNotFound); }
+            if (string.IsNullOrEmpty(currentGameId)) { throw new GameServiceException(ErrorCode.RoomNotFound); }
 
-            var dto = new GameInfoDTO()
-            {
-                Player1Account = player.ToString(),
-                Player2Account = account,
-            };
+            await cacheService.StringDeleteAsync(player.ToString());
 
-            await BeginNewGame(dto);
+            //var dto = new GameInfoDTO()
+            //{
+            //    Player1Account = player.ToString(),
+            //    Player2Account = account,
+            //};
 
-            return (true, roomId);
+            //await BeginNewGame(dto);
+
+            return (true, currentGameId);
+        }
+
+        public async Task PickCharacter(string currentGameId, string account)
+        {
+            
         }
 
         //public async Task<string> HostGame()
@@ -130,28 +136,23 @@ namespace BoardGame.Services
 
         //}
 
-        private async Task<string> BeginNewGame(GameInfoDTO dto)
+        private async Task BeginNewGame(GameInfoDTO dto)
         {
-            await unitOfWork.BeginTransactionAsync();
-            var currentGameId = RandomNumberGenerator.GetHexString(16, true);
-
             try
             {
                 await ValidateGameInfo(dto);
 
-                var entries = new HashEntry(currentGameId, JsonConvert.SerializeObject(dto.To<GameDTO>()));
+                var entries = new HashEntry(dto.CurrentGameId, JsonConvert.SerializeObject(dto.To<GameDTO>()));
                 await cacheService.HashSetAsync(CacheKey.CurrentGame, [entries]);
-
-                return currentGameId;
             }
             catch (GameServiceException)
             {
-                await cacheService.HashRemoveAsync(CacheKey.CurrentGame, currentGameId);
+                await cacheService.HashRemoveAsync(CacheKey.CurrentGame, dto.CurrentGameId);
                 throw;
             }
             catch (Exception)
             {
-                await cacheService.HashRemoveAsync(CacheKey.CurrentGame, currentGameId);
+                await cacheService.HashRemoveAsync(CacheKey.CurrentGame, dto.CurrentGameId);
                 throw;
             }
         }
@@ -213,20 +214,7 @@ namespace BoardGame.Services
             _ = await unitOfWork.Members.GetByAccountAsync(dto.Player1Account) ?? throw new GameServiceException("player1 account does not exist!");
             _ = await unitOfWork.Members.GetByAccountAsync(dto.Player1Account) ?? throw new GameServiceException("player2 account does not exist!");
 
-            var chosenCharacters1 = new HashSet<Character>
-            {
-                dto.Player1Characters.Character1,
-                dto.Player1Characters.Character2,
-                dto.Player1Characters.Characetr3 
-            };
-            var chosenCharacters2 = new HashSet<Character>
-            {
-                dto.Player2Characters.Character1,
-                dto.Player2Characters.Character2,
-                dto.Player2Characters.Characetr3
-            };
-
-            if (chosenCharacters1.Count != 3 || chosenCharacters2.Count != 3) { throw new GameServiceException("Duplicated characters"); }
+            if (dto.Player1Characters.ToHashSet().Count != 3 || dto.Player2Characters.ToHashSet().Count != 3) { throw new GameServiceException("Duplicated characters"); }
         }
 
         public async Task EndGame(string currentGameId, string userAccount)

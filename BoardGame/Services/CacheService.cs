@@ -23,6 +23,17 @@ namespace BoardGame.Services
             await _db.StringSetAsync(key, value);
         }
 
+        public async Task<bool> StringDeleteAsync(string key)
+        {
+            bool _isKeyExist = await _db.KeyExistsAsync(key);
+            if (_isKeyExist == true)
+            {
+                return await _db.KeyDeleteAsync(key);
+            }
+
+            return false;
+        }
+
         public async Task<RedisValue> ListLeftPopAsync(string key)
         {
             return await _db.ListLeftPopAsync(key);

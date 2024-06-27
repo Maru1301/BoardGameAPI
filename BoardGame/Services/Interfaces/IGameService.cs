@@ -8,9 +8,11 @@ namespace BoardGame.Services.Interfaces
     {
         public Task<IEnumerable<GameDTO>> GetGameRecordList();
 
-        public Task<string> PlayWithBot(string account);
+        public Task<string> PlayWithBot(WhoGoesFirst whoGoesFirst, string account);
 
-        public Task<(bool gameStarted, string roomId)> Match(string account);
+        public Task<(bool gameStarted, string currentGameId)> Match(string account);
+
+        public Task PickCharacter(string currentGameId, string account);
 
         //public Task<string> HostGame();
 

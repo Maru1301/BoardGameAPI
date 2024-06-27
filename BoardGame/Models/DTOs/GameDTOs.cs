@@ -8,8 +8,8 @@ public class GameBaseDTO
 {
     public string Player1Account { get; set; } = string.Empty;
     public string Player2Account { get; set; } = string.Empty;
-    public CharacterSet Player1Characters { get; set; } = new();
-    public CharacterSet Player2Characters { get; set; } = new();
+    public List<Character> Player1Characters { get; set; } = [];
+    public List<Character> Player2Characters { get; set; } = [];
 }
 
 public class GameDTO : GameBaseDTO
@@ -26,6 +26,8 @@ public class GameInfoRequestDTO : GameBaseDTO
 
 public class GameInfoDTO : GameBaseDTO
 {
+    public string CurrentGameId { get; set; } = string.Empty;
+    public WhoGoesFirst WhoGoesFirst { get; set; }
     public long CreatedTime { get; set; } = Extensions.GetTimeStamp();
 }
 

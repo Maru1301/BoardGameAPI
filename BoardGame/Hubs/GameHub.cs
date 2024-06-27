@@ -12,14 +12,20 @@ namespace BoardGame.Hubs;
 [AuthorizeRoles(Role.Member, Role.Guest)]
 public class GameHub(IGameService gameService) : Hub
 {
-    public async Task PlayWithBot()
+    public async Task PlayWithBot(WhoGoesFirst whoGoesFirst)
     {
         var account = GetUserAccount();
 
-        var roomId = await gameService.PlayWithBot(account);
-        await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+        var currentGameId = await gameService.PlayWithBot(whoGoesFirst, account);
+        await Groups.AddToGroupAsync(Context.ConnectionId, currentGameId);
 
-        await Clients.Group(roomId).SendAsync("ReceiveQueue", "game started");
+        await Clients.Group(currentGameId).SendAsync("ReceiveQueue", "game started");
+    }
+
+    public async Task PickCharacter(string currentGameId)
+    {
+        var account = GetUserAccount();
+        await gameService.PickCharacter(currentGameId, account);
     }
 
     public async Task StartQueuing()
@@ -27,11 +33,11 @@ public class GameHub(IGameService gameService) : Hub
         try
         {
             var account = GetUserAccount();
-            var (gameStarted, roomId) = await gameService.Match(account);
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            var (gameStarted, currentGameId) = await gameService.Match(account);
+            await Groups.AddToGroupAsync(Context.ConnectionId, currentGameId);
             if (gameStarted) 
             {
-                await Clients.Group(roomId).SendAsync("ReceiveQueue", "game started");
+                await Clients.Group(currentGameId).SendAsync("ReceiveQueue", "game started");
             }
         }
         catch (GameServiceException ex)
