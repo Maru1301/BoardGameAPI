@@ -1,22 +1,38 @@
-﻿namespace BoardGame.Infrastractures
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace BoardGame.Infrastractures
 {
-    public static class Role
+    public enum Role
     {
-        public const string Admin = "Admin";
-        public const string Member = "Member";
-        public const string Guest = "Guest";
+        Admin,
+        Member,
+        Guest,
     }
 
     public static class ErrorCode
     {
-        public const string InvalidAccountOrPassword = "Invalid Account or Password";
-        public const string MemberNotExist = "Member doesn't exist!";
-        public const string WrongConfirmationCode = "Wrong confirmation code!";
-        public const string ErrorParsingJwt = "Error occured while parsing JWT";
-        public const string AccountExist = "Account already exists";
-        public const string NameExist = "Name already exists";
-        public const string EmailExist = "Email already exists";
-        public const string AccountNotMatch = "Login Account does not matched!";
+        public static string InvalidAccountOrPassword { get => "Invalid Account or Password"; }
+        public static string InvalidAccount { get => "Invalid Account!"; }
+        public static string MemberNotExist { get => "Member doesn't exist!"; }
+        public static string WrongConfirmationCode { get => "Wrong confirmation code!"; }
+        public static string ErrorParsingJwt { get => "Error occured while parsing JWT"; }
+        public static string AccountExist { get => "Account already exists"; }
+        public static string NameExist { get => "Name already exists"; }
+        public static string EmailExist { get => "Email already exists"; }
+        public static string AccountNotMatch { get => "Login Account does not matched!"; }
+        public static string GameNotExist { get => "Game does not exist"; }
+        public static string DeserializationFialed { get => "Deserialization Fialed"; }
+        public static string RoomNotFound { get => "Room Not Found"; }
+        public static string NotYourTurn { get => "Not Your Turn!"; }
+        public static string LastRoundNotEnd { get => "The last round is not over yet"; }
+    }
+
+    public class CacheKey
+    {
+        public static string Member { get => "Member"; }
+        public static string GameRecord { get => "GameRecord"; }
+        public static string CurrentGame { get => "CurrentGame"; }
+        public static string WaitingPlayer { get => "WaitingPlayer"; }
     }
 
     public enum Result : short
@@ -31,7 +47,8 @@
     public enum WhoGoesFirst
     {
         Player1,
-        Player2
+        Player2,
+        None
     }
 
     public enum Character

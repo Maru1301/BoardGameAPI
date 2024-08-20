@@ -4,15 +4,15 @@
     {
         public void ConstructMenu()
         {
-            var title = "MainMenu";
+            var title = Resources.MainMenu;
             var mainMenuList = builder.BuildMainMenuList(title);
 
-            title = "Choose a character";
+            title = Resources.ChooseCharacter;
             var characterMenuList = builder.BuildCharacterMenuList(title);
             
             builder.ConnectMenuOptionWithMenuList(mainMenuList.Options.First(), characterMenuList);
             
-            title = "Choose an opponent";
+            title = Resources.ChooseOppoCharacter;
             var opponentMenuList = builder.BuildOpponentMenuList(title);
             
             var characterInfoMenuLists = characterMenuList.Options.Select(option => option.NextMenuList).ToList();

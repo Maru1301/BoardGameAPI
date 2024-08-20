@@ -1,25 +1,19 @@
 ﻿namespace Menu_Practice;
 
-internal partial class Program
+internal static class Program
 {
     private static async Task Main(string[] args)
     {
-        ConsoleService consoleService = new();
-        MenuService menuService = new();
-
-        var system = new SystemController(consoleService, menuService);
-
-        while (await system.LoginAsync() == false);
-
-        var status = Status.InMenu;
-        while (status != Status.End)
+        if (args is null)
         {
-            status = system.RunMenu(status);
-
-            if (status == Status.InGame)
-            {
-                status = system.RunGame(status);
-            }
+            throw new ArgumentNullException(nameof(args));
         }
+
+        MenuService menuService = new();
+        GameService gameService = new(new Characters.Character(), new Characters.Character());
+
+        var system = new SystemController(menuService, gameService);
+
+        await system.Start();
     }
 }

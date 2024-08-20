@@ -9,26 +9,32 @@ namespace Menu_Practice
         private Character _chosenCharacter = new();
         private Character _chosenOpponent = new();
 
+        public MenuList CurrentMenuList { get => _menuStack.Peek(); }
+
         public void Init(MenuList rootMenuList)
         {
             _menuStack.Push(rootMenuList);
         }
 
-        public MenuList GetNextMenuList(MenuOption menuOption)
+        public MenuList GetCurrentMenuList()
         {
-            MenuList menuList = new();
-
-            if (menuOption.NextMenuList != null)
-            {
-                menuList = menuOption.NextMenuList;
-
-                _menuStack.Push(menuList);
-            }
-
-            return menuList;
+            return _menuStack.Peek();
         }
 
-        public MenuList GetPrevMenuList()
+        public bool IsCurrentMenuListRoot()
+        {
+            return _menuStack.Peek().IsRootList;
+        }
+
+        public void MoveToNextMenuList(MenuOption menuOption)
+        {
+            if (menuOption.NextMenuList != null)
+            {
+                _menuStack.Push(menuOption.NextMenuList);
+            }
+        }
+
+        public MenuList MoveToPrevMenuList()
         {
             _menuStack.Pop();
 

@@ -3,18 +3,13 @@ using Utility;
 
 namespace BoardGame.Infrastractures
 {
-    public class EmailHelper
+    public class EmailHelper(IConfiguration configuration)
     {
-        private readonly string AppName = string.Empty;
-        private readonly string EmailAccount = string.Empty;
-        private readonly string EmailPassword = string.Empty;
+        private readonly string AppName = configuration["AppName"] ?? string.Empty;
+        private readonly string EmailAccount = configuration["Email:Account"] ?? string.Empty;
+        private readonly string EmailPassword = configuration["Email:Password"] ?? string.Empty;
+        private string Subject { get => "[New Member Confirmation Email]"; }
 
-        public EmailHelper(IConfiguration configuration)
-        {
-            AppName = configuration["AppName"] ?? string.Empty;
-            EmailAccount = configuration["Email:Account"] ?? string.Empty;
-            EmailPassword = configuration["Email:Password"] ?? string.Empty;
-        }
         /// <summary>
         /// Sends a confirmation email to a newly registered user.
         /// </summary>
@@ -23,7 +18,7 @@ namespace BoardGame.Infrastractures
         /// <param name="emailAddress">The email address of the registered user.</param>
         public void SendConfirmationEmail(string confirmationUrl, string name, string email)
         {
-            string subject = "[New Member Confirmation Email]";
+            
             string body = $@"Hi {name},
 
 						<br />
@@ -35,7 +30,7 @@ namespace BoardGame.Infrastractures
                         Sincerely,
                         The {AppName} Team";
 
-            var mailMessage = new MailMessage(EmailAccount, email, subject, body)
+            var mailMessage = new MailMessage(EmailAccount, email, Subject, body)
             {
                 IsBodyHtml = true
             };

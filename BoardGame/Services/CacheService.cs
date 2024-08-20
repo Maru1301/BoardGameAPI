@@ -1,6 +1,5 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Services.Interfaces;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace BoardGame.Services
@@ -14,14 +13,40 @@ namespace BoardGame.Services
             _db = ConnectionHelper.Connection.GetDatabase();
         }
 
-        public async Task<T?> GetDataAsync<T>(string key)
+        public async Task<RedisValue> StringGetAsync(string key)
         {
-            var value = await _db.StringGetAsync(key);
-            if (!string.IsNullOrEmpty(value))
+            return await _db.StringGetAsync(key);
+        }
+
+        public async Task StringSetAsync(string key, RedisValue value)
+        {
+            await _db.StringSetAsync(key, value);
+        }
+
+        public async Task<bool> StringDeleteAsync(string key)
+        {
+            bool _isKeyExist = await _db.KeyExistsAsync(key);
+            if (_isKeyExist == true)
             {
-                return JsonConvert.DeserializeObject<T>(value!);
+                return await _db.KeyDeleteAsync(key);
             }
-            return default;
+
+            return false;
+        }
+
+        public async Task<RedisValue> ListLeftPopAsync(string key)
+        {
+            return await _db.ListLeftPopAsync(key);
+        }
+
+        public async Task ListRightPushAsync(string key, RedisValue value)
+        {
+            await _db.ListRightPushAsync(key, value);
+        }
+
+        public async Task SetGetAsync(string key)
+        {
+            await _db.SetPopAsync(key);
         }
 
         public async Task<RedisValue> HashGetAsync(string key, string subKey)
@@ -34,7 +59,7 @@ namespace BoardGame.Services
             return await _db.HashGetAllAsync(key);
         }
 
-        public async Task HashSetAsync(string key, HashEntry[] entries, TimeSpan expiry = default)
+        public async Task HashSetAsync(string key, HashEntry[] entries, TimeSpan expiry)
         {
             await _db.HashSetAsync(key, entries);
             await _db.KeyExpireAsync(key, expiry);

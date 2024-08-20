@@ -8,29 +8,17 @@ namespace BoardGame.Models.EFModels
         public ObjectId Id { get; set; }
         public string Player1Account { get; set; } = string.Empty;
         public string Player2Account { get; set; } = string.Empty;
-        public CharacterSet Player1Characters { get; set; } = new();
-        public CharacterSet Player2Characters { get; set; } = new();
-        public Round? Round1 { get; set; }
-        public Round? Round2 { get; set; }
-        public Round? Round3 { get; set; }
-        public Round? Round4 { get; set; }
-        public Round? Round5 { get; set; }
-        public Round? Round6 { get; set; }
+        public List<Character> Player1Characters { get; set; } = new();
+        public List<Character> Player2Characters { get; set; } = new();
+        public List<Round> Round { get; set; } = [];
         public EndGameInfo? EndGameInfo { get; set; }
         public long CreatedTime { get; set; }
     }
 
-    public class CharacterSet
-    {
-        public Character Character1 { get; set; }
-
-        public Character Character2 { get; set; }
-
-        public Character Characetr3 { get; set; }
-    }
-
     public class Round
     {
+        public int Order { get; set; }
+
         //record by member account
         public string Winner { get; set; } = string.Empty;
 
@@ -44,23 +32,18 @@ namespace BoardGame.Models.EFModels
         public long RoundBegin { get; set; }
 
         public long RoundEnd { get; set; }
+
+        public bool InGame { get => RoundEnd == default; }
     }
 
     public class PlayerRoundInfo
     {
-        //public int CompressedInfo { get; set; } = 0;
         public Character Character { get; set; }
 
         public CardSet Hand { get; set; } = new();
 
-        public RoundCards ChosenCards { get; set; } = new();
-    }
+        public List<Card> ChosenCards { get; set; } = [];
 
-    public class RoundCards
-    {
-        public Card Card1 { get; set; }
-        public Card Card2 { get; set; }
-        public Card Card3 { get; set; }
         public int LastOpened { get; set; }
     }
 

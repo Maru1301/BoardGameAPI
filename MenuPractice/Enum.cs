@@ -2,24 +2,24 @@
 
 public enum Status : short
 {
-    InMenu = 1,
-    InGame = 2,
-    End = -1,
+    InMenu,
+    InGame,
+    End,
 }
 
 public enum Result : short
 {
-    BasicWin = 0,
-    BasicLose = 1,
-    CharacterRuleWin = 2,
-    CharacterRuleLose = 3,
-    Draw = -1
+    BasicWin,
+    BasicLose,
+    CharacterRuleWin,
+    CharacterRuleLose,
+    Draw
 }
 
-public enum Card : short
+public enum Card
 {
-    None = -1,
-    Crown = 0,
-    Shield = 1,
-    Dagger = 2
+    Crown,
+    Shield,
+    Dagger,
+    None
 }

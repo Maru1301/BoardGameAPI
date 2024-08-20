@@ -14,8 +14,6 @@ public class Character
 
     public string AdditionalPointCondition { get; set; } = string.Empty;
 
-    public Func<PlayerInfoContainer, PlayerInfoContainer, Result>? UseRuleLogic { get; set; }
-
     public Character()
     {
         
@@ -29,6 +27,5 @@ public class Character
         DisqualificationCondition = character.DisqualificationCondition;
         EvolutionCondition = character.EvolutionCondition;
         AdditionalPointCondition = character.AdditionalPointCondition;
-        UseRuleLogic = character.UseRuleLogic;
     }
 }

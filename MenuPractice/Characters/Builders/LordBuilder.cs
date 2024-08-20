@@ -1,6 +1,4 @@
-﻿using static Menu_Practice.Program;
-
-namespace Menu_Practice.Characters.Builders
+﻿namespace Menu_Practice.Characters.Builders
 {
     internal class LordBuilder : ICharacterBuilder
     {
@@ -34,78 +32,6 @@ namespace Menu_Practice.Characters.Builders
         public void BuildAdditionalPointCondition()
         {
             _character.AdditionalPointCondition = "盾牌數";
-        }
-
-        public void BuildGameLogic()
-        {
-            _character.UseRuleLogic = RuleLogic;
-        }
-
-        private static Result RuleLogic(PlayerInfoContainer player1Info, PlayerInfoContainer player2Info)
-        {
-            switch ((player1Info.ChosenCard, player2Info.ChosenCard))
-            {
-                case (0, 0):
-                    if (player1Info.Cards[0] > player2Info.Cards[0])
-                    {
-                        return Result.CharacterRuleWin;
-                    }
-                    else if (player1Info.Cards[0] == player2Info.Cards[0])
-                    {
-                        return Result.Draw;
-                    }
-                    else
-                    {
-                        return Result.CharacterRuleLose;
-                    }
-                case (0, 1):
-                    return Result.BasicWin;
-                case (0, 2):
-                    return Result.BasicLose;
-                case (1, 0):
-                    if (player1Info.Cards[0] == 0 || player2Info.Cards[0] == 0)
-                    {
-                        return Result.Draw;
-                    }
-                    else
-                    {
-                        return Result.BasicLose;
-                    }
-                case (1, 1):
-                    if (player1Info.Cards[1] > player2Info.Cards[1])
-                    {
-                        return Result.CharacterRuleWin;
-                    }
-                    else if (player1Info.Cards[1] == player2Info.Cards[1])
-                    {
-                        return Result.Draw;
-                    }
-                    else
-                    {
-                        return Result.CharacterRuleLose;
-                    }
-                case (1, 2):
-                    return Result.BasicWin;
-                case (2, 0):
-                    return Result.BasicWin;
-                case (2, 1):
-                    return Result.BasicLose;
-                case (2, 2):
-                    if (player1Info.Cards[0] < player2Info.Cards[0])
-                    {
-                        return Result.CharacterRuleWin;
-                    }
-                    else if (player1Info.Cards[0] == player2Info.Cards[0])
-                    {
-                        return Result.Draw;
-                    }
-                    else
-                    {
-                        return Result.CharacterRuleLose;
-                    }
-            }
-
-            return Result.Draw;
         }
 
         public Character GetCharacter()

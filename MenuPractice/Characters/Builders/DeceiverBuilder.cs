@@ -36,61 +36,6 @@ namespace Menu_Practice.Characters.Builders
             _character.AdditionalPointCondition = "匕首數 - 2";
         }
 
-        public void BuildGameLogic()
-        {
-            _character.UseRuleLogic = RuleLogic;
-        }
-
-        private static Result RuleLogic(PlayerInfoContainer player1Info, PlayerInfoContainer player2Info)
-        {
-            switch ((player1Info.ChosenCard, player2Info.ChosenCard))
-            {
-                case (0, 0):
-                    if (player1Info.Cards[1] > player2Info.Cards[1])
-                    {
-                        return Result.CharacterRuleWin;
-                    }else if(player1Info.Cards[1] < player2Info.Cards[1])
-                    {
-                        return Result.CharacterRuleLose;
-                    }
-                    return Result.Draw;
-                case (0, 1):
-                    return Result.BasicWin;
-                case (0, 2):
-                    return Result.BasicLose;
-                case (1, 0):
-                    return Result.BasicLose;
-                case (1, 1):
-                    if (player1Info.Cards[1] < player2Info.Cards[1])
-                    {
-                        return Result.CharacterRuleWin;
-                    }
-                    else if (player1Info.Cards[1] > player2Info.Cards[1])
-                    {
-                        return Result.CharacterRuleLose;
-                    }
-                    return Result.Draw;
-                case (1, 2):
-                    return Result.BasicWin;
-                case (2, 0):
-                    return Result.BasicWin;
-                case (2, 1):
-                    return Result.BasicLose;
-                case (2, 2):
-                    if (player1Info.Cards[1] < player2Info.Cards[1])
-                    {
-                        return Result.CharacterRuleWin;
-                    }
-                    else if (player1Info.Cards[1] > player2Info.Cards[1])
-                    {
-                        return Result.CharacterRuleLose;
-                    }
-                    return Result.Draw;
-            }
-
-            return Result.Draw;
-        }
-
         public Character GetCharacter()
         {
             return _character;

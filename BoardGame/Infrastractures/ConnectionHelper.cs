@@ -2,7 +2,7 @@
 
 namespace BoardGame.Infrastractures
 {
-    public class ConnectionHelper
+    public static class ConnectionHelper
     {
         static ConnectionHelper()
         {

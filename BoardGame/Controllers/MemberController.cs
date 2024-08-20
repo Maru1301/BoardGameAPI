@@ -25,7 +25,6 @@ namespace BoardGame.Controllers
         {
             try
             {
-                //_logger.LogInformation("ListMember");
                 var members = await _memberService.ListMembers();
 
                 return Ok(members.Select(m => m.To<MemberResponseDTO>()).ToList());
@@ -40,7 +39,7 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet, AuthorizeRoles(Role.Member, Role.Guest)]
         public async Task<IActionResult> GetMemberInfo()
         {
             try
@@ -71,7 +70,6 @@ namespace BoardGame.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] MemberLoginRequestDTO login)
         {
-            //_logger.LogInformation($"{login.Account} tries to login");
             try
             {
                 var token = await _memberService.ValidateUser(login.To<LoginDTO>());
@@ -200,15 +198,15 @@ namespace BoardGame.Controllers
             }
         }
 
-        [HttpDelete, AllowAnonymous]
+        [HttpDelete]
         public async Task<IActionResult> Delete(string account)
         {
             try
             {
-                var role = HttpContext.GetJwtClaim(ClaimTypes.Role).Value;
+                var roleStr = HttpContext.GetJwtClaim(ClaimTypes.Role).Value;
                 var jwtAccount = HttpContext.GetJwtClaim(ClaimTypes.Name).Value;
 
-                if (role != Role.Admin && account != jwtAccount)
+                if (roleStr != Role.Admin.ToString() && account != jwtAccount)
                 {
                     return BadRequest(ErrorCode.AccountNotMatch);
                 }

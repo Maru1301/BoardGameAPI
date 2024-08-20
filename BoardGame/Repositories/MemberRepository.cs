@@ -1,4 +1,5 @@
-﻿using BoardGame.Models.EFModels;
+﻿using BoardGame.Infrastractures;
+using BoardGame.Models.EFModels;
 using BoardGame.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
@@ -17,7 +18,7 @@ namespace BoardGame.Repositories
 
         public async Task<IEnumerable<Member>> GetAllAsync()
         {
-            return await _db.Members.ToListAsync();
+            return await _db.Members.ToListWithNoLockAsync();
         }
 
         public async Task<ObjectId> AddAsync(Member entity)
