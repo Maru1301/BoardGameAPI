@@ -1,13 +1,10 @@
-﻿namespace Menu_Practice;
+﻿namespace BoardGameClient;
 
 internal static class Program
 {
     private static async Task Main(string[] args)
     {
-        if (args is null)
-        {
-            throw new ArgumentNullException(nameof(args));
-        }
+        ArgumentNullException.ThrowIfNull(args);
 
         MenuService menuService = new();
         GameService gameService = new(new Characters.Character(), new Characters.Character());

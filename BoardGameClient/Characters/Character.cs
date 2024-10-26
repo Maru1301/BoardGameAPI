@@ -1,4 +1,4 @@
-﻿namespace Menu_Practice.Characters;
+﻿namespace BoardGameClient.Characters;
 
 public class Character
 {
@@ -16,14 +16,14 @@ public class Character
 
     public Character()
     {
-        
+
     }
 
     public Character(Character character)
     {
         Name = character.Name;
         Rule = character.Rule;
-        Cards = [..character.Cards];
+        Cards = [.. character.Cards];
         DisqualificationCondition = character.DisqualificationCondition;
         EvolutionCondition = character.EvolutionCondition;
         AdditionalPointCondition = character.AdditionalPointCondition;

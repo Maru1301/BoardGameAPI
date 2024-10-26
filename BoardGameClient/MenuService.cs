@@ -1,7 +1,7 @@
-﻿using Menu_Practice.Characters;
-using Menu_Practice.Menu;
+﻿using BoardGameClient.Characters;
+using BoardGameClient.Menu;
 
-namespace Menu_Practice
+namespace BoardGameClient
 {
     public class MenuService
     {

@@ -1,4 +1,4 @@
-﻿namespace Menu_Practice;
+﻿namespace BoardGameClient;
 
 public enum Status : short
 {

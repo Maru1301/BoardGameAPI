@@ -1,7 +1,7 @@
-﻿using Menu_Practice.Characters;
+﻿using BoardGameClient.Characters;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace Menu_Practice;
+namespace BoardGameClient;
 
 public class GameService
 {
@@ -102,7 +102,7 @@ public class GameService
 
     public void BeginNewRound()
     {
-        
+
     }
 
     public List<int> PlayerCards { get => _player.Character.Cards; set => _player.Character.Cards = value; }
@@ -193,8 +193,8 @@ public class GameService
         const int playerPoint = 0;
         const int npcPoint = 0;
 
-        return playerPoint == npcPoint ? "平手" : 
-               playerPoint > npcPoint ? "勝利" : 
+        return playerPoint == npcPoint ? "平手" :
+               playerPoint > npcPoint ? "勝利" :
                "敗北";
     }
 
