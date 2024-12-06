@@ -1,14 +1,13 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace BoardGame.Infrastractures
 {
-    public class JWTHelper(IOptionsMonitor<JWTSettingsOptions> settings)
+    public class JWTHelper(IConfig config)
     {
-        private readonly JWTSettingsOptions _settings = settings.CurrentValue;
+        private readonly IConfig _config = config;
 
         public string GenerateToken(ObjectId Id, string account, Role role)
         {
@@ -26,14 +25,14 @@ namespace BoardGame.Infrastractures
                 new Claim(ClaimTypes.Role, role.ToString()),
             ];
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.IssuerSigningKey));
-            var cred = new SigningCredentials(key, _settings.Algorithm);
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(config.JwtConfig.IssuerSigningKey));
+            var cred = new SigningCredentials(key, config.JwtConfig.Algorithm);
             var token = new JwtSecurityToken
             (
-                issuer: _settings.ValidIssuer,
-                audience: _settings.ValidAudience,
+                issuer: config.JwtConfig.ValidIssuer,
+                audience: config.JwtConfig.ValidAudience,
                 claims: claims,
-                expires: DateTime.Now.AddSeconds(double.Parse(_settings.ExpiredTime.ToString()!)),
+                expires: DateTime.Now.AddSeconds(double.Parse(config.JwtConfig.ExpiredTime.ToString()!)),
                 signingCredentials: cred
             );
 

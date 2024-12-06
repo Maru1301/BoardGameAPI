@@ -1,15 +1,17 @@
 ﻿using BoardGame.Infrastractures;
 using MongoDB.Bson;
+using MongoDB.EntityFrameworkCore;
 
 namespace BoardGame.Models.EFModels
 {
+    [Collection("game")]
     public class Game
     {
         public ObjectId Id { get; set; }
         public string Player1Account { get; set; } = string.Empty;
         public string Player2Account { get; set; } = string.Empty;
-        public List<Character> Player1Characters { get; set; } = new();
-        public List<Character> Player2Characters { get; set; } = new();
+        public List<Infrastractures.Character> Player1Characters { get; set; } = new();
+        public List<Infrastractures.Character> Player2Characters { get; set; } = new();
         public List<Round> Round { get; set; } = [];
         public EndGameInfo? EndGameInfo { get; set; }
         public long CreatedTime { get; set; }
@@ -38,7 +40,7 @@ namespace BoardGame.Models.EFModels
 
     public class PlayerRoundInfo
     {
-        public Character Character { get; set; }
+        public Infrastractures.Character Character { get; set; }
 
         public CardSet Hand { get; set; } = new();
 

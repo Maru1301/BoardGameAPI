@@ -16,521 +16,521 @@ namespace BoardGameTest
 
         private static readonly List<Card> _DCC = [Card.Dagger, Card.Crown, Card.Crown];
 
-        public static TheoryData<PlayerRoundInfo, PlayerRoundInfo, Result> AssassinRuleData => new()
+        public static TheoryData<PlayerRoundInfo, PlayerRoundInfo, GameResult> AssassinRuleData => new()
         {
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _CCC,
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _CCC
-                },
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _SCC
-                },
-                Result.Player1Win
-            },
-            {
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _SCC
-                },
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _DCC
-                },
-                Result.Player1Win
-            },
-            {
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _DCC
-                },
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _CCC
-                },
-                Result.Player1Win
-            },
-            {
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _DCC
-                },
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _DCC
-                },
-                Result.Draw
-            },
-            {
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                GameResult.Player1Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _DCC
                 },
-                Result.Player2Win
+                GameResult.Player1Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
-                    ChosenCards = _SCC
+                    ChosenCards = _CCC
                 },
-                Result.Player2Win
+                GameResult.Player1Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
-                    ChosenCards = _SCC
+                    ChosenCards = _DCC
                 },
-                Result.Player2Win
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
-                    Hand = new(),
-                    ChosenCards = _SCC
-                },
-                new PlayerRoundInfo
-                {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
-                Result.Player2Win
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _DCC
+                },
+                GameResult.Player2Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _DCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                GameResult.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _DCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                GameResult.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
-                Result.Player2Win
+                GameResult.Player2Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
-                Result.Player2Win
+                GameResult.Player2Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _SCC
+                },
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
+                    Hand = new(),
+                    ChosenCards = _CCC
+                },
+                GameResult.Player2Win
+            },
+            {
+                new PlayerRoundInfo
+                {
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 3},
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 2 },
                     ChosenCards = _DCC
                 },
-                Result.Player1CharacterRuleWin
+                GameResult.Player1CharacterRuleWin
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 2},
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 3 },
                     ChosenCards = _DCC
                 },
-                Result.Player2CharacterRuleWin
+                GameResult.Player2CharacterRuleWin
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 2},
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 2 },
                     ChosenCards = _DCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 2},
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 2 },
                     ChosenCards = _DCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 2},
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 1 },
                     ChosenCards = _DCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 1},
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Assassin,
+                    Character = BoardGame.Infrastractures.Character.Assassin,
                     Hand = new() { Dagger = 2 },
                     ChosenCards = _DCC
                 },
-                Result.Draw
+                GameResult.Draw
             }
         };
 
-        public static TheoryData<PlayerRoundInfo, PlayerRoundInfo, Result> DeceiverRuleData => new()
+        public static TheoryData<PlayerRoundInfo, PlayerRoundInfo, GameResult> DeceiverRuleData => new()
         {
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 1},
                     ChosenCards = _CCC
                 },
-                Result.Player1CharacterRuleWin
+                GameResult.Player1CharacterRuleWin
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(){ Sheild = 1 },
                     ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2},
                     ChosenCards = _CCC
                 },
-                Result.Player2CharacterRuleWin
+                GameResult.Player2CharacterRuleWin
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2},
                     ChosenCards = _CCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
-                Result.Player1Win
+                GameResult.Player1Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _DCC
                 },
-                Result.Player1Win
+                GameResult.Player1Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
-                Result.Player1Win
+                GameResult.Player1Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _DCC
                 },
-                Result.Player2Win
+                GameResult.Player2Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
             {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _CCC
                 },
-                Result.Player2Win
+                GameResult.Player2Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
             {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new(),
                     ChosenCards = _SCC
                 },
-                Result.Player2Win
+                GameResult.Player2Win
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 1 },
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _SCC
                 },
-                Result.Player1CharacterRuleWin
+                GameResult.Player1CharacterRuleWin
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
             {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 1 },
                     ChosenCards = _SCC
                 },
-                Result.Player2CharacterRuleWin
+                GameResult.Player2CharacterRuleWin
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _SCC
                 },
                 new PlayerRoundInfo
             {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _SCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 1 },
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _DCC
                 },
-                Result.Player1CharacterRuleWin
+                GameResult.Player1CharacterRuleWin
             },
                 {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
             {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 1 },
                     ChosenCards = _DCC
                 },
-                Result.Player2CharacterRuleWin
+                GameResult.Player2CharacterRuleWin
             },
             {
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _DCC
                 },
                 new PlayerRoundInfo
                 {
-                    Character = Character.Deceiver,
+                    Character = BoardGame.Infrastractures.Character.Deceiver,
                     Hand = new() { Sheild = 2 },
                     ChosenCards = _DCC
                 },
-                Result.Draw
+                GameResult.Draw
             },
         };
 
@@ -561,7 +561,7 @@ namespace BoardGameTest
         [Theory]
         [MemberData(nameof(AssassinRuleData), MemberType = typeof(RuleTests))]
         [MemberData(nameof(DeceiverRuleData), MemberType = typeof(RuleTests))]
-        public void TestRule_NormalRule(PlayerRoundInfo player1, PlayerRoundInfo player2, Result expected)
+        public void TestRule_NormalRule(PlayerRoundInfo player1, PlayerRoundInfo player2, GameResult expected)
         {
             // Get the service instance from the static field
             var service = ServiceProvider.GetService<IGameService>();
@@ -582,14 +582,14 @@ namespace BoardGameTest
             // Arrange
             var player1 = new PlayerRoundInfo
             {
-                Character = Character.Assassin,
+                Character = BoardGame.Infrastractures.Character.Assassin,
                 Hand = new(),
                 ChosenCards = [(Card)100, Card.Crown, Card.Crown],
                 LastOpened = 0,
             };
             var player2 = new PlayerRoundInfo
             {
-                Character = Character.Assassin,
+                Character = BoardGame.Infrastractures.Character.Assassin,
                 Hand = new(),
                 ChosenCards = [(Card)100, Card.Crown, Card.Crown],
                 LastOpened = 0,

@@ -1,7 +1,9 @@
 ﻿using MongoDB.Bson;
+using MongoDB.EntityFrameworkCore;
 
 namespace BoardGame.Models.EFModels
 {
+    [Collection("member")]
     public class Member
     {
         public ObjectId Id { get; set; }

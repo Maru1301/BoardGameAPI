@@ -12,12 +12,14 @@ namespace BoardGame.Services
         public IMemberRepository Members { get; private set; }
         public IAdminRepository Admins { get; private set; }
         public IGameRepository Games { get; private set; }
+        public ICharacterRepository Characters { get; private set; }
         public UnitOfWork(AppDbContext dbContext)
         {
             _dbContext = dbContext;
             Members = new Lazy<MemberRepository>(() => new MemberRepository(_dbContext)).Value;
             Admins = new Lazy<AdminRepository>(() => new AdminRepository(_dbContext)).Value;
             Games = new Lazy<GameRepository>(() => new GameRepository(_dbContext)).Value;
+            Characters = new Lazy<CharacterRepository>(() => new CharacterRepository(_dbContext)).Value;
         }
 
         public async Task BeginTransactionAsync()
@@ -28,9 +30,8 @@ namespace BoardGame.Services
 
         public async Task CommitTransactionAsync()
         {
-            await _dbContext.SaveChangesAsync();
             // todo: MongoDb EntityFrameworkCore does not support Transaction yet
-            //await _dbContext.Database.CommitTransactionAsync();
+            // await _dbContext.Database.CommitTransactionAsync();
         }
 
         public async Task RollbackTransactionAsync()
@@ -69,6 +70,7 @@ namespace BoardGame.Services
         IMemberRepository Members { get; }
         IAdminRepository Admins { get; }
         IGameRepository Games { get; }
+        ICharacterRepository Characters { get; }
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();
         Task RollbackTransactionAsync();

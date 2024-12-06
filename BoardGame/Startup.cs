@@ -15,6 +15,8 @@ using BoardGame.Providers.Interfaces;
 using BoardGame.Providers;
 using Microsoft.Extensions.Caching.Memory;
 using BoardGame.ApiCores;
+using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace BoardGame
 {
@@ -88,10 +90,9 @@ namespace BoardGame
     {
         public static IServiceCollection AddSystemConfig(this IServiceCollection services, IConfiguration Configuration, out Config outConfig)
         {
-            // Bind the Configuration to the Config object
-            var config = new Config();
-            Configuration.GetSection(nameof(Config)).Bind(config);
-
+            string configFile = Path.Combine(System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "config.json");
+            string json = File.ReadAllText(configFile);
+            var config = JsonConvert.DeserializeObject<Config>(json);
             outConfig = config;
 
             // Register the Configuration as a singleton

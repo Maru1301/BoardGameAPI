@@ -1,29 +1,26 @@
-﻿using StackExchange.Redis;
+﻿namespace BoardGame.Services.Interfaces;
 
-namespace BoardGame.Services.Interfaces
+public interface ICacheService
 {
-    public interface ICacheService
-    {
-        public Task<RedisValue> StringGetAsync(string key);
+    T? Get<T>(object key) where T : class, new();
 
-        public Task StringSetAsync(string key, RedisValue value);
+    void Set<T>(string key, T value, TimeSpan timeSpan) where T : class, new();
 
-        public Task<bool> StringDeleteAsync(string key);
+    void Remove<T>(object key);
+}
 
-        public Task<RedisValue> ListLeftPopAsync(string key);
-
-        public Task ListRightPushAsync(string key, RedisValue value);
-
-        public Task<RedisValue> HashGetAsync(string key, string subKey);
-
-        public Task<HashEntry[]> HashGetAllAsync(string key);
-
-        public Task HashSetAsync(string key, HashEntry[] entries) => HashSetAsync(key, entries, TimeSpan.FromMinutes(5));
-
-        public Task HashSetAsync(string key, HashEntry[] entries, TimeSpan expiry);
-
-        public Task<bool> RemoveDataAsync(string key);
-
-        Task<bool> HashRemoveAsync(string key, string subkey);
-    }
+public enum CacheDataStatus
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    None,
+    /// <summary>
+    /// 
+    /// </summary>
+    OK,
+    /// <summary>
+    /// 
+    /// </summary>
+    Expired
 }

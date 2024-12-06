@@ -20,28 +20,23 @@ namespace BoardGame.Repositories
             return await _db.Admins.ToListAsync();
         }
 
-        public async Task<ObjectId> AddAsync(Admin entity)
+        public async Task<bool> AddAsync(Admin entity)
         {
-            var entry = await _db.Admins.AddAsync(entity);
-            await _db.SaveChangesAsync();
+            await _db.Admins.AddAsync(entity);
 
-            return entry.Entity.Id;
+            return await _db.SaveChangesAsync() > 0;
         }
 
-        public async Task UpdateAsync(Admin entity)
+        public async Task<bool> UpdateAsync(Admin entity)
         {
             _db.Admins.Update(entity);
-            await _db.SaveChangesAsync();
+            return await _db.SaveChangesAsync() > 0;
         }
 
-        public async Task DeleteAsync(ObjectId id)
+        public async Task<bool> DeleteAsync(Admin entity)
         {
-            var entity = await _db.Admins.FindAsync(id);
-            if (entity != null)
-            {
-                _db.Admins.Remove(entity);
-                await _db.SaveChangesAsync();
-            }
+            _db.Admins.Remove(entity);
+            return await _db.SaveChangesAsync() > 0;
         }
 
         public async Task<Admin?> GetByAccountAsync(string account)

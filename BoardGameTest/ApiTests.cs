@@ -2,11 +2,11 @@
 using BoardGame;
 using RestSharp;
 using Shouldly;
-using BoardGame.Models.DTOs;
 using Microsoft.Extensions.DependencyInjection;
 using BoardGame.Infrastractures;
 using RestSharp.Authenticators;
 using MongoDB.Bson;
+using BoardGame.ApiControllers.Models;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
@@ -56,7 +56,7 @@ namespace BoardGameTest
         {
             using var client = new RestClient(factory.CreateClient());
             var request = new RestRequest(url);
-            request.AddBody(new RegisterRequestDTO
+            request.AddBody(new RegisterRequest
             {
                 Name = name,
                 Account = account,
@@ -76,7 +76,7 @@ namespace BoardGameTest
         {
             using var client = new RestClient(factory.CreateClient());
             var request = new RestRequest(url);
-            request.AddBody(new MemberLoginRequestDTO
+            request.AddBody(new MemberLoginRequest
             {
                 Account = account,
                 Password = password
@@ -108,7 +108,7 @@ namespace BoardGameTest
             using var client = new RestClient(factory.CreateClient());
             var request = CreateRequestWithJwt(url, id, string.Empty, Role.Member);
 
-            request.AddBody(new EditRequestDTO
+            request.AddBody(new EditMemberInfoRequest
             {
                 Name = name,
                 Email = email
@@ -127,7 +127,7 @@ namespace BoardGameTest
             using var client = new RestClient(factory.CreateClient());
             var request = CreateRequestWithJwt(url, id, string.Empty, Role.Member);
 
-            request.AddBody(new ResetPasswordRequestDTO
+            request.AddBody(new ResetPasswordRequest
             {
                 OldPassword = oldPassword,
                 NewPassword = newPassword

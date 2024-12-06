@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Utility;
 
-namespace BoardGame.Models.DTOs;
+namespace BoardGame.Models.DTO;
 
 public class AdminLoginRequestDTO
 {

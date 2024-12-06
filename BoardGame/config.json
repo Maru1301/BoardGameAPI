@@ -1,5 +1,9 @@
 {
   "AppName": "BoardGame",
+  "DomainName": "https://localhost:7120",
+  "ApiURl": {
+    "ValidateEmail": "/api/Member/ValidateEmail"
+  },
   "EmailConfig": {
     "Account": "how7633818@gmail.com",
     "Password": "tvim bmdq ikpt nqrn"
@@ -9,7 +13,7 @@
     "DatabaseName": "BoardGameDB"
   },
   "RedisConfig": {
-    "ConnectionString": "localhost:6379"
+    //"ConnectionString": "localhost:6379"
   },
   "JwtConfig": {
     "ValidateIssuer": true,

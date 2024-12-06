@@ -1,79 +1,78 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿namespace BoardGame.Infrastractures;
 
-namespace BoardGame.Infrastractures
+[Flags]
+public enum Role
 {
-    public enum Role
-    {
-        Admin,
-        Member,
-        Guest,
-    }
+    Admin = 1,
+    Member = 2,
+    Guest = 4,
+}
 
-    public static class ErrorCode
-    {
-        public static string InvalidAccountOrPassword { get => "Invalid Account or Password"; }
-        public static string InvalidAccount { get => "Invalid Account!"; }
-        public static string MemberNotExist { get => "Member doesn't exist!"; }
-        public static string WrongConfirmationCode { get => "Wrong confirmation code!"; }
-        public static string ErrorParsingJwt { get => "Error occured while parsing JWT"; }
-        public static string AccountExist { get => "Account already exists"; }
-        public static string NameExist { get => "Name already exists"; }
-        public static string EmailExist { get => "Email already exists"; }
-        public static string AccountNotMatch { get => "Login Account does not matched!"; }
-        public static string GameNotExist { get => "Game does not exist"; }
-        public static string DeserializationFialed { get => "Deserialization Fialed"; }
-        public static string RoomNotFound { get => "Room Not Found"; }
-        public static string NotYourTurn { get => "Not Your Turn!"; }
-        public static string LastRoundNotEnd { get => "The last round is not over yet"; }
-    }
+public class ErrorCode
+{
+    public static string InvalidAccountOrPassword { get => "Invalid Account or Password"; }
+    public static string InvalidAccount { get => "Invalid Account!"; }
+    public static string MemberNotExist { get => "Member doesn't exist!"; }
+    public static string WrongConfirmationCode { get => "Wrong confirmation code!"; }
+    public static string ErrorParsingJwt { get => "Error occured while parsing JWT"; }
+    public static string AccountExist { get => "Account already exists"; }
+    public static string NameExist { get => "Name already exists"; }
+    public static string EmailExist { get => "Email already exists"; }
+    public static string AccountNotMatch { get => "Login Account does not matched!"; }
+    public static string ParameterMissing { get => "Parameter missing!"; }
+    public static string GameNotExist { get => "Game does not exist"; }
+    public static string DeserializationFialed { get => "Deserialization Fialed"; }
+    public static string RoomNotFound { get => "Room Not Found"; }
+    public static string NotYourTurn { get => "Not Your Turn!"; }
+    public static string LastRoundNotEnd { get => "The last round is not over yet"; }
+}
 
-    public class CacheKey
-    {
-        public static string Member { get => "Member"; }
-        public static string GameRecord { get => "GameRecord"; }
-        public static string CurrentGame { get => "CurrentGame"; }
-        public static string WaitingPlayer { get => "WaitingPlayer"; }
-    }
+public class CacheKey
+{
+    public static string Member { get => "Member"; }
+    public static string GameRecord { get => "GameRecord"; }
+    public static string CurrentGame { get => "CurrentGame"; }
+    public static string WaitingPlayer { get => "WaitingPlayer"; }
+}
 
-    public enum Result : short
-    {
-        Player1Win = 1,
-        Player2Win = -1,
-        Player1CharacterRuleWin = 2,
-        Player2CharacterRuleWin = -2,
-        Draw = 0
-    }
+public enum GameResult : short
+{
+    Player1Win = 1,
+    Player2Win = -1,
+    Player1CharacterRuleWin = 2,
+    Player2CharacterRuleWin = -2,
+    Draw = 0
+}
 
-    public enum WhoGoesFirst
-    {
-        Player1,
-        Player2,
-        None
-    }
+public enum WhoGoesFirst
+{
+    Player1,
+    Player2,
+    None
+}
 
-    public enum Character
-    {
-        Assassin,
-        Deceiver,
-        Knight,
-        Lobbyist,
-        Lord,
-        Soldier
-    }
+public enum Character
+{
+    Assassin,
+    Deceiver,
+    Knight,
+    Lobbyist,
+    Lord,
+    Soldier
+}
 
-    public enum Card
-    {
-        Crown,
-        Sheild,
-        Dagger
-    }
+public enum Card
+{
+    Crown,
+    Sheild,
+    Dagger
+}
 
-    public class CardSet
-    {
-        public int Crown { get; set; }
+public class CardSet
+{
+    public int Crown { get; set; }
 
-        public int Sheild { get; set; }
+    public int Sheild { get; set; }
 
-        public int Dagger { get; set; }
-    }
+    public int Dagger { get; set; }
 }

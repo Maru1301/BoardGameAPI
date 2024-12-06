@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Utility;
 
-namespace BoardGame.Models.DTOs;
+namespace BoardGame.Models.DTO;
 
 public class MemberDTO
 {
@@ -24,18 +24,7 @@ public class MemberResponseDTO
     public bool IsConfirmed { get; set; }
 }
 
-public class MemberLoginRequestDTO
-{
-    [Required(ErrorMessage = "Account is required!")]
-    [StringLength(50)]
-    public string Account { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Password is required!")]
-    [StringLength(50)]
-    public string Password { get; set; } = string.Empty;
-}
-
-public class LoginDTO
+public class LoginRequestDTO
 {
     public string Account { get; set; } = string.Empty;
 
@@ -43,30 +32,6 @@ public class LoginDTO
 }
 
 public class RegisterRequestDTO
-{
-    [Required]
-    [StringLength(50)]
-    public string Name { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(50)]
-    public string Account { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(50)]
-    public string Password { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(50)]
-    [Compare(nameof(Password))]
-    public string ConfirmPassword { get; set; } = string.Empty;
-
-    [EmailAddress]
-    [Required]
-    public string Email { get; set; } = string.Empty;
-}
-
-public class RegisterDTO
 {
     public string Account { get; set; } = string.Empty;
 

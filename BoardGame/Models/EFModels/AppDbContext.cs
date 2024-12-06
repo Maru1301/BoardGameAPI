@@ -1,28 +1,33 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
-using MongoDB.EntityFrameworkCore.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace BoardGame.Models.EFModels
 {
-    public class AppDbContext(DbContextOptions options) : IdentityDbContext<IdentityUser>(options)
+    public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<Member> Members { get; init; }
         public DbSet<Admin> Admins { get; init; }
         public DbSet<Game> Games { get; init; }
-
-        public static AppDbContext Create(IMongoDatabase database) =>
-        new(new DbContextOptionsBuilder<AppDbContext>()
-            .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
-            .Options);
+        public DbSet<Character> Characters { get; init; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Member>().ToCollection("members");
-            modelBuilder.Entity<Admin>().ToCollection("admins");
-            modelBuilder.Entity<Game>().ToCollection("games");
+
+            // Get all types from the specified namespace
+            var entityTypes = Assembly.GetExecutingAssembly()
+                                       .GetTypes()
+                                       .Where(t => t.Namespace == "BoardGame.Models.EFModels" && t.IsClass);
+
+            // Dynamically configure entities
+            //foreach (var entityType in entityTypes)
+            //{
+            //    modelBuilder.Entity(entityType);
+            //}
+            modelBuilder.Entity<Member>();
+            modelBuilder.Entity<Admin>();
+            modelBuilder.Entity<Game>();
+            modelBuilder.Entity<Character>();
         }
     }
 

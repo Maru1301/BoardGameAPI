@@ -1,6 +1,7 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
 using BoardGame.Repositories.Interfaces;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -21,28 +22,22 @@ namespace BoardGame.Repositories
             return await _db.Members.ToListWithNoLockAsync();
         }
 
-        public async Task<ObjectId> AddAsync(Member entity)
+        public async Task<bool> AddAsync(Member entity)
         {
-            var entry = await _db.Members.AddAsync(entity);
-            await _db.SaveChangesAsync();
-
-            return entry.Entity.Id;
+            await _db.Members.AddAsync(entity);
+            return await _db.SaveChangesAsync() > 0;
         }
 
-        public async Task UpdateAsync(Member entity)
+        public async Task<bool> UpdateAsync(Member entity)
         {
             _db.Members.Update(entity);
-            await _db.SaveChangesAsync();
+            return await _db.SaveChangesAsync() > 0;
         }
 
-        public async Task DeleteAsync(ObjectId id)
+        public async Task<bool> DeleteAsync(Member entity)
         {
-            var user = await _db.Members.FindAsync(id);
-            if (user != null)
-            {
-                _db.Members.Remove(user);
-                await _db.SaveChangesAsync();
-            }
+            _db.Members.Remove(entity);
+            return await _db.SaveChangesAsync() > 0;
         }
 
         public async Task<Member?> GetByAccountAsync(string account)

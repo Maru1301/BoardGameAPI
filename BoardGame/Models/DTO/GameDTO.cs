@@ -1,15 +1,15 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
 
-namespace BoardGame.Models.DTOs;
+namespace BoardGame.Models.DTO;
 
 // Base class for shared properties
 public class GameBaseDTO
 {
     public string Player1Account { get; set; } = string.Empty;
     public string Player2Account { get; set; } = string.Empty;
-    public List<Character> Player1Characters { get; set; } = [];
-    public List<Character> Player2Characters { get; set; } = [];
+    public List<Infrastractures.Character> Player1Characters { get; set; } = [];
+    public List<Infrastractures.Character> Player2Characters { get; set; } = [];
 }
 
 public class GameDTO : GameBaseDTO
@@ -54,7 +54,7 @@ public class RoundInfoDTO
     public PlayerRoundInfo Player2 { get; set; } = new();
     public long RoundStart { get; set; }
     public long RoundEnd { get; set; }
-    public Character RuleCharacter => WhoGoesFirst == WhoGoesFirst.Player1 ? Player1.Character : Player2.Character;
+    public Infrastractures.Character RuleCharacter => WhoGoesFirst == WhoGoesFirst.Player1 ? Player1.Character : Player2.Character;
 }
 
 public class OpenNextCardRequestDTO

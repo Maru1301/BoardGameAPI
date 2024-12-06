@@ -1,18 +1,20 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
-using BoardGame.Models.DTOs;
+using BoardGame.Models.DTO;
 
 namespace BoardGame.Services.Interfaces
 {
     public interface IGameService
     {
-        public Task<IEnumerable<GameDTO>> GetGameRecordList();
+        Task<IEnumerable<GameDTO>> GetGameRecordList();
 
-        public Task<string> PlayWithBot(WhoGoesFirst whoGoesFirst, string account);
+        Task<IEnumerable<CharacterDTO>> GetCharacterList();
 
-        public Task<(bool gameStarted, string currentGameId)> Match(string account);
+        Task<string> PlayWithBot(WhoGoesFirst whoGoesFirst, string account);
 
-        public Task PickCharacter(string currentGameId, string account);
+        Task<(bool gameStarted, string currentGameId)> Match(string account);
+
+        Task PickCharacter(string currentGameId, string account);
 
         //public Task<string> HostGame();
 
@@ -20,7 +22,7 @@ namespace BoardGame.Services.Interfaces
 
         //public Task<bool> GetReady();
 
-        public Func<PlayerRoundInfo, PlayerRoundInfo, Result> MapRule(Character character);
+        Func<PlayerRoundInfo, PlayerRoundInfo, GameResult> MapRule(Infrastractures.Character character);
 
         Task EndGame(string currentGameId, string userAccount);
         Task BeginNewRound(RoundInfoDTO roundInfo, string userAccount);

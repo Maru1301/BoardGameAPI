@@ -1,13 +1,14 @@
 ﻿using BoardGame.Infrastractures;
 using BoardGame.Models.EFModels;
 using BoardGame.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 
 namespace BoardGame.Repositories
 {
     public class GameRepository(AppDbContext dbContext) : IGameRepository
     {
+        private readonly AppDbContext _db = dbContext;
+
         public async Task<Game?> GetByIdAsync(ObjectId id)
         {
             return await _db.Games.FindAsync(id);
@@ -18,29 +19,22 @@ namespace BoardGame.Repositories
             return await _db.Games.ToListWithNoLockAsync();
         }
 
-        private readonly AppDbContext _db = dbContext;
-        public async Task<ObjectId> AddAsync(Game entity)
+        public async Task<bool> AddAsync(Game entity)
         {
-            var entry = await _db.Games.AddAsync(entity);
-            await _db.SaveChangesAsync();
-
-            return entry.Entity.Id;
+            await _db.Games.AddAsync(entity);
+            return await _db.SaveChangesAsync() > 0;
         }
 
-        public async Task UpdateAsync(Game entity)
+        public async Task<bool> UpdateAsync(Game entity)
         {
             _db.Games.Update(entity);
-            await _db.SaveChangesAsync();
+            return await _db.SaveChangesAsync() > 0;
         }
 
-        public async Task DeleteAsync(ObjectId id)
+        public async Task<bool> DeleteAsync(Game entity)
         {
-            var entity = await _db.Games.FindAsync(id);
-            if (entity != null)
-            {
-                _db.Games.Remove(entity);
-                await _db.SaveChangesAsync();
-            }
+            _db.Games.Remove(entity);
+            return await _db.SaveChangesAsync() > 0;
         }
     }
 }

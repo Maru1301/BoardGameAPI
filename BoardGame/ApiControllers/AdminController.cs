@@ -1,38 +1,31 @@
 ﻿using BoardGame.Infrastractures;
-using BoardGame.Models.DTOs;
+using BoardGame.Models.DTO;
 using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BoardGame.Services;
-using System.Net;
 using BoardGame.Authorizations;
 using Utility;
 
-namespace BoardGame.Controllers
+namespace BoardGame.ApiControllers
 {
     [AuthorizeRoles(Role.Admin)]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class AdminController(IAdminService adminService) : ControllerBase
     {
-        private readonly IAdminService _adminService = adminService;
-
-        [HttpPost, AuthorizeRoles(Role.Admin)]
+        [HttpPost]
         public async Task<IActionResult> AddAdmin(AdminCreateRequestDTO vm)
         {
             try
             {
-                string result = await _adminService.AddAdmin(vm.To<AdminCreateDTO>());
+                string result = await adminService.AddAdmin(vm.To<AdminCreateDTO>());
 
                 return Ok(result);
             }
             catch (AdminServiceException ex)
             {
                 return BadRequest($"Add admin failed. Please check the provided information. {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
             }
         }
 
@@ -41,17 +34,13 @@ namespace BoardGame.Controllers
         {
             try
             {
-                var token = await _adminService.ValidateUser(vm.To<LoginDTO>());
+                var token = await adminService.ValidateUser(vm.To<LoginRequestDTO>());
 
                 return Ok(token);
             }
             catch (AdminServiceException ex)
             {
                 return BadRequest($"Login failed. Please check the provided information. {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }

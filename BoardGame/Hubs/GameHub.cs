@@ -1,6 +1,6 @@
 ﻿using BoardGame.Authorizations;
 using BoardGame.Infrastractures;
-using BoardGame.Models.DTOs;
+using BoardGame.Models.DTO;
 using BoardGame.Services;
 using BoardGame.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
@@ -179,7 +179,7 @@ public class GameHub(IGameService gameService) : Hub
 
     private string GetUserAccount()
     {
-        string userAccount = Context.GetJwtClaim(ClaimTypes.Name).Value;
+        string userAccount = Context.User.GetJwtClaim(ClaimTypes.Name).Value;
 
         if (string.IsNullOrEmpty(userAccount))
         {

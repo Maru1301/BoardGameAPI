@@ -1,97 +1,141 @@
-﻿using BoardGame.Models.DTOs;
+﻿using BoardGame.Models.DTO;
 using BoardGame.Infrastractures;
 using BoardGame.Services.Interfaces;
 using BoardGame.Models.EFModels;
 using MongoDB.Bson;
-using Newtonsoft.Json;
 using System.Data;
 using Utility;
-using StackExchange.Redis;
+using FluentResults;
+using System.Net.Mail;
 
 namespace BoardGame.Services
 {
-    public class MemberService(IUnitOfWork unitOfWork, IConfiguration configuration, ICacheService cacheService, JWTHelper jwt) : IService, IMemberService
+    public class MemberService(IUnitOfWork unitOfWork, IConfig config, JWTHelper jwt) : IService, IMemberService
     {
         /// <summary>
-        /// Register a new user based on the provided information.
-        /// Throws specific exceptions for duplicate account, name, or email.
-        /// On successful registration, a confirmation email is sent with a generated confirmation URL
-        /// for account verification.
+        /// Registers a new user using the provided registration data.
+        /// Ensures account, name, and email are unique before proceeding.
+        /// If the registration is successful, generates a confirmation URL 
+        /// and sends a verification email to the user's email address.
         /// </summary>
-        /// <param name="dto">The `RegisterDTO` object containing user registration information.</param>
-        /// <param name="confirmationUrlTemplate">The template string used to generate the confirmation URL.</param>
-        /// <returns>A message indicating successful registration.</returns>
-        /// <exception cref="MemberServiceException">Thrown if error occured in MemberService.</exception>
-        /// <exception cref="Exception">Thrown for any other unexpected errors during registration.</exception>
-        public async Task<string> Register(RegisterDTO dto, string domainName)
+        /// <param name="dto">A `RegisterRequestDTO` object containing the user's registration details.</param>
+        /// <returns>A `Result<string>` indicating the success or failure of the registration process.</returns>
+        /// <exception cref="Exception">Thrown when an unexpected error occurs during registration.</exception>
+        public async Task<Result<string>> Register(RegisterRequestDTO dto)
         {
-            await unitOfWork.BeginTransactionAsync();
+            if (!await IsAccountAvailableAsync(dto.Account)) 
+            { 
+                return Result.Fail(ErrorCode.AccountExist); 
+            }
+            if (!await IsNameAvailableAsync(dto.Name)) 
+            {
+                return Result.Fail(ErrorCode.NameExist); 
+            }
+            if (!await IsEmailAvailableAsync(dto.Email)) 
+            {
+                return Result.Fail(ErrorCode.EmailExist); 
+            }
+
+            //create a new confirm code
+            dto.ConfirmCode = Guid.NewGuid().ToString("N");
+
             try
             {
-                if (!await IsAccountAvailableAsync(dto.Account)) { throw new MemberServiceException(ErrorCode.AccountExist); }
-                if (!await IsNameAvailableAsync(dto.Name)) { throw new MemberServiceException(ErrorCode.NameExist); }
-                if (!await IsEmailAvailableAsync(dto.Email)) { throw new MemberServiceException(ErrorCode.EmailExist); }
-
-                //create a new confirm code
-                dto.ConfirmCode = Guid.NewGuid().ToString("N");
-
-                await unitOfWork.Members.AddAsync(dto.To<Member>());
+                await unitOfWork.BeginTransactionAsync();
+                var addResult = await unitOfWork.Members.AddAsync(dto.To<Member>());
                 await unitOfWork.CommitTransactionAsync();
-
-                var entity = (await unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
-
-                // Define a template for the confirmation email URL.
-                string confirmationUrlTemplate = $"{domainName}/Member/ActivateRegistration";
-
-                SendConfirmationCode(entity, confirmationUrlTemplate);
-
-                await unitOfWork.CommitTransactionAsync();
-                return "Registration successful! Confirmation email sent!";
-            }
-            catch (MemberServiceException)
-            {
-                await unitOfWork.RollbackTransactionAsync();
-                throw;
             }
             catch (Exception)
             {
                 await unitOfWork.RollbackTransactionAsync();
                 throw;
             }
+
+            var member = (await unitOfWork.Members.GetByAccountAsync(dto.Account));
+                
+            if(member == null)
+            {
+                return Result.Fail(new DataNotFoundError());
+            }
+
+            // Define a template for the confirmation email URL.
+            string url = $"{config.DomainName}{config.ApiUrl.ValidateEmail}?memberId={member.Id}&confirmCode={member.ConfirmCode}";
+
+            var mailResult = SendConfirmationEmail(url, member.Name!, member.Email!);
+
+            await unitOfWork.CommitTransactionAsync();
+            return mailResult.WithSuccess("Registration successful!");
         }
 
-        public void SendConfirmationCode(Member entity, string confirmationUrlTemplate)
+        /// <summary>
+        /// Sends a confirmation email to a newly registered user.
+        /// </summary>
+        /// <param name="confirmationUrl">The URL for the user to click to confirm their registration.</param>
+        /// <param name="name">The name of the registered user.</param>
+        /// <param name="emailAddress">The email address of the registered user.</param>
+        private Result<string> SendConfirmationEmail(string confirmationUrl, string name, string to)
         {
-            // Generate confirmation URL
-            string url = $"{confirmationUrlTemplate}?memberId={entity.Id}&confirmCode={entity.ConfirmCode}";
+            var from = config.EmailConfig.Account;
+            if (string.IsNullOrEmpty(from))
+            {
+                return Result.Fail("Fail to send confirmation mail");
+            }
+            var pw = config.EmailConfig.Password;
+            if (string.IsNullOrEmpty(pw))
+            {
+                return Result.Fail("Fail to send confirmation mail");
+            }
 
-            new EmailHelper(configuration).SendConfirmationEmail(url, entity.Name!, entity.Email!);
+            string body = $@"Hi {name},
+
+						<br />
+                        Please click on this link [<a href='{confirmationUrl}' target='_blank'>Verify Email</a>] to activate your account.
+                        <br />
+                        If you did not request this email, please ignore it. Thank you!
+
+                        <br />
+                        Sincerely,
+                        The {config.AppName} Team";
+
+            var mailMessage = new MailMessage(from, to, "[New Member Confirmation Email]", body)
+            {
+                IsBodyHtml = true
+            };
+
+            EmailUtility.SendEmailViaGmailSmtp(mailMessage, from, pw);
+
+            return Result.Ok("Confirmation mail sent!");
         }
 
-        public async Task<string> ResendConfirmationCode(ObjectId memberId, string domainName)
+        public async Task<Result<string>> ResendConfirmationCode(ObjectId memberId)
         {
-            await unitOfWork.BeginTransactionAsync();
+            var member = await unitOfWork.Members.GetByIdAsync(memberId);
+
+            if(member == null)
+            {
+                return Result.Fail(new DataNotFoundError());
+            }
+
+            //create a new confirm code
+            var confirmCode = Guid.NewGuid().ToString("N");
+            member.ConfirmCode = confirmCode;
+
             try
             {
-                var entity = (await unitOfWork.Members.GetByIdAsync(memberId) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
-
-                // Define a template for the confirmation email URL.
-                string confirmationUrlTemplate = $"{domainName}/Member/ValidateEmail";
-
-                SendConfirmationCode(entity, confirmationUrlTemplate);
-
-                return "success";
-            }
-            catch (MemberServiceException)
-            {
-                await unitOfWork.RollbackTransactionAsync();
-                throw;
+                await unitOfWork.BeginTransactionAsync();
+                await unitOfWork.Members.UpdateAsync(member);
+                await unitOfWork.CommitTransactionAsync();
             }
             catch (Exception)
             {
                 await unitOfWork.RollbackTransactionAsync();
                 throw;
             }
+
+            // Define a template for the confirmation email URL.
+            string url = $"{config.DomainName}{config.ApiUrl.ValidateEmail}?memberId={member.Id}&confirmCode={confirmCode}";
+
+            return SendConfirmationEmail(url, member.Name!, member.Email!);
         }
 
         /// <summary>
@@ -101,40 +145,41 @@ namespace BoardGame.Services
         /// </summary>
         /// <param name="dto">The EditDTO containing member ID, name, and new email address.</param>
         /// <returns>A string indicating successful edit ("Edition successful")</returns>
-        /// /// <exception cref="MemberServiceException">Thrown if member not found or old password doesn't matched the password in the database.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during update.</exception>
-        public async Task<string> EditMemberInfo(EditDTO dto)
+        public async Task<Result<string>> EditMemberInfo(EditDTO dto)
         {
-            await unitOfWork.BeginTransactionAsync();
+            if (await IsEmailAvailableAsync(dto.Email, dto.Id) == false) 
+            {
+                return Result.Fail(ErrorCode.EmailExist); 
+            }
+
+            var entity = await unitOfWork.Members.GetByIdAsync(dto.Id);
+            if(entity == null)
+            {
+                return Result.Fail(new DataNotFoundError());
+            }
+
+            // Update member information
+            entity.Name = dto.Name;
+            if(!entity.Email.Equals(dto.Email))
+            {
+                entity.IsConfirmed = false;
+            }
+            entity.Email = dto.Email;
+
             try
             {
-                if (await IsEmailAvailableAsync(dto.Email, dto.Id) == false) { throw new MemberServiceException(ErrorCode.EmailExist); }
-
-                var entity = (await unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist));
-
-                // Update member information
-                entity.Name = dto.Name;
-                if(!entity.Email.Equals(dto.Email))
-                {
-                    entity.IsConfirmed = false;
-                }
-                entity.Email = dto.Email;
-
+                await unitOfWork.BeginTransactionAsync();
                 await unitOfWork.Members.UpdateAsync(entity);
-
                 await unitOfWork.CommitTransactionAsync();
-                return "Edition successful";
-            }
-            catch (MemberServiceException)
-            {
-                await unitOfWork.RollbackTransactionAsync();
-                throw;
             }
             catch (Exception)
             {
                 await unitOfWork.RollbackTransactionAsync();
                 throw;
             }
+
+            return Result.Ok("Edition successful");
         }
 
         /// <summary>
@@ -142,41 +187,39 @@ namespace BoardGame.Services
         /// </summary>
         /// <param name="dto">A ResetPasswordDTO object containing the member's ID, old password, new password, and salt.</param>
         /// <returns>A string indicating success ("Reset successful").</returns>
-        /// <exception cref="MemberServiceException">Thrown if member not found or old password doesn't matched the password in the database.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during update.</exception>
-        public async Task<string> ResetPassword(ResetPasswordDTO dto)
+        public async Task<Result<string>> ResetPassword(ResetPasswordDTO dto)
         {
-            await unitOfWork.BeginTransactionAsync();
+            var entity = await unitOfWork.Members.GetByIdAsync(dto.Id);
+            if(entity == null)
+            {
+                return Result.Fail(new DataNotFoundError());
+            }
+
+            // Validate old password matches the hashed and salted password in the database
+            var oldEncryptedPassword = HashUtility.ToSHA256(dto.OldPassword, entity.Salt);
+            if (!entity.EncryptedPassword.Equals(oldEncryptedPassword))
+            {
+                return Result.Fail("Old password not match.");
+            }
+
+            // Update member entity with new password and salt
+            entity.Salt = dto.Salt;
+            entity.EncryptedPassword = dto.EncryptedPassword;
+
             try
             {
-                var entity = await unitOfWork.Members.GetByIdAsync(dto.Id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
-
-                // Validate old password matches the hashed and salted password in the database
-                var oldEncryptedPassword = Utility.HashUtility.ToSHA256(dto.OldPassword, entity.Salt);
-                if (!entity.EncryptedPassword.Equals(oldEncryptedPassword))
-                {
-                    throw new MemberServiceException("Old password confirmation failed");
-                }
-
-                // Update member entity with new password and salt
-                entity.Salt = dto.Salt;
-                entity.EncryptedPassword = dto.EncryptedPassword;
-
+                await unitOfWork.BeginTransactionAsync();
                 await unitOfWork.Members.UpdateAsync(entity);
-
                 await unitOfWork.CommitTransactionAsync();
-                return "Reset successful";
-            }
-            catch (MemberServiceException)
-            {
-                await unitOfWork.RollbackTransactionAsync();
-                throw;
             }
             catch (Exception)
             {
                 await unitOfWork.RollbackTransactionAsync();
                 throw;
             }
+
+            return Result.Ok("Reset successful");
         }
 
         /// <summary>
@@ -186,46 +229,54 @@ namespace BoardGame.Services
         /// <param name="memberId">The ID of the member to activate.</param>
         /// <param name="confirmCode">The confirmation code provided by the user.</param>
         /// <returns>A message indicating successful email validation ("Validation successful").</returns>
-        /// <exception cref="MemberServiceException">Thrown if the member is not found or there's an error within the MemberService logic.</exception>
         /// <exception cref="Exception">Thrown for any other unexpected errors during validation.</exception>
-        public async Task<string> ValidateEmail(string memberId, string confirmCode)
+        public async Task<Result<string>> ValidateEmail(string memberId, string confirmCode)
         {
-            await unitOfWork.BeginTransactionAsync();
+            var entity = await unitOfWork.Members.GetByIdAsync(new ObjectId(memberId));
+            if (entity == null)
+            {
+                return Result.Fail(new DataNotFoundError());
+            }
+
+            // Validate the confirmation code
+            if (string.Compare(entity.ConfirmCode, confirmCode) != 0) 
+            {
+                return Result.Fail(ErrorCode.WrongConfirmationCode);
+            }
+
+            entity.IsConfirmed = true;
+
             try
             {
-                Member entity = await unitOfWork.Members.GetByIdAsync(new ObjectId(memberId)) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
-
-                // Validate the confirmation code
-                if (string.Compare(entity.ConfirmCode, confirmCode) != 0) { throw new MemberServiceException(ErrorCode.WrongConfirmationCode); }
-
-                entity.IsConfirmed = true;
-
+                await unitOfWork.BeginTransactionAsync();
                 await unitOfWork.Members.UpdateAsync(entity);
-
                 await unitOfWork.CommitTransactionAsync();
-                return "Validation successful";
-            }
-            catch (MemberServiceException)
-            {
-                await unitOfWork.RollbackTransactionAsync();
-                throw;
             }
             catch (Exception)
             {
                 await unitOfWork.RollbackTransactionAsync();
                 throw;
             }
+
+            return Result.Ok("Validation successful");
         }
 
-        public async Task<string> ValidateUser(LoginDTO dto)
+        public async Task<Result<string>> ValidateUser(LoginRequestDTO dto)
         {
-            var member = await unitOfWork.Members.GetByAccountAsync(dto.Account) ?? throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword);
-            
-            if(!ValidatePassword(member.To<MemberDTO>(), dto.Password)) { throw new MemberServiceException(ErrorCode.InvalidAccountOrPassword); }
+            var member = await unitOfWork.Members.GetByAccountAsync(dto.Account);
+            if(member == null)
+            {
+                return Result.Fail(ErrorCode.InvalidAccountOrPassword);
+            }
 
-            var token = jwt.GenerateToken(member.Id, member.Account, member.IsConfirmed ? Infrastractures.Role.Member : Infrastractures.Role.Guest);
+            if(!ValidatePassword(member.To<MemberDTO>(), dto.Password))
+            {
+                return Result.Fail(ErrorCode.InvalidAccountOrPassword);
+            }
 
-            return token;
+            var token = jwt.GenerateToken(member.Id, member.Account, member.IsConfirmed ? Role.Member : Role.Guest);
+
+            return Result.Ok(token);
         }
 
         private static bool ValidatePassword(MemberDTO member, string password)
@@ -235,51 +286,30 @@ namespace BoardGame.Services
 
         public async Task<IEnumerable<MemberDTO>> ListMembers()
         {
-            // Try to get members from cache
-            var cachedData = await cacheService.HashGetAllAsync(CacheKey.Member);
-
-            if (cachedData != null && cachedData.Length > 0)
-            {
-                return cachedData.Select(cachedMember => JsonConvert.DeserializeObject<MemberDTO>(cachedMember.Value.ToString()))!;
-            }
-
-            // If not cached, fetch from database
             var members = await unitOfWork.Members.GetAllAsync();
-
-            // Add members to cache with expiration (optional)
-            var entries = members.Select(member => new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member))).ToArray();
-            await cacheService.HashSetAsync(CacheKey.Member, entries);
 
             return members.Select(x => x.To<MemberDTO>());
         }
 
-        public async Task<MemberDTO> GetMemberInfo(ObjectId id) 
+        public async Task<Result<MemberDTO>> GetMemberInfo(ObjectId id) 
         {
-            // Try to get members from cache
-            var cachedMember = await cacheService.HashGetAsync(CacheKey.Member, id.ToString());
-
-            if (cachedMember.HasValue)
+            var member = await unitOfWork.Members.GetByIdAsync(id);
+            if(member == null)
             {
-                return JsonConvert.DeserializeObject<MemberDTO>(cachedMember.ToString())!;
+                return Result.Fail(new DataNotFoundError());
             }
-
-            var member = await unitOfWork.Members.GetByIdAsync(id) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
-
-            // Add members to cache with expiration
-            var entries = new HashEntry(member.Id.ToString(), JsonConvert.SerializeObject(member));
-            await cacheService.HashSetAsync(CacheKey.Member, [entries]);
-
+            
             return member.To<MemberDTO>();
         }
 
-        public async Task<bool> IsAccountAvailableAsync(string account)
+        private async Task<bool> IsAccountAvailableAsync(string account)
         {
             var member = await unitOfWork.Members.GetByAccountAsync(account);
 
             return member == null;
         }
 
-        public async Task<bool> IsNameAvailableAsync(string name)
+        private async Task<bool> IsNameAvailableAsync(string name)
         {
             var member = await unitOfWork.Members.GetByNameAsync(name);
 
@@ -291,7 +321,7 @@ namespace BoardGame.Services
         /// </summary>
         /// <param name="email">The email address to check for availability.</param>
         /// <returns>True if the email address is not in use by any other member, false otherwise.</returns>
-        public async Task<bool> IsEmailAvailableAsync(string email)
+        private async Task<bool> IsEmailAvailableAsync(string email)
         {
             var member = await unitOfWork.Members.GetByEmailAsync(email);
 
@@ -305,34 +335,24 @@ namespace BoardGame.Services
         /// <param name="email">The email address to check for availability.</param>
         /// <param name="memberId">The ID of the member to exclude from the check.</param>
         /// <returns>True if the email address is not in use by any other member, false otherwise.</returns>
-        public async Task<bool> IsEmailAvailableAsync(string email, ObjectId memberId)
+        private async Task<bool> IsEmailAvailableAsync(string email, ObjectId memberId)
         {
             var member = await unitOfWork.Members.GetByEmailAsync(email);
 
             return member == null || (member != null && member.Id == memberId);
         }
 
-        public async Task<bool> Delete(string account)
+        public async Task<Result<bool>> DeleteMember(string account)
         {
-            try
+            var member = await unitOfWork.Members.GetByAccountAsync(account);
+            if (member == null)
             {
-                var member = await unitOfWork.Members.GetByAccountAsync(account) ?? throw new MemberServiceException(ErrorCode.MemberNotExist);
-
-                await unitOfWork.Members.DeleteAsync(member.Id);
-
-                return true;
+                return Result.Fail(new DataNotFoundError());
             }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            await unitOfWork.Members.DeleteAsync(member);
+
+            return true;
         }
-    }
-
-    /// <summary>
-    /// The MemberServiceException is thrown when errors occurred in the service 
-    /// </summary>
-    public class MemberServiceException(string message) : Exception(message)
-    {
     }
 }
