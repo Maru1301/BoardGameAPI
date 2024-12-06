@@ -1,0 +1,26 @@
+{
+  "AppName": "BoardGame",
+  "EmailConfig": {
+    "Account": "how7633818@gmail.com",
+    "Password": "tvim bmdq ikpt nqrn"
+  },
+  "MongoDBConfig": {
+    "AtlasURI": "mongodb+srv://Maru:lW6bAtsACfR3Rb1W@cluster0.r3hywvh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    "DatabaseName": "BoardGameDB"
+  },
+  "RedisConfig": {
+    "ConnectionString": "localhost:6379"
+  },
+  "JwtConfig": {
+    "ValidateIssuer": true,
+    "ValidIssuer": "BoardGame",
+    "ValidateAudience": true,
+    "ValidAudience": "BoardGameUsers",
+    "ValidateLifetime": true,
+    "ExpiredTime": 6835680,
+    "Algorithm": "HS256",
+    "ValidateIssuerSigningKey": true,
+    "IssuerSigningKey": "This is the secret for BoardGameJWT. This is the secret for BoardGameJWT.",
+    "ExpirationEnabled": true
+  }
+}
