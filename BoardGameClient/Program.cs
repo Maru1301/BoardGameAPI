@@ -6,10 +6,10 @@ internal static class Program
     {
         ArgumentNullException.ThrowIfNull(args);
 
-        MenuService menuService = new();
-        GameService gameService = new(new Characters.Character(), new Characters.Character());
+        //MenuService menuService = new();
+        //GameService gameService = new(new Characters.Character(), new Characters.Character());
 
-        var system = new SystemController(menuService, gameService);
+        var system = new SystemController();
 
         await system.Start();
     }

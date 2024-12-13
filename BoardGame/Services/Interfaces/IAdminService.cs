@@ -1,10 +1,11 @@
 ﻿using BoardGame.Models.DTO;
+using FluentResults;
 
 namespace BoardGame.Services.Interfaces
 {
     public interface IAdminService
     {
-        public Task<string> ValidateUser(LoginRequestDTO dto);
-        public Task<string> AddAdmin(AdminCreateDTO dto);
+        Task<Result<string>> ValidateUser(LoginRequestDTO dto);
+        Task<string> AddAdmin(AdminCreateDTO dto);
     }
 }

@@ -2,6 +2,7 @@
 using BoardGame.Models.DTO;
 using BoardGame.Models.EFModels;
 using BoardGame.Services.Interfaces;
+using FluentResults;
 using Utility;
 
 namespace BoardGame.Services
@@ -32,7 +33,7 @@ namespace BoardGame.Services
             }
         }
 
-        public async Task<string> ValidateUser(LoginRequestDTO dto)
+        public async Task<Result<string>> ValidateUser(LoginRequestDTO dto)
         {
             var admin = await unitOfWork.Admins.GetByAccountAsync(dto.Account);
             if (admin == null || !ValidatePassword(admin.To<AdminDTO>(), dto.Password))
@@ -41,9 +42,9 @@ namespace BoardGame.Services
             }
 
             // Authorize the user and generate a JWT token.
-            var token = _jwt.GenerateToken(admin.Id, dto.Account, Role.Admin);
+            var result = _jwt.GenerateToken(admin.Id, dto.Account, Role.Admin);
 
-            return token;
+            return result;
         }
 
         private static bool ValidatePassword(AdminDTO admin, string password)

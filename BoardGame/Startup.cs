@@ -36,7 +36,7 @@ namespace BoardGame
                 });
             });
 
-            services.AddSystemConfig(Configuration, out Config config);
+            services.AddSystemConfig(out Config config);
             services.AddJwtAuthentication(config);
             services.AddControllers();
             services.RegisterScopedServices(config);
@@ -88,15 +88,14 @@ namespace BoardGame
 
     public static class StartupExt
     {
-        public static IServiceCollection AddSystemConfig(this IServiceCollection services, IConfiguration Configuration, out Config outConfig)
+        public static IServiceCollection AddSystemConfig(this IServiceCollection services, out Config outConfig)
         {
-            string configFile = Path.Combine(System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "config.json");
+            string configFile = Path.Combine(Path.GetDirectoryName(Environment.ProcessPath), "config.json");
             string json = File.ReadAllText(configFile);
-            var config = JsonConvert.DeserializeObject<Config>(json);
-            outConfig = config;
+            outConfig = JsonConvert.DeserializeObject<Config>(json);
 
             // Register the Configuration as a singleton
-            services.AddSingleton<IConfig>(config);
+            services.AddSingleton<IConfig>(outConfig);
 
             return services;
         }

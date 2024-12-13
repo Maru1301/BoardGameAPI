@@ -1,22 +1,35 @@
-﻿using BoardGameClient.Characters;
-using BoardGameClient.Menu;
+﻿using MenuVisualizer;
 
 namespace BoardGameClient;
 
 public class SystemController
 {
-    private readonly MenuService _menuService;
     private readonly GameService _gameService;
     private string _token = string.Empty;
     private readonly string _domain = Resources.TempDomainName;
+    private Character player = new();
+    private Character bot = new();
 
-    public SystemController(MenuService menuService, GameService gameService)
+    private object? SetPlayerCharacter(object? obj)
     {
-        Console.CursorVisible = false;
-        _menuService = menuService; // Todo: menuServire requires Refactoring
-        _gameService = gameService;
+        player = (Character)obj;
+        return null;
+    }
 
-        menuService.Init(GenerateMenu());
+    private object? SetBotCharacter(object? obj)
+    {
+        bot = (Character)obj;
+        return null;
+    }
+
+    public SystemController()
+    {
+        var builder = new NewMenuBuilder(SetPlayerCharacter, SetBotCharacter);
+        var menu = builder.Construct();
+        var manager = new ConsoleMenuManager();
+        manager.Construct(menu);
+
+        manager.ShowAsync();
     }
 
     public async Task Start()
@@ -28,16 +41,6 @@ public class SystemController
         while (await LoginAsync() == false) { };
         await _gameService.Test(_token);
 #endif
-
-        var status = Status.InMenu;
-        while (status != Status.End)
-        {
-            status = RunMenu(status);
-            if (status == Status.InGame)
-            {
-                status = RunGame(status);
-            }
-        }
     }
 
     // Refactoring required
@@ -94,100 +97,6 @@ public class SystemController
     //        return false;
     //    }
     //}
-
-    private static MenuList GenerateMenu()
-    {
-        CharacterList characterList = new();
-        IMenuBuilder menuBuilder = new MenuBuilder(characterList);
-        MenuDirector menuDirector = new(menuBuilder);
-        menuDirector.ConstructMenu();
-
-        return menuBuilder.GetRootMenuList();
-    }
-
-    private Status RunMenu(Status status)
-    {
-        var removedIndex = 0;
-        MenuOption removedOption = new();
-        while (status == Status.InMenu)
-        {
-            var menuOption = _menuService.CurrentMenuList.GetMenuOption();
-            if (_menuService.IsCurrentMenuListRoot() && menuOption.OptionName == "Exit")
-            {
-                status = Status.End;
-                break;
-            }
-
-            if (_menuService.GetCurrentMenuList().GetType() == typeof(CharacterInfoMenu) && menuOption.OptionName == "Select")
-            {
-                _menuService.SetChosenCharacter(((CharacterInfoMenu)_menuService.GetCurrentMenuList()).Character);
-                _menuService.MoveToNextMenuList(menuOption);
-                (removedOption, removedIndex) = ((OpponentMenu)_menuService.GetCurrentMenuList()).FilterChosenCharacter(_menuService.GetChosenCharacter());
-            }
-            else if (_menuService.GetCurrentMenuList().GetType() == typeof(OpponentMenu))
-            {
-                if (menuOption.OptionName == "Back")
-                {
-                    _menuService.GetCurrentMenuList().Insert(removedIndex, removedOption);
-                    _menuService.MoveToPrevMenuList();
-                }
-                else
-                {
-                    _menuService.SetChosenOpponent(((OpponentMenuOption)menuOption).Character);
-                    status = Status.InGame;
-                    break;
-                }
-            }
-            else if (menuOption.OptionName == "Back")
-            {
-                _menuService.MoveToPrevMenuList();
-            }
-            else
-            {
-                _menuService.MoveToNextMenuList(menuOption);
-            }
-        }
-
-        return status;
-    }
-
-    private Status RunGame(Status status)
-    {
-        var playerCharacter = _menuService.GetChosenCharacter();
-        var opponentCharacter = _menuService.GetChosenOpponent();
-
-        var gameService = new GameService(playerCharacter, opponentCharacter);
-
-        gameService.BeginNewGame();
-
-        while (status == Status.InGame)
-        {
-            gameService.BeginNewRound();
-
-            var (playerChosenCard, npcChosenCard) = gameService.GetChosenCard();
-            (playerChosenCard, npcChosenCard).ShowChosenCards();
-            Result result = gameService.JudgeRound();
-
-            var card = result switch
-            {
-                Result.BasicWin => gameService.GetPlayerWinCard(),
-                Result.BasicLose => gameService.GetNpcWinCard(),
-                Result.CharacterRuleWin => npcChosenCard,
-                Result.CharacterRuleLose => playerChosenCard,
-                Result.Draw => Card.None,
-                _ => throw new NotImplementedException()
-            };
-
-            gameService.ProcessSettlement(result, card);
-            (result, card).ShowRoundResult();
-
-            status = gameService.EndRound();
-        }
-
-        gameService.GetOutcome().Show();
-
-        return status;
-    }
 }
 
 public class Res

@@ -1,5 +1,4 @@
-﻿using BoardGameClient.Characters;
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 
 namespace BoardGameClient;
 
@@ -13,8 +12,8 @@ public class GameService
 
     public GameService(Character character, Character opponent)
     {
-        _player.Character = new Character(character);
-        _npc.Character = new Character(opponent);
+        //_player.Character = new Character(character);
+        //_npc.Character = new Character(opponent);
     }
 
     public async Task Test(string jwtToken)
@@ -105,23 +104,23 @@ public class GameService
 
     }
 
-    public List<int> PlayerCards { get => _player.Character.Cards; set => _player.Character.Cards = value; }
+    //public List<int> PlayerCards { get => _player.Character.Cards; set => _player.Character.Cards = value; }
 
-    public List<int> GetNpcCards { get => _npc.Character.Cards; set => _npc.Character.Cards = value; }
+    //public List<int> GetNpcCards { get => _npc.Character.Cards; set => _npc.Character.Cards = value; }
 
-    public (Card playerCard, Card npcCard) GetChosenCard()
-    {
-        var playerChosenCard = PlayerCards.GetChosenCard();
+    //public (Card playerCard, Card npcCard) GetChosenCard()
+    //{
+    //    var playerChosenCard = PlayerCards.GetChosenCard();
 
-        Random random = new();
-        var npcCards = _npc.Character.Cards;
+    //    Random random = new();
+    //    var npcCards = _npc.Character.Cards;
 
-        var canChooseCards = (from item in npcCards.Select((cardAmount, index) => new { index, cardAmount }) where item.cardAmount > 0 select item.index).ToList();
+    //    var canChooseCards = (from item in npcCards.Select((cardAmount, index) => new { index, cardAmount }) where item.cardAmount > 0 select item.index).ToList();
 
-        var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
+    //    var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
 
-        return (playerChosenCard, (Card)chosenCard);
-    }
+    //    return (playerChosenCard, (Card)chosenCard);
+    //}
 
     public Result JudgeRound()
     {
@@ -134,36 +133,36 @@ public class GameService
         return Card.None;
     }
 
-    public Card GetNpcWinCard()
-    {
-        Random random = new();
-        var playerCards = _player.Character.Cards;
+    //public Card GetNpcWinCard()
+    //{
+    //    Random random = new();
+    //    var playerCards = _player.Character.Cards;
 
-        var canChooseCards = (from item in playerCards.Select((cardAmount, index) => new { index, cardAmount }) where item.cardAmount > 0 select item.index).ToList();
+    //    var canChooseCards = (from item in playerCards.Select((cardAmount, index) => new { index, cardAmount }) where item.cardAmount > 0 select item.index).ToList();
 
-        var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
+    //    var chosenCard = canChooseCards[random.Next(canChooseCards.Count)];
 
-        return (Card)chosenCard;
-    }
+    //    return (Card)chosenCard;
+    //}
 
-    public void ProcessSettlement(Result result, Card card)
-    {
-        var playerWin = IsPlayerWin(result);
+    //public void ProcessSettlement(Result result, Card card)
+    //{
+    //    var playerWin = IsPlayerWin(result);
 
-        switch (playerWin)
-        {
-            case null:
-                return;
-            case true:
-                _player.Character.Cards[(int)card]++;
-                _npc.Character.Cards[(int)card]--;
-                break;
-            default:
-                _npc.Character.Cards[(int)card]++;
-                _player.Character.Cards[(int)card]--;
-                break;
-        }
-    }
+    //    switch (playerWin)
+    //    {
+    //        case null:
+    //            return;
+    //        case true:
+    //            _player.Character.Cards[(int)card]++;
+    //            _npc.Character.Cards[(int)card]--;
+    //            break;
+    //        default:
+    //            _npc.Character.Cards[(int)card]++;
+    //            _player.Character.Cards[(int)card]--;
+    //            break;
+    //    }
+    //}
 
     private static bool? IsPlayerWin(Result result)
     {
@@ -203,6 +202,18 @@ public class GameService
         public Character Character { get; set; } = new();
 
         public bool GoFirst { get; set; }
+    }
+
+    public static List<Character> GetCharacterList()
+    {
+        return [new Character() {
+            Name = "111",
+            Rule = "111",
+            Card = [0,1,2],
+            Disqualification = "111",
+            Evolution = "111",
+            AdditionalPoint = "111",
+        }];
     }
 }
 

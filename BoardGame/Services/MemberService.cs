@@ -274,9 +274,9 @@ namespace BoardGame.Services
                 return Result.Fail(ErrorCode.InvalidAccountOrPassword);
             }
 
-            var token = jwt.GenerateToken(member.Id, member.Account, member.IsConfirmed ? Role.Member : Role.Guest);
+            var result = jwt.GenerateToken(member.Id, member.Account, member.IsConfirmed ? Role.Member : Role.Guest);
 
-            return Result.Ok(token);
+            return result;
         }
 
         private static bool ValidatePassword(MemberDTO member, string password)

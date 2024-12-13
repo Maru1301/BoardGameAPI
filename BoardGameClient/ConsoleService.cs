@@ -1,6 +1,4 @@
-﻿using BoardGameClient.Menu;
-
-namespace BoardGameClient;
+﻿namespace BoardGameClient;
 
 public static class ConsoleService
 {
@@ -140,69 +138,6 @@ public static class ConsoleService
             }
             Console.WriteLine();
         }
-    }
-
-    private static void Show(this MenuList menuList, int chooser)
-    {
-        Console.Clear();
-
-        if (menuList.GetType() == typeof(CharacterInfoMenu))
-        {
-            var info = menuList.GetInfo();
-            Console.WriteLine(info);
-        }
-
-        Console.WriteLine(menuList.Title);
-
-        for (var i = 0; i < menuList.Options.Count; i++)
-        {
-            Console.WriteLine(chooser == i
-                ? $"=>  {menuList.Options[i].OptionName}"
-                : $"    {menuList.Options[i].OptionName}");
-        }
-    }
-
-    public static MenuOption GetMenuOption(this MenuList menuList)
-    {
-        var chooser = 0;
-        ConsoleKey key;
-
-        do
-        {
-            menuList.Show(chooser);
-
-            key = Console.ReadKey().Key;
-
-            switch (key)
-            {
-                case ConsoleKey.UpArrow:
-                case ConsoleKey.W:
-                    {
-                        if (chooser > 0)
-                        {
-                            chooser--;
-                        }
-
-                        break;
-                    }
-                case ConsoleKey.DownArrow:
-                case ConsoleKey.S:
-                    {
-                        if (chooser < menuList.Options.Count - 1)
-                        {
-                            chooser++;
-                        }
-
-                        break;
-                    }
-                case ConsoleKey.Enter:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        } while (key != ConsoleKey.Enter);
-
-        return menuList.Options[chooser];
     }
 
     public static Card GetChosenCard(this List<int> playerCards)

@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using FluentResults;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -7,16 +8,10 @@ namespace BoardGame.Infrastractures
 {
     public class JWTHelper(IConfig config)
     {
-        private readonly IConfig _config = config;
+        public Result<string> GenerateToken(ObjectId Id, string account, Role role)
+            => BuildToken(Id, account, role);
 
-        public string GenerateToken(ObjectId Id, string account, Role role)
-        {
-            var token = BuildToken(Id, account, role);
-
-            return token;
-        }
-
-        private string BuildToken(ObjectId Id, string account, Role role)
+        private Result<string> BuildToken(ObjectId Id, string account, Role role)
         {
             List<Claim> claims =
             [
@@ -25,19 +20,25 @@ namespace BoardGame.Infrastractures
                 new Claim(ClaimTypes.Role, role.ToString()),
             ];
 
+            if (string.IsNullOrEmpty(config.JwtConfig.IssuerSigningKey))
+            {
+                return Result.Fail("Issuer signing key is missing!");
+            }
+
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(config.JwtConfig.IssuerSigningKey));
             var cred = new SigningCredentials(key, config.JwtConfig.Algorithm);
+            _ = double.TryParse(config.JwtConfig.ExpiredTime, out double expiredTime);
             var token = new JwtSecurityToken
             (
                 issuer: config.JwtConfig.ValidIssuer,
                 audience: config.JwtConfig.ValidAudience,
                 claims: claims,
-                expires: DateTime.Now.AddSeconds(double.Parse(config.JwtConfig.ExpiredTime.ToString()!)),
+                expires: DateTime.Now.AddSeconds(expiredTime),
                 signingCredentials: cred
             );
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwt;
+            return Result.Ok(jwt);
         }
     }
 

@@ -10,8 +10,8 @@ namespace BoardGame.Models.EFModels
         public ObjectId Id { get; set; }
         public string Player1Account { get; set; } = string.Empty;
         public string Player2Account { get; set; } = string.Empty;
-        public List<Infrastractures.Character> Player1Characters { get; set; } = new();
-        public List<Infrastractures.Character> Player2Characters { get; set; } = new();
+        public List<Infrastractures.Character> Player1Characters { get; set; } = [];
+        public List<Infrastractures.Character> Player2Characters { get; set; } = [];
         public List<Round> Round { get; set; } = [];
         public EndGameInfo? EndGameInfo { get; set; }
         public long CreatedTime { get; set; }
